@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 let AxiosConfig = axios.create({
-  baseURL: 'http://localhost:8351//',//Proveriti koji je port
+  baseURL: 'http://localhost:5065/',
   // Prostor za dodatnu konfiguraciju
 });
 
