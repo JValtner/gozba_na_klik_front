@@ -1,46 +1,30 @@
-import React, { useState } from 'react';
-import WelcomePage from './components/WelcomePage';
 
-const App = () => {
-  const [currentUser, setCurrentUser] = useState(null);
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import WelcomePage from "./components/welcome/WelcomePage";
+import RegisterUserForm from "./components/users/RegisterUserForm";
+import Header from "./components/welcome/Header";
+import Footer from "./components/welcome/Footer";
+import './styles/main.scss';
 
-  const handleLogin = (userData) => {
-    console.log('User logged in:', userData);
-    setCurrentUser(userData);
-  };
+export default function App() {
+  return (
 
-  const handleGoToRegister = () => {
-    alert('U pripremi je registracija korisnika.');
-  };
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-  };
-
-  if (!currentUser) {
-    return (
+    <Router>
+      <Header />
       <WelcomePage 
         onLogin={handleLogin}
         onGoToRegister={handleGoToRegister}
       />
-    );
-  }
+      <main>
+        <Routes>
+          <Route path="/" element={<WelcomePage />} />
+          <Route path="/register" element={<RegisterUserForm />} />
+        </Routes>
+      </main>
+      <Footer />
+    </Router>
 
-  return (
-    <div className="dashboard">
-      <div className="dashboard__container">
-        <div className="dashboard__header">
-          <div>
-            <h1>Dashboard za {currentUser.username}</h1>
-            <p>Uloga: {currentUser.role}</p>
-          </div>
-          <button className="btn btn--danger" onClick={handleLogout}>
-            Odjavi se
-          </button>
-        </div>
-      </div>
-    </div>
+
   );
-};
-
-export default App;
+}

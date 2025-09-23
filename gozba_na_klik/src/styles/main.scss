@@ -1,4 +1,8 @@
-* {
+@import "welcome-page';
+@import 'dashboard';
+@import 'header';
+@import 'footer';
+{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -9,5 +13,4 @@ body {
   background-color: #f9fafb;
 }
 
-@import './components/welcome-page';
-@import './components/dashboard';
+
