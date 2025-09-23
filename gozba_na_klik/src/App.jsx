@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import WelcomePage from "./components/welcome/WelcomePage";
@@ -11,6 +12,10 @@ export default function App() {
 
     <Router>
       <Header />
+      <WelcomePage 
+        onLogin={handleLogin}
+        onGoToRegister={handleGoToRegister}
+      />
       <main>
         <Routes>
           <Route path="/" element={<WelcomePage />} />
@@ -23,4 +28,3 @@ export default function App() {
 
   );
 }
-

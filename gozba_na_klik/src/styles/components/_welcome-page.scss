@@ -1,0 +1,297 @@
+.welcome-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #fff7ed, #fef2f2);
+
+  &__content {
+    flex: 1;
+    display: flex;
+  }
+
+  &__left,
+  &__right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+}
+
+// Sadržaj poruke dobrodošlice
+.welcome-content {
+  max-width: 28rem;
+  text-align: center;
+
+  @media (min-width: 1024px) {
+    text-align: left;
+  }
+
+  &__title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+
+    @media (min-width: 1024px) {
+      font-size: 3.75rem;
+    }
+  }
+
+  &__subtitle {
+    font-size: 1.25rem;
+    color: #4b5563;
+    margin-bottom: 1rem;
+  }
+
+  &__description {
+    font-size: 1.125rem;
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+  }
+
+  &__feature {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #ea580c;
+
+    @media (min-width: 1024px) {
+      justify-content: flex-start;
+    }
+  }
+}
+
+.feature-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: #ea580c;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.feature-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+// Login forma container
+.login-form-container {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 28rem;
+  padding: 2rem;
+}
+
+// Login forma header
+.login-form__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-form__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.login-form__subtitle {
+  color: #4b5563;
+  margin: 0;
+}
+
+// Forma
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// Form group (label + input)
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #1f2937;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+
+  &::placeholder {
+    color: #6b7280;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #ea580c;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+  }
+
+  &:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+// Error message
+.error-message {
+  padding: 0.75rem 1rem;
+  background-color: #fef2f2;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.5rem;
+
+  &__text {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #dc2626;
+    font-weight: 500;
+  }
+}
+
+// Buttons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.3);
+  }
+
+  &--primary {
+    background-color: #ea580c;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: #c2410c;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &--secondary {
+    background-color: transparent;
+    color: #ea580c;
+    border: 2px solid #ea580c;
+
+    &:hover:not(:disabled) {
+      background-color: #ea580c;
+      color: white;
+    }
+  }
+
+  &--full-width {
+    width: 100%;
+  }
+}
+
+// Loading spinner
+.loading-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+
+  &--small {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+// Login forma footer
+.login-form__footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.footer-text {
+  color: #4b5563;
+  margin-bottom: 0.75rem;
+}
+
+// Test accounts
+.test-accounts {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+
+  &__title {
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  &__list {
+    font-size: 0.875rem;
+    color: #4b5563;
+
+    p {
+      margin-bottom: 0.25rem;
+    }
+
+    strong {
+      color: #1f2937;
+    }
+  }
+}
+
+// Animacije
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
