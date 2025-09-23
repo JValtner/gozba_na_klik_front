@@ -1,0 +1,29 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../users/UserContext";
+
+export default function Header() {
+  const { username, isAuth, logout } = useUser();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");  
+  };
+
+  return (
+    <header className="app-header">
+      <div className="logo">🍴 Feast on Click</div>
+      <div className="user-info">
+        {isAuth ? (
+          <>
+            <span>Welcome, <strong>{username}</strong></span>
+            <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          </>
+        ) : (
+          <span>You are not logged in</span>
+        )}
+      </div>
+    </header>
+  );
+}
