@@ -9,13 +9,16 @@ export function UserProvider({ children }) {
     });
 
     // svaki put kad se username promeni -> snimamo u localStorage
+    //svaki put kad se user promeni--> snimamo u localStorage Ispravka Josip
     useEffect(() => {
-        if (username) {
+        if (user) {
             localStorage.setItem("username", username);
+            localStorage.setItem("Userid", user.id);
         } else {
             localStorage.removeItem("username");
+            localStorage.removeItem("userId");
         }
-    }, [username]);
+    }, [user]);
 
     return (
         <UserContext.Provider value={{ username, setUsername }}>

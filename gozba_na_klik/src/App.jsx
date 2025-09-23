@@ -15,6 +15,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<WelcomePage />} />
           <Route path="/register" element={<RegisterUserForm />} />
+          <Route path="/profile/:userId" element={<RegisterUserForm />} />
         </Routes>
       </main>
       <Footer />
