@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import AxiosConfig from "../../config/axios.config";
+import { createUser } from "../service/userService";
 import { useUser } from "../users/UserContext";
 
 export default function RegisterUserForm() {
@@ -16,15 +16,13 @@ export default function RegisterUserForm() {
 
     const onSubmit = async (data) => {
         try {
-            await AxiosConfig.post("api/users", {
+            await createUser({
+                ...data,
                 username: data.username,
                 password: data.password,
                 email: data.email,
-                role: "Client",
+                role: "Buyer",
             });
-
-
-
 
             alert("Uspešno ste se registrovali!");
             navigate("/");
