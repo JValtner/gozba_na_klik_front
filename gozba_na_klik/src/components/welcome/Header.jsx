@@ -8,20 +8,20 @@ export default function Header() {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");  
+    navigate("/login");
   };
 
   return (
     <header className="app-header">
-      <div className="logo">🍴 Feast on Click</div>
+      <div className="logo">🍴 Gozba na klik</div>
       <div className="user-info">
         {isAuth ? (
           <>
-            <span>Welcome, <strong>{username}</strong></span>
-            <button className="logout-btn" onClick={handleLogout}>Logout</button>
+            <span>Dobrodošli, <strong>{username}</strong></span>
+            <button className="logout-btn" onClick={handleLogout}>Odjava</button>
           </>
         ) : (
-          <span>You are not logged in</span>
+          <span>Niste ulogovani</span>
         )}
       </div>
     </header>
