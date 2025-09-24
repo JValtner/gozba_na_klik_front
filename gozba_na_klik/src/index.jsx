@@ -3,14 +3,15 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./styles/main.scss";
 import { UserProvider } from "./components/users/UserContext";
+import "./styles/main.scss";
 
-const container = document.getElementById("root");
-const root = createRoot(container);
+ReactDOM.createRoot(document.getElementById("root")).render(
 
-root.render(
-  <React.StrictMode>
-    <UserProvider>
-      <App />
-    </UserProvider>
-  </React.StrictMode>
+
+    <React.StrictMode>
+        <UserProvider>
+            <App />
+        </UserProvider>
+    </React.StrictMode>
 );
+
