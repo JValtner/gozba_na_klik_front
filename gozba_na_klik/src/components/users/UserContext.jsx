@@ -3,11 +3,8 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
-    // inicijalno čitamo username iz localStorage
-    const [username, setUsername] = useState(() => {
-        return localStorage.getItem("username") || null;
-    });
 
+<<<<<<< HEAD
     // svaki put kad se username promeni -> snimamo u localStorage
     //svaki put kad se user promeni--> snimamo u localStorage Ispravka Josip
     useEffect(() => {
@@ -19,14 +16,34 @@ export function UserProvider({ children }) {
             localStorage.removeItem("userId");
         }
     }, [user]);
+=======
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem("username") || null;
+  });
+>>>>>>> 78f843589c3f48745cf58de04e2011db66ab692e
 
-    return (
-        <UserContext.Provider value={{ username, setUsername }}>
-            {children}
-        </UserContext.Provider>
-    );
+  useEffect(() => {
+    if (username) {
+      localStorage.setItem("username", username);
+    } else {
+      localStorage.removeItem("username");
+    }
+  }, [username]);
+
+  function logout() {
+    setUsername(null);
+    localStorage.removeItem("username");
+    localStorage.removeItem("token"); 
+  }
+  const isAuth = !!username;
+
+  return (
+    <UserContext.Provider value={{ username, setUsername, isAuth, logout }}>
+      {children}
+    </UserContext.Provider>
+  );
 }
 
 export function useUser() {
-    return useContext(UserContext);
+  return useContext(UserContext);
 }
