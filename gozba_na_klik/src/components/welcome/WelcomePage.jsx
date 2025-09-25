@@ -1,49 +1,52 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import AxiosConfig from '../../config/axios.config';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AxiosConfig from "../../config/axios.config";
 import { useUser } from "../users/UserContext";
 
 const WelcomePage = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: '', password: '' });
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { setUsername } = useUser();
+  const { setRole } = useUser();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (error) setError('');
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (error) setError("");
   };
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
 
     if (!formData.username.trim() || !formData.password.trim()) {
-      setError('Molimo unesite korisničko ime i lozinku');
+      setError("Molimo unesite korisničko ime i lozinku");
       return;
     }
 
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const response = await AxiosConfig.post('/api/users/login', {
+      const response = await AxiosConfig.post("/api/users/login", {
         username: formData.username,
-        password: formData.password
+        password: formData.password,
       });
 
       setUsername(response.data.username);
+      setRole(response.data.role);
 
       if (response.data.token) {
-      localStorage.setItem("token", response.data.token);
-    }
-    
+        localStorage.setItem("token", response.data.token);
+      }
+
       alert(`Uspešna prijava! Dobrodošli ${response.data.username}`);
       // Ovde ubaciti deo nakon iplementacije glavne stranice za prikaz
-      // navigate('/dashboard');
+      navigate("/admin-users");
     } catch (error) {
-      const message = error.response?.data?.message || 'Greška prilikom prijave';
+      const message =
+        error.response?.data?.message || "Greška prilikom prijave";
       setError(message);
     } finally {
       setIsLoading(false);
@@ -51,7 +54,7 @@ const WelcomePage = () => {
   };
 
   const handleGoToRegister = () => {
-    navigate('/register');
+    navigate("/register");
   };
 
   return (
@@ -64,7 +67,8 @@ const WelcomePage = () => {
               Dobrodošli u najbolju aplikaciju za naručivanje hrane!
             </p>
             <p className="welcome-content__description">
-              Otkrijte ukusna jela iz vaših omiljenih restorana i naručite ih brzo i lako.
+              Otkrijte ukusna jela iz vaših omiljenih restorana i naručite ih
+              brzo i lako.
             </p>
             <div className="welcome-content__feature">
               <div className="feature-dot"></div>
@@ -82,7 +86,9 @@ const WelcomePage = () => {
 
             <form className="login-form" onSubmit={handleLoginSubmit}>
               <div className="form-group">
-                <label htmlFor="username" className="form-label">Korisničko ime</label>
+                <label htmlFor="username" className="form-label">
+                  Korisničko ime
+                </label>
                 <input
                   type="text"
                   id="username"
@@ -97,7 +103,9 @@ const WelcomePage = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="password" className="form-label">Lozinka</label>
+                <label htmlFor="password" className="form-label">
+                  Lozinka
+                </label>
                 <input
                   type="password"
                   id="password"
@@ -128,7 +136,7 @@ const WelcomePage = () => {
                     Prijavljivanje...
                   </>
                 ) : (
-                  'Prijavi se'
+                  "Prijavi se"
                 )}
               </button>
             </form>
