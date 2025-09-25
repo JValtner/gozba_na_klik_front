@@ -1,7 +1,7 @@
 import axios from "axios";
 
 let AxiosConfig = axios.create({
-  baseURL: "http://localhost:5065",
+  baseURL: "http://localhost:50307",
   //http port na backend-u 50307 jv
   //http port na backend-u 5065
   // Prostor za dodatnu konfiguraciju
