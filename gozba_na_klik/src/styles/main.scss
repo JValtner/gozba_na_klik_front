@@ -2,6 +2,10 @@
 @import "dashboard";
 @import "header";
 @import "footer";
+@import "error";
+@import "spinner";
+@import "users-table";
+
 * {
   margin: 0;
   padding: 0;
@@ -9,6 +13,14 @@
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter", "Segoe UI", "Roboto", "Helvetica Neue", Arial,
+    sans-serif;
   background-color: #f9fafb;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  flex: 1;
+  min-height: 900px;
 }
