@@ -1,113 +1,137 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { set, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { getUserById, updateUser } from "../service/userService";
 
-export default function RegisterUserForm() {
-    const navigate = useNavigate();
-    const { user, setUser } = useState();
-    const userId = localStorage.getItem("userId");
-    const{statusMsg, setStatusMsg} = useState("");
+export default function UserProfile() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [user, setUser] = useState(null);
+  const [statusMsg, setStatusMsg] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
 
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
- useEffect(() => {
+  useEffect(() => {
     const fetchUser = async () => {
-        if (userId) {
-            try {
-                const existingUser = await getUserById(Number(userId));
-                setUser(user);
-                setValue("userimage", existingUser.userimage);
-                setValue("username", existingUser.username);
-                setValue("password", existingUser.password);
-                setValue("email", existingUser.email);
-            } catch (err) {
-                setTimeout(() => {setStatusMsg("User loading error");}, 3000);
-                setStatusMsg("");
-            }
+      if (id) {
+        try {
+          const existingUser = await getUserById(Number(id));
+          if (!existingUser) return;
+          setUser(existingUser);
+
+          // prefill the form with user data (except password)
+          reset({
+            userimage: null,
+            username: existingUser.username || "",
+            email: existingUser.email || "",
+            password: "", // empty for security
+          });
+
+          // set initial image preview
+          if (existingUser.userImage) {
+            setImagePreview(`http://localhost:50307${existingUser.userImage}`);
+          }
+        } catch (err) {
+          setStatusMsg("Greška pri učitavanju korisnika");
+          setTimeout(() => setStatusMsg(""), 3000);
         }
+      }
     };
 
     fetchUser();
-}, [userId, setUser, setValue]);
+  }, [id, reset]);
 
-    const onSubmit = async (data) => {
-        try {
-            const formData = new FormData();
-            formData.append("userimage", data.userimage[0]); // first file
-            formData.append("username", data.username);
-            formData.append("password", data.password);
-            formData.append("email", data.email);
-            formData.append("role", "Buyer");
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
 
-            await updateUser(Number(user.id), formData); // backend saves file to /uploads and stores path in DB
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData();
 
-            alert("Uspešno ste se registrovali!");
-            navigate("/");
-        } catch (err) {
-            setTimeout(() => {setStatusMsg("User update error");}, 3000);
-                setStatusMsg("");
-        }
-    };
+      if (data.userimage?.[0]) {
+        formData.append("userimage", data.userimage[0]);
+      }
+      formData.append("username", data.username);
+      formData.append("email", data.email);
 
-    return (
-        <div style={{ maxWidth: "400px", margin: "50px auto" }}>
-            <h2>Profile Page</h2>
+      if (data.password) {
+        formData.append("password", data.password);
+      }
 
-            <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-                <div clasName="statusMsg" id="statusMsg">{statusMsg}</div>    
-                <div>
-                    <label>Profile image</label>
-                    <input
-                        type="file"
-                        {...register("userimage", { required: "Profile image is required" })}
-                    />
-                    {errors.userimage && (
-                        <p style={{ color: "red" }}>{errors.userimage.message}</p>
-                    )}
-                </div>
+      await updateUser(Number(id), formData);
 
-                <div>
-                    <label>Korisničko ime</label>
-                    <input
-                        type="text"
-                        {...register("username", { required: "Korisničko ime je obavezno" })}
-                    />
-                    {errors.username && (
-                        <p style={{ color: "red" }}>{errors.username.message}</p>
-                    )}
-                </div>
+      alert("Profil je uspešno ažuriran!");
+      navigate("/");
+    } catch (err) {
+      setStatusMsg("Greška prilikom ažuriranja profila");
+      setTimeout(() => setStatusMsg(""), 3000);
+    }
+  };
 
-                <div>
-                    <label>Lozinka</label>
-                    <input
-                        type="password"
-                        {...register("password", { required: "Lozinka je obavezna" })}
-                    />
-                    {errors.password && (
-                        <p style={{ color: "red" }}>{errors.password.message}</p>
-                    )}
-                </div>
+  return (
+    <div className="user-profile-container">
+      <h2>Profil korisnika</h2>
 
-                <div>
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        {...register("email", {
-                            required: "Email je obavezan",
-                            pattern: {
-                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                message: "Unesite validan email",
-                            },
-                        })}
-                    />
-                    {errors.email && (
-                        <p style={{ color: "red" }}>{errors.email.message}</p>
-                    )}
-                </div>
+      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+        <div className="statusMsg">{statusMsg}</div>
 
-                <button type="submit">Registruj se</button>
-            </form>
+        <div className="profile-image">
+          {imagePreview ? (
+            <img src={imagePreview} alt="Profile Preview" />
+          ) : (
+            <div>Nema slike</div>
+          )}
+          <input
+            type="file"
+            {...register("userimage")}
+            onChange={handleImageChange}
+          />
         </div>
-    );
+
+        <div>
+          <label>Korisničko ime</label>
+          <input
+            type="text"
+            disabled
+            {...register("username", { required: "Korisničko ime je obavezno" })}
+          />
+          {errors.username && <p>{errors.username.message}</p>}
+        </div>
+
+        <div>
+          <label>Lozinka (ostavite prazno ako ne menjate)</label>
+          <input type="password" {...register("password")} />
+        </div>
+
+        <div>
+          <label>Email</label>
+          <input
+            type="email"
+            {...register("email", {
+              required: "Email je obavezan",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Unesite validan email",
+              },
+            })}
+          />
+          {errors.email && <p>{errors.email.message}</p>}
+        </div>
+
+        <button type="submit">Sačuvaj izmene</button>
+      </form>
+    </div>
+  );
 }

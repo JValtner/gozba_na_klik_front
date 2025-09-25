@@ -1,44 +1,43 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { set } from "react-hook-form";
 
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
 
-<<<<<<< HEAD
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem("username") || null;
+  });
+  const [userId, setUserId] = useState(() => {
+  const storedId = localStorage.getItem("userId");
+  return storedId ? Number(storedId) : null;
+});
+
     // svaki put kad se username promeni -> snimamo u localStorage
     //svaki put kad se user promeni--> snimamo u localStorage Ispravka Josip
     useEffect(() => {
-        if (user) {
+        if (username && userId) {
             localStorage.setItem("username", username);
-            localStorage.setItem("Userid", user.id);
+            localStorage.setItem("userId", userId);
         } else {
             localStorage.removeItem("username");
             localStorage.removeItem("userId");
         }
-    }, [user]);
-=======
-  const [username, setUsername] = useState(() => {
-    return localStorage.getItem("username") || null;
-  });
->>>>>>> 78f843589c3f48745cf58de04e2011db66ab692e
+    }, [username, userId]);
 
-  useEffect(() => {
-    if (username) {
-      localStorage.setItem("username", username);
-    } else {
-      localStorage.removeItem("username");
-    }
-  }, [username]);
+  
 
   function logout() {
     setUsername(null);
+    setUserId(null);
     localStorage.removeItem("username");
+    localStorage.removeItem("userId");
     localStorage.removeItem("token"); 
   }
   const isAuth = !!username;
 
   return (
-    <UserContext.Provider value={{ username, setUsername, isAuth, logout }}>
+    <UserContext.Provider value={{ username, setUsername, userId, setUserId, isAuth, logout }}>
       {children}
     </UserContext.Provider>
   );

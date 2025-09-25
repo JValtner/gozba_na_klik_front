@@ -8,13 +8,15 @@ const WelcomePage = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { setUsername } = useUser();
+  const { setUsername, setUserId } = useUser(); 
+
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (error) setError('');
   };
+
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
@@ -33,15 +35,19 @@ const WelcomePage = () => {
         password: formData.password
       });
 
-      setUsername(response.data.username);
+      const { id, username, token } = response.data;
 
-      if (response.data.token) {
-      localStorage.setItem("token", response.data.token);
-    }
-    
-      alert(`Uspešna prijava! Dobrodošli ${response.data.username}`);
-      // Ovde ubaciti deo nakon iplementacije glavne stranice za prikaz
-      // navigate('/dashboard');
+      setUsername(username);
+      setUserId(Number(id)); // ✅ this is the key fix
+
+      localStorage.setItem("username", username);
+      localStorage.setItem("userId", String(id));
+      if (token) {
+        localStorage.setItem("token", token);
+      }
+
+      alert(`Uspešna prijava! Dobrodošli ${username}`);
+      // navigate(`/profile/${id}`); // optional redirect
     } catch (error) {
       const message = error.response?.data?.message || 'Greška prilikom prijave';
       setError(message);
