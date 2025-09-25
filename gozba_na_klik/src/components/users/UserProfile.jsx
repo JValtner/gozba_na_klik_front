@@ -35,7 +35,7 @@ export default function UserProfile() {
 
           // set initial image preview
           if (existingUser.userImage) {
-            setImagePreview(`http://localhost:50307${existingUser.userImage}`);
+            setImagePreview(`http://localhost:5065${existingUser.userImage}`);
           }
         } catch (err) {
           setStatusMsg("Greška pri učitavanju korisnika");
