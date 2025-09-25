@@ -6,39 +6,34 @@ export function UserProvider({ children }) {
   const [username, setUsername] = useState(() => {
     return localStorage.getItem("username") || null;
   });
-  const [role, setRole] = useState(() => {
-    return localStorage.getItem("role") || null;
+
+  const [userId, setUserId] = useState(() => {
+    const storedId = localStorage.getItem("userId");
+    return storedId ? Number(storedId) : null;
   });
 
   useEffect(() => {
-    if (username) {
+    if (username && userId) {
       localStorage.setItem("username", username);
+      localStorage.setItem("userId", userId);
     } else {
       localStorage.removeItem("username");
+      localStorage.removeItem("userId");
     }
-  }, [username]);
-
-  useEffect(() => {
-    if (role) {
-      localStorage.setItem("role", role);
-    } else {
-      localStorage.removeItem("role");
-    }
-  }, [role]);
+  }, [username, userId]);
 
   function logout() {
     setUsername(null);
-    setRole(null);
+    setUserId(null);
     localStorage.removeItem("username");
+    localStorage.removeItem("userId");
     localStorage.removeItem("token");
-    localStorage.removeItem("role");
   }
+
   const isAuth = !!username;
 
   return (
-    <UserContext.Provider
-      value={{ username, setUsername, role, setRole, isAuth, logout }}
-    >
+    <UserContext.Provider value={{ username, setUsername, userId, setUserId, isAuth, logout }}>
       {children}
     </UserContext.Provider>
   );
