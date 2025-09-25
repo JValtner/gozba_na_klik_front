@@ -8,7 +8,7 @@ const WelcomePage = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { setUsername, setUserId } = useUser(); 
+  const { setUsername, setUserId, setRole } = useUser();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -31,7 +31,7 @@ const WelcomePage = () => {
       console.log("🚀 Šaljem login zahtev sa podacima:", {
         username: formData.username,
         // Ne loguj password iz bezbednosnih razloga
-        passwordLength: formData.password.length
+        passwordLength: formData.password.length,
       });
 
       const response = await AxiosConfig.post("/api/users/login", {
@@ -42,20 +42,24 @@ const WelcomePage = () => {
       console.log("✅ Dobio sam odgovor od servera:", response);
       console.log("📦 Response data:", response.data);
 
-      const { id, username, token } = response.data;
+      const { id, username, role, token } = response.data;
 
       // Dodatna provera da vidimo šta tačno dobijamo
-      console.log("🔍 Ekstraktovani podaci:", { id, username, token });
+      console.log("🔍 Ekstraktovani podaci:", { id, username, role, token });
 
       if (!id || !username) {
-        throw new Error("Server nije vratio potrebne podatke (id ili username)");
+        throw new Error(
+          "Server nije vratio potrebne podatke (id ili username)"
+        );
       }
 
       setUsername(username);
       setUserId(Number(id));
+      setRole(role);
 
       localStorage.setItem("username", username);
       localStorage.setItem("userId", String(id));
+      localStorage.setItem("role", role);
       if (token) {
         localStorage.setItem("token", token);
       }
@@ -63,31 +67,39 @@ const WelcomePage = () => {
       console.log("💾 Podaci sačuvani u localStorage:", {
         username: localStorage.getItem("username"),
         userId: localStorage.getItem("userId"),
-        hasToken: !!localStorage.getItem("token")
+        role: localStorage.getItem("role"),
+        hasToken: !!localStorage.getItem("token"),
       });
 
       alert(`Uspešna prijava! Dobrodošli ${username}`);
-      // navigate(`/profile/${id}`); // dodaj ovo ako hoćeš da preusmeri
-      
+      if (role === "Admin") {
+        navigate("/admin-users");
+      } else {
+        navigate(`/profile/${id}`);
+      }
     } catch (error) {
       console.error("❌ Greška prilikom login-a:", error);
-      
+
       // Detaljnije logovanje grešaka
       if (error.response) {
         console.error("📡 Server response error:", {
           status: error.response.status,
           data: error.response.data,
-          headers: error.response.headers
+          headers: error.response.headers,
         });
       } else if (error.request) {
-        console.error("📡 Network error - zahtev nije stigao do servera:", error.request);
+        console.error(
+          "📡 Network error - zahtev nije stigao do servera:",
+          error.request
+        );
       } else {
         console.error("⚙️ Greška u konfiguraciji zahteva:", error.message);
       }
 
-      const message = error.response?.data?.message || 
-                     error.message || 
-                     "Greška prilikom prijave";
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Greška prilikom prijave";
       setError(message);
     } finally {
       setIsLoading(false);

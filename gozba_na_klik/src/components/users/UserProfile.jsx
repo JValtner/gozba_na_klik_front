@@ -105,7 +105,9 @@ export default function UserProfile() {
           <input
             type="text"
             disabled
-            {...register("username", { required: "Korisničko ime je obavezno" })}
+            {...register("username", {
+              required: "Korisničko ime je obavezno",
+            })}
           />
           {errors.username && <p>{errors.username.message}</p>}
         </div>
