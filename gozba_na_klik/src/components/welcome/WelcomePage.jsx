@@ -10,13 +10,11 @@ const WelcomePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { setUsername, setUserId } = useUser(); 
 
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (error) setError("");
   };
-
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
@@ -30,15 +28,31 @@ const WelcomePage = () => {
     setError("");
 
     try {
+      console.log("🚀 Šaljem login zahtev sa podacima:", {
+        username: formData.username,
+        // Ne loguj password iz bezbednosnih razloga
+        passwordLength: formData.password.length
+      });
+
       const response = await AxiosConfig.post("/api/users/login", {
         username: formData.username,
         password: formData.password,
       });
 
+      console.log("✅ Dobio sam odgovor od servera:", response);
+      console.log("📦 Response data:", response.data);
+
       const { id, username, token } = response.data;
 
+      // Dodatna provera da vidimo šta tačno dobijamo
+      console.log("🔍 Ekstraktovani podaci:", { id, username, token });
+
+      if (!id || !username) {
+        throw new Error("Server nije vratio potrebne podatke (id ili username)");
+      }
+
       setUsername(username);
-      setUserId(Number(id)); // ✅ this is the key fix
+      setUserId(Number(id));
 
       localStorage.setItem("username", username);
       localStorage.setItem("userId", String(id));
@@ -46,11 +60,34 @@ const WelcomePage = () => {
         localStorage.setItem("token", token);
       }
 
+      console.log("💾 Podaci sačuvani u localStorage:", {
+        username: localStorage.getItem("username"),
+        userId: localStorage.getItem("userId"),
+        hasToken: !!localStorage.getItem("token")
+      });
+
       alert(`Uspešna prijava! Dobrodošli ${username}`);
-      // navigate(`/profile/${id}`); // optional redirect
+      // navigate(`/profile/${id}`); // dodaj ovo ako hoćeš da preusmeri
+      
     } catch (error) {
-      const message =
-        error.response?.data?.message || "Greška prilikom prijave";
+      console.error("❌ Greška prilikom login-a:", error);
+      
+      // Detaljnije logovanje grešaka
+      if (error.response) {
+        console.error("📡 Server response error:", {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
+      } else if (error.request) {
+        console.error("📡 Network error - zahtev nije stigao do servera:", error.request);
+      } else {
+        console.error("⚙️ Greška u konfiguraciji zahteva:", error.message);
+      }
+
+      const message = error.response?.data?.message || 
+                     error.message || 
+                     "Greška prilikom prijave";
       setError(message);
     } finally {
       setIsLoading(false);
