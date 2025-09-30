@@ -43,7 +43,7 @@ export default function Header() {
                   className="profile-icon"
                   src={
                     user?.userImage
-                      ? `http://localhost:50307${user.userImage}`
+                      ? `http://localhost:5065${user.userImage}`
                       : "/default-profile.png"
                   }
                 />
