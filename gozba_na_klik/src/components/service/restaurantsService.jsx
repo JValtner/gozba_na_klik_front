@@ -46,7 +46,7 @@ export async function deleteRestaurant(id) {
 
 // UPDATE work schedules
 export async function updateWorkSchedules(restaurantId, schedules) {
-  const response = await AxiosConfig.post(`/api/restaurants/${restaurantId}/workschedules`, schedules);
+  const response = await AxiosConfig.put(`/api/restaurants/${restaurantId}/workschedules`, schedules);
   return response.data;
 }
 

@@ -129,7 +129,7 @@ export default function CreateRestaurant() {
               <input
                 type="tel"
                 id="phoneNumber"
-                {...register("phoneNumber", { 
+                {...register("phone", { 
                   required: "Broj telefona je obavezan",
                   maxLength: { value: 20, message: "Broj telefona ne može biti duži od 20 karaktera" }
                 })}
