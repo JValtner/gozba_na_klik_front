@@ -12,6 +12,7 @@ import WorkingHours from "./components/restaurants/WorkingHours";
 import ClosedDates from "./components/restaurants/ClosedDates";
 import Footer from "./components/welcome/Footer";
 import "./styles/main.scss";
+import RestaurantTable from "./components/restaurants/RestaurantTable";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/" element={<WelcomePage />} />
             <Route path="/register" element={<RegisterUserForm />} />
             <Route path="/profile/:id" element={<UserProfile />} />
+            {/* Admin rute */}
             <Route
               path="/admin-users"
               element={
@@ -31,11 +33,29 @@ export default function App() {
                 </AdminRoute>
               }
             />
+            <Route
+              path="/admin-restaurants"
+              element={
+                <AdminRoute>
+                  <RestaurantTable />
+                </AdminRoute>
+              }
+            />
+
             {/* Restaurant rute */}
-            <Route path="/restaurants/dashboard" element={<RestaurantDashboard />} />
+            <Route
+              path="/restaurants/dashboard"
+              element={<RestaurantDashboard />}
+            />
             <Route path="/restaurants/edit/:id" element={<EditRestaurant />} />
-            <Route path="/restaurants/:id/working-hours" element={<WorkingHours />} />
-            <Route path="/restaurants/:id/closed-dates" element={<ClosedDates />} />
+            <Route
+              path="/restaurants/:id/working-hours"
+              element={<WorkingHours />}
+            />
+            <Route
+              path="/restaurants/:id/closed-dates"
+              element={<ClosedDates />}
+            />
           </Routes>
         </main>
         <Footer />
