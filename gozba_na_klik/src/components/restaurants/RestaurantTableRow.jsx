@@ -1,6 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const RestaurantTableRow = ({ name, address, phone, owner, onDelete }) => {
+const RestaurantTableRow = ({ id, name, address, phone, owner, onDelete }) => {
   return (
     <tr className="table-row">
       <td>{name}</td>
@@ -10,8 +11,14 @@ const RestaurantTableRow = ({ name, address, phone, owner, onDelete }) => {
       <td>
         <div className="btn-container">
           <button className="delete-btn" onClick={onDelete}>
-            Delete
+            Obriši
           </button>
+          <Link
+            to={`/admin-restaurant-form/${id}`}
+            className="btn btn--secondary"
+          >
+            Izmeni
+          </Link>
         </div>
       </td>
     </tr>

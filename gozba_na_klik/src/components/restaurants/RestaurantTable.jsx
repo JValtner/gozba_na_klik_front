@@ -6,11 +6,13 @@ import {
   deleteRestaurant,
   getAllRestaurants,
 } from "../service/restaurantsService";
+import { useNavigate } from "react-router-dom";
 
 const RestaurantTable = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const loadRestaurants = async () => {
     try {
@@ -47,6 +49,12 @@ const RestaurantTable = () => {
     <div>
       <div className="title-container">
         <h1>Restaurants</h1>
+        <button
+          className="btn btn--secondary"
+          onClick={() => navigate("/admin-restaurant-form")}
+        >
+          + Dodaj restoran
+        </button>
       </div>
       <div className="error-container">
         {error && <span className="error-span show">{error}</span>}
@@ -66,6 +74,7 @@ const RestaurantTable = () => {
             {restaurants.map((restaurant) => (
               <RestaurantTableRow
                 key={restaurant.id}
+                id={restaurant.id}
                 name={restaurant.name}
                 address={restaurant.address}
                 phone={restaurant.phone}

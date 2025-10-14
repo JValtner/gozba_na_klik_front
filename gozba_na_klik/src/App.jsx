@@ -13,6 +13,7 @@ import ClosedDates from "./components/restaurants/ClosedDates";
 import Footer from "./components/welcome/Footer";
 import "./styles/main.scss";
 import RestaurantTable from "./components/restaurants/RestaurantTable";
+import AdminRestaurantForm from "./components/restaurants/AdminRestaurantForm";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/" element={<WelcomePage />} />
             <Route path="/register" element={<RegisterUserForm />} />
             <Route path="/profile/:id" element={<UserProfile />} />
+
             {/* Admin rute */}
             <Route
               path="/admin-users"
@@ -38,6 +40,22 @@ export default function App() {
               element={
                 <AdminRoute>
                   <RestaurantTable />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin-restaurant-form"
+              element={
+                <AdminRoute>
+                  <AdminRestaurantForm />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin-restaurant-form/:id"
+              element={
+                <AdminRoute>
+                  <AdminRestaurantForm />
                 </AdminRoute>
               }
             />
