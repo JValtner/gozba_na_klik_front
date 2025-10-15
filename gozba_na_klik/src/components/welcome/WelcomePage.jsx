@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AxiosConfig from "../../config/axios.config";
 import { useUser } from "../users/UserContext";
@@ -8,7 +8,27 @@ const WelcomePage = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { setUsername, setUserId, setRole } = useUser();
+  const { setUsername, setUserId, setRole, isAuth, role, userId } = useUser();
+
+  useEffect(() => {
+    if (isAuth && role && userId) {
+      redirectToDashboard(role, userId);
+    }
+  }, [isAuth, role, userId]);
+
+  const redirectToDashboard = (userRole, id) => {
+    if (userRole === "Admin") {
+      navigate("/admin-users", { replace: true });
+    } else if (userRole === "RestaurantOwner") {
+      navigate("/restaurants/dashboard", { replace: true });
+    } else if (userRole === "RestaurantEmployee") {
+      navigate("/employee/dashboard", { replace: true });
+    } else if (userRole === "DeliveryPerson") {
+      navigate("/delivery/dashboard", { replace: true });
+    } else {
+      navigate(`/profile/${id}`, { replace: true });
+    }
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -28,29 +48,15 @@ const WelcomePage = () => {
     setError("");
 
     try {
-      console.log("🚀 Šaljem login zahtev sa podacima:", {
-        username: formData.username,
-        // Ne loguj password iz bezbednosnih razloga
-        passwordLength: formData.password.length,
-      });
-
       const response = await AxiosConfig.post("/api/users/login", {
         username: formData.username,
         password: formData.password,
       });
 
-      console.log("✅ Dobio sam odgovor od servera:", response);
-      console.log("📦 Response data:", response.data);
-
       const { id, username, role, token } = response.data;
 
-      // Dodatna provera da vidimo šta tačno dobijamo
-      console.log("🔍 Ekstraktovani podaci:", { id, username, role, token });
-
       if (!id || !username) {
-        throw new Error(
-          "Server nije vratio potrebne podatke (id ili username)"
-        );
+        throw new Error("Server nije vratio potrebne podatke (id ili username)");
       }
 
       setUsername(username);
@@ -64,40 +70,11 @@ const WelcomePage = () => {
         localStorage.setItem("token", token);
       }
 
-      console.log("💾 Podaci sačuvani u localStorage:", {
-        username: localStorage.getItem("username"),
-        userId: localStorage.getItem("userId"),
-        role: localStorage.getItem("role"),
-        hasToken: !!localStorage.getItem("token"),
-      });
-
       alert(`Uspešna prijava! Dobrodošli ${username}`);
-if (role === "Admin") {
-  navigate("/admin-users");
-} else if (role === "RestaurantOwner") {
-  navigate("/restaurants/dashboard");  // ← Vlasnici idu na dashboard
-} else {
-  navigate(`/profile/${id}`);  // ← Ostali idu na profil
-}
+
+      redirectToDashboard(role, id);
+
     } catch (error) {
-      console.error("❌ Greška prilikom login-a:", error);
-
-      // Detaljnije logovanje grešaka
-      if (error.response) {
-        console.error("📡 Server response error:", {
-          status: error.response.status,
-          data: error.response.data,
-          headers: error.response.headers,
-        });
-      } else if (error.request) {
-        console.error(
-          "📡 Network error - zahtev nije stigao do servera:",
-          error.request
-        );
-      } else {
-        console.error("⚙️ Greška u konfiguraciji zahteva:", error.message);
-      }
-
       const message =
         error.response?.data?.message ||
         error.message ||
@@ -111,6 +88,25 @@ if (role === "Admin") {
   const handleGoToRegister = () => {
     navigate("/register");
   };
+
+  if (isAuth) {
+    return (
+      <div className="welcome-page">
+        <div className="welcome-page__content">
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '100vh',
+            fontSize: '1.5rem',
+            color: '#4b5563'
+          }}>
+            Redirektovanje...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="welcome-page">

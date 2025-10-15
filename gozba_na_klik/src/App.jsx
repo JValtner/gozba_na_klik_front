@@ -12,6 +12,7 @@ import WorkingHours from "./components/restaurants/WorkingHours";
 import ClosedDates from "./components/restaurants/ClosedDates";
 import Footer from "./components/welcome/Footer";
 import "./styles/main.scss";
+import EmployeesDashboard from "./components/employees/EmployeesDashboard";
 
 export default function App() {
   return (
@@ -36,7 +37,9 @@ export default function App() {
             <Route path="/restaurants/edit/:id" element={<EditRestaurant />} />
             <Route path="/restaurants/:id/working-hours" element={<WorkingHours />} />
             <Route path="/restaurants/:id/closed-dates" element={<ClosedDates />} />
+            <Route path="/restaurants/:id/employees" element={<EmployeesDashboard />} />
           </Routes>
+
         </main>
         <Footer />
       </div>

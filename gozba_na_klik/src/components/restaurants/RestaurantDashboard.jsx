@@ -13,20 +13,32 @@ const RestaurantDashboard = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const data = await getMyRestaurants();
-      setRestaurants(data);
-    } catch (err) {
-      console.error("Greška:", err);
-      setError("Greška pri učitavanju.");
-    } finally {
-      setLoading(false);
-    }
-  };
-  loadData();
-}, []);
+    const loadData = async () => {
+      try {
+        setLoading(true);
+
+        // DEBUG
+        console.log('=== DEBUG INFO ===');
+        console.log('userId iz localStorage:', localStorage.getItem('userId'));
+        console.log('userId iz context:', userId);
+
+        const data = await getMyRestaurants();
+
+        console.log('Backend vratio:', data);
+        console.log('Broj restorana:', data.length);
+
+        setRestaurants(data);
+      } catch (err) {
+        console.error("Greška:", err);
+        console.error("Response:", err.response?.data);
+        console.error("Status:", err.response?.status);
+        setError("Greška pri učitavanju.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   const handleEdit = (restaurantId) => {
     navigate(`/restaurants/edit/${restaurantId}`);
@@ -81,29 +93,39 @@ const RestaurantDashboard = () => {
             {restaurants.map((restaurant) => (
               <div key={restaurant.id} className="dashboard__card">
                 {restaurant.photoUrl && (
-                  <img 
-                    src={`http://localhost:5065${restaurant.photoUrl}`} 
+                  <img
+                    src={`http://localhost:5065${restaurant.photoUrl}`}
                     alt={restaurant.name}
                     className="restaurant-image"
                   />
                 )}
                 <h2>{restaurant.name}</h2>
                 <p>Kreiran: {formatDate(restaurant.createdAt)}</p>
-                
+
                 <div className="card-actions">
-                  <button 
+                  <button
                     className="btn btn--primary"
                     onClick={() => handleEdit(restaurant.id)}
                   >
                     Uredi
                   </button>
-                  <button 
+
+                  <button
                     className="btn btn--secondary"
                     onClick={() => handleDelete(restaurant.id, restaurant.name)}
                   >
                     Obriši
                   </button>
+
+                  {/* ✅ Novo dugme za upravljanje zaposlenima */}
+                  <button
+                    className="btn btn--info"
+                    onClick={() => navigate(`/restaurants/${restaurant.id}/employees`)}
+                  >
+                    Zaposleni
+                  </button>
                 </div>
+
               </div>
             ))}
           </div>
