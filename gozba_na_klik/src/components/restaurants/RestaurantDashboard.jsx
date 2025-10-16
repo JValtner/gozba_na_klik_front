@@ -16,22 +16,9 @@ const RestaurantDashboard = () => {
     const loadData = async () => {
       try {
         setLoading(true);
-
-        // DEBUG
-        console.log('=== DEBUG INFO ===');
-        console.log('userId iz localStorage:', localStorage.getItem('userId'));
-        console.log('userId iz context:', userId);
-
         const data = await getMyRestaurants();
-
-        console.log('Backend vratio:', data);
-        console.log('Broj restorana:', data.length);
-
         setRestaurants(data);
       } catch (err) {
-        console.error("Greška:", err);
-        console.error("Response:", err.response?.data);
-        console.error("Status:", err.response?.status);
         setError("Greška pri učitavanju.");
       } finally {
         setLoading(false);
@@ -52,11 +39,15 @@ const RestaurantDashboard = () => {
     try {
       await deleteRestaurant(restaurantId);
       alert("Restoran je uspešno obrisan!");
-      loadMyRestaurants();
+      getMyRestaurants();
     } catch (err) {
       console.error("Greška pri brisanju restorana:", err);
       alert("Greška pri brisanju restorana. Pokušajte ponovo.");
     }
+  };
+
+  const handleMenu =(restaurant) => {
+    navigate(`/restaurants/${restaurant.id}/menu`);
   };
 
   const formatDate = (dateString) => {
@@ -109,20 +100,24 @@ const RestaurantDashboard = () => {
                   >
                     Uredi
                   </button>
-
                   <button
                     className="btn btn--secondary"
                     onClick={() => handleDelete(restaurant.id, restaurant.name)}
                   >
                     Obriši
                   </button>
-
-                  {/* ✅ Novo dugme za upravljanje zaposlenima */}
                   <button
                     className="btn btn--info"
                     onClick={() => navigate(`/restaurants/${restaurant.id}/employees`)}
                   >
                     Zaposleni
+                  </button>
+                  <button
+                    className="btn btn--secondary btn--small"
+                    onClick={() => handleMenu(restaurant)}
+                    title="Jelovnik"
+                  >
+                    Menu
                   </button>
                 </div>
 

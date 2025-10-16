@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { deleteRestaurant } from "../service/restaurantService";
+import { useNavigate } from "react-router-dom";
 
 const RestaurantCard = ({ restaurant, onEdit, onView, onRefresh }) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
     if (!window.confirm(`Da li ste sigurni da želite da obrišete restoran "${restaurant.name}"?`)) {
@@ -22,6 +24,10 @@ const RestaurantCard = ({ restaurant, onEdit, onView, onRefresh }) => {
     }
   };
 
+  const handleMenu = () => {
+    navigate(`/restaurants/${restaurant.id}/menu`);
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("sr-RS");
   };
@@ -30,7 +36,7 @@ const RestaurantCard = ({ restaurant, onEdit, onView, onRefresh }) => {
     <div className="restaurant-card">
       <div className="restaurant-card__image">
         {restaurant.photoUrl ? (
-  <img src={`http://localhost:5065${restaurant.photoUrl}`}
+          <img src={`http://localhost:5065${restaurant.photoUrl}`}
             alt={restaurant.name}
             onError={(e) => {
               e.target.src = "/default-restaurant.png";
@@ -56,8 +62,8 @@ const RestaurantCard = ({ restaurant, onEdit, onView, onRefresh }) => {
 
         {restaurant.description && (
           <p className="restaurant-card__description">
-            {restaurant.description.length > 100 
-              ? `${restaurant.description.substring(0, 100)}...` 
+            {restaurant.description.length > 100
+              ? `${restaurant.description.substring(0, 100)}...`
               : restaurant.description
             }
           </p>
@@ -81,27 +87,34 @@ const RestaurantCard = ({ restaurant, onEdit, onView, onRefresh }) => {
         </div>
 
         <div className="restaurant-card__actions">
-          <button 
+          <button
             className="btn btn--secondary btn--small"
             onClick={onView}
             title="Prikaži detalje"
           >
             Prikaži
           </button>
-          <button 
+          <button
             className="btn btn--primary btn--small"
             onClick={onEdit}
             title="Uredi restoran"
           >
             Uredi
           </button>
-          <button 
+          <button
             className="btn btn--danger btn--small"
             onClick={handleDelete}
             disabled={isDeleting}
             title="Obriši restoran"
           >
             {isDeleting ? "Brisanje..." : "Obriši"}
+          </button>
+          <button
+            className="btn btn--secondary btn--small"
+            onClick={handleMenu}
+            title="Jelovnik"
+          >
+            Jelovnik
           </button>
         </div>
       </div>
