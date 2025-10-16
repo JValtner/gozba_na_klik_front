@@ -1,0 +1,77 @@
+.status-msg {
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  text-align: center;
+  background-color: rgba(31, 234, 17, 0.08);
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+
+  p {
+    color: green;
+    font-weight: 500;
+  }
+}
+.alergens-page {
+  margin: 2rem auto;
+  background: #fff;
+  padding: 1.5rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-size: 0.9rem;
+  color: #333;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  .alergen-column {
+    display: flex;
+    flex-direction: column;
+    /* remove width: 45% */
+  }
+
+  .alergen-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between; // push button to the right
+      width: 100%;                    // take full width
+      padding: 0.4rem 0.7rem;
+      background: #f8f8f8;
+      border-radius: 0.4rem;
+      margin-bottom: 0.4rem;
+
+      button {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.8rem;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 0.3rem;
+        cursor: pointer;
+        background: transparent;
+        transition: all 0.2s ease;
+
+        &.btn--primary {
+          border-color: #007bff;
+          color: #007bff;
+
+          &:hover {
+            background: rgba(0, 123, 255, 0.1);
+          }
+        }
+
+        &.btn--danger {
+          border-color: #dc3545;
+          color: #dc3545;
+
+          &:hover {
+            background: rgba(220, 53, 69, 0.1);
+          }
+        }
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ import UserProfile from "./components/users/UserProfile";
 import UsersTable from "./components/users/UsersTable";
 import AdminRoute from "./components/users/AdminRoute";
 import RestaurantDashboard from "./components/restaurants/RestaurantDashboard";
+import Menu from "./components/restaurants/menu/Menu";
 import EditRestaurant from "./components/restaurants/EditRestaurant";
 import WorkingHours from "./components/restaurants/WorkingHours";
 import ClosedDates from "./components/restaurants/ClosedDates";
@@ -14,6 +15,9 @@ import Footer from "./components/welcome/Footer";
 import "./styles/main.scss";
 import RestaurantTable from "./components/restaurants/RestaurantTable";
 import AdminRestaurantForm from "./components/restaurants/AdminRestaurantForm";
+import CreateMeal from "./components/restaurants/meal/CreateMeal";
+import EditMeal from "./components/restaurants/meal/EditMeal";
+import MealDetails from "./components/restaurants/meal/MealDetail";
 
 export default function App() {
   return (
@@ -66,14 +70,12 @@ export default function App() {
               element={<RestaurantDashboard />}
             />
             <Route path="/restaurants/edit/:id" element={<EditRestaurant />} />
-            <Route
-              path="/restaurants/:id/working-hours"
-              element={<WorkingHours />}
-            />
-            <Route
-              path="/restaurants/:id/closed-dates"
-              element={<ClosedDates />}
-            />
+            <Route path="/restaurants/:id/working-hours" element={<WorkingHours />} />
+            <Route path="/restaurants/:id/closed-dates" element={<ClosedDates />} />
+            <Route path="/restaurants/:id/menu" element ={<Menu/>}/>
+            <Route path="/restaurants/:id/menu/new" element={<CreateMeal />} />
+            <Route path="/restaurants/:id/menu/:mealId/edit" element={<EditMeal />} />
+            <Route path="/restaurants/:id/menu/:mealId" element={<MealDetails />} />
           </Routes>
         </main>
         <Footer />

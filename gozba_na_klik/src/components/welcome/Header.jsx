@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../users/UserContext";
 import { getUserById } from "../service/userService";
+import { baseUrl } from "../../config/routeConfig";
 
 export default function Header() {
   const { username, userId, isAuth, logout, role } = useUser();
@@ -28,6 +29,10 @@ export default function Header() {
     logout();
     navigate("/login");
   };
+
+  const profileImageSrc = user?.userImage
+    ? `${baseUrl}${user.userImage}`
+    : `${baseUrl}/assets/profileImg/default_profile.png`;
 
   return (
     <header className="app-header">
@@ -59,11 +64,7 @@ export default function Header() {
                 <img
                   alt="Profile"
                   className="profile-icon"
-                  src={
-                    user?.userImage
-                      ? `http://localhost:5065${user.userImage}`
-                      : "/default-profile.png"
-                  }
+                  src={profileImageSrc}
                 />
                 Profil
               </Link>

@@ -1,0 +1,104 @@
+.menu-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+.restaurant-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60%;
+  margin-bottom: 2rem;
+  background: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  .restaurant-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .restaurant-name-overlay {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      text-align: center;
+      padding: 1rem 0;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+  }
+
+  .restaurant-info {
+    padding: 1.5rem 2rem;
+    width: 100%;
+
+    .restaurant-description {
+      font-size: 1rem;
+      color: #444;
+      margin-bottom: 1.5rem;
+    }
+
+    .restaurant-sections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+
+      section {
+        background: #f9f9f9;
+        padding: 1rem;
+        border-radius: 0.8rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+        h3 {
+          margin-bottom: 0.5rem;
+          color: #222;
+          font-size: 1.1rem;
+          border-bottom: 2px solid #ddd;
+          padding-bottom: 0.3rem;
+        }
+
+        ul {
+          margin: 0;
+          padding-left: 1.2rem;
+          list-style-type: disc;
+        }
+
+        p {
+          color: #666;
+        }
+      }
+    }
+  }
+}
+
+.meals-section {
+  width: 60%;
+  margin-top: 2rem;
+
+  h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    text-align: left;
+    color: #333;
+  }
+
+  .meals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+}
