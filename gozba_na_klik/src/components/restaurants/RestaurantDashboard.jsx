@@ -13,20 +13,20 @@ const RestaurantDashboard = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const data = await getMyRestaurants();
-      setRestaurants(data);
-    } catch (err) {
-      console.error("Greška:", err);
-      setError("Greška pri učitavanju.");
-    } finally {
-      setLoading(false);
-    }
-  };
-  loadData();
-}, []);
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const data = await getMyRestaurants();
+        setRestaurants(data);
+      } catch (err) {
+        console.error("Greška:", err);
+        setError("Greška pri učitavanju.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   const handleEdit = (restaurantId) => {
     navigate(`/restaurants/edit/${restaurantId}`);
@@ -40,11 +40,15 @@ const RestaurantDashboard = () => {
     try {
       await deleteRestaurant(restaurantId);
       alert("Restoran je uspešno obrisan!");
-      loadMyRestaurants();
+      getMyRestaurants();
     } catch (err) {
       console.error("Greška pri brisanju restorana:", err);
       alert("Greška pri brisanju restorana. Pokušajte ponovo.");
     }
+  };
+
+  const handleMenu =(restaurant) => {
+    navigate(`/restaurants/${restaurant.id}/menu`);
   };
 
   const formatDate = (dateString) => {
@@ -81,27 +85,34 @@ const RestaurantDashboard = () => {
             {restaurants.map((restaurant) => (
               <div key={restaurant.id} className="dashboard__card">
                 {restaurant.photoUrl && (
-                  <img 
-                    src={`http://localhost:5065${restaurant.photoUrl}`} 
+                  <img
+                    src={`http://localhost:5065${restaurant.photoUrl}`}
                     alt={restaurant.name}
                     className="restaurant-image"
                   />
                 )}
                 <h2>{restaurant.name}</h2>
                 <p>Kreiran: {formatDate(restaurant.createdAt)}</p>
-                
+
                 <div className="card-actions">
-                  <button 
+                  <button
                     className="btn btn--primary"
                     onClick={() => handleEdit(restaurant.id)}
                   >
                     Uredi
                   </button>
-                  <button 
+                  <button
                     className="btn btn--secondary"
                     onClick={() => handleDelete(restaurant.id, restaurant.name)}
                   >
                     Obriši
+                  </button>
+                  <button
+                    className="btn btn--secondary btn--small"
+                    onClick={() => handleMenu(restaurant)}
+                    title="Jelovnik"
+                  >
+                    Menu
                   </button>
                 </div>
               </div>
