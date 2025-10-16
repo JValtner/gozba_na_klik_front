@@ -49,6 +49,29 @@ h1 {
     &:nth-child(3) a {
       text-decoration: none;
     }
+
+    select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      font-size: 0.9rem;
+      color: #2c3e50;
+      cursor: pointer;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+
+      &:focus {
+        border-color: #ea580c;
+        box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2);
+        outline: none;
+      }
+
+      option {
+        padding: 6px 10px;
+        background-color: #fff;
+        color: #2c3e50;
+      }
+    }
   }
 }
 
@@ -68,7 +91,7 @@ button {
   text-decoration: none;
 
   &:hover {
-    transform: 1.03;
+    transform: scale(1.03); // ispravljeno sa transform: 1.03
     background-color: #f02849;
   }
 }

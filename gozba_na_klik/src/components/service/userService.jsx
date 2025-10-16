@@ -7,6 +7,11 @@ export async function getAllUsers() {
   return response.data;
 }
 
+export async function getAllRestaurantOwners() {
+  const response = await AxiosConfig.get(`${RESOURCE}/restaurant-owners`);
+  return response.data;
+}
+
 export async function getUserById(id) {
   const response = await AxiosConfig.get(`${RESOURCE}/${id}`);
   return response.data;
@@ -18,9 +23,8 @@ export async function createUser(userData) {
 }
 
 export async function updateUser(id, userData) {
- 
   const response = await AxiosConfig.put(`${RESOURCE}/${id}`, userData, {
-    headers: { "Content-Type": "multipart/form-data" }
+    headers: { "Content-Type": "multipart/form-data" },
   });
 
   return response.data;

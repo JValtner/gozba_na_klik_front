@@ -72,13 +72,13 @@ const WelcomePage = () => {
       });
 
       alert(`Uspešna prijava! Dobrodošli ${username}`);
-if (role === "Admin") {
-  navigate("/admin-users");
-} else if (role === "RestaurantOwner") {
-  navigate("/restaurants/dashboard");  // ← Vlasnici idu na dashboard
-} else {
-  navigate(`/profile/${id}`);  // ← Ostali idu na profil
-}
+      if (role === "Admin") {
+        navigate("/admin-users");
+      } else if (role === "RestaurantOwner") {
+        navigate("/restaurants/dashboard"); // ← Vlasnici idu na dashboard
+      } else {
+        navigate(`/profile/${id}`); // ← Ostali idu na profil
+      }
     } catch (error) {
       console.error("❌ Greška prilikom login-a:", error);
 
