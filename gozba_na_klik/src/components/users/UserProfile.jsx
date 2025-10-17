@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { getUserById, updateUser } from "../service/userService";
+import { baseUrl } from "../../config/routeConfig";
 
 export default function UserProfile() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [user, setUser] = useState(null);
   const [statusMsg, setStatusMsg] = useState("");
-  const [imagePreview, setImagePreview] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
 
   const {
     register,
@@ -25,18 +26,13 @@ export default function UserProfile() {
           if (!existingUser) return;
           setUser(existingUser);
 
-          // prefill the form with user data (except password)
+          // prefill form (except password)
           reset({
             userimage: null,
             username: existingUser.username || "",
             email: existingUser.email || "",
-            password: "", // empty for security
+            password: "",
           });
-
-          // set initial image preview
-          if (existingUser.userImage) {
-            setImagePreview(`http://localhost:5065${existingUser.userImage}`);
-          }
         } catch (err) {
           setStatusMsg("Greška pri učitavanju korisnika");
           setTimeout(() => setStatusMsg(""), 3000);
@@ -51,7 +47,7 @@ export default function UserProfile() {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result);
+      reader.onloadend = () => setPreviewImage(reader.result);
       reader.readAsDataURL(file);
     }
   };
@@ -80,6 +76,13 @@ export default function UserProfile() {
     }
   };
 
+  // ✅ Determine which image to show: preview (if selected) or current profile image
+  const imageSrc = previewImage
+    ? previewImage
+    : user?.userImage
+    ? `${baseUrl}${user.userImage}`
+    : `${baseUrl}/assets/profileImg/default_profile.png`;
+
   return (
     <div className="user-profile-container">
       <h2>Profil korisnika</h2>
@@ -88,11 +91,13 @@ export default function UserProfile() {
         <div className="statusMsg">{statusMsg}</div>
 
         <div className="profile-image">
-          {imagePreview ? (
-            <img src={imagePreview} alt="Profile Preview" />
-          ) : (
-            <div>Nema slike</div>
-          )}
+          <img
+            src={imageSrc}
+            alt="Profile Preview"
+            onError={(e) => {
+              e.target.src = `${baseUrl}/assets/profileImg/default_profile.png`;
+            }}
+          />
           <input
             type="file"
             {...register("userimage")}

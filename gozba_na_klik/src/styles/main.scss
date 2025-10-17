@@ -5,11 +5,16 @@
 @import "profile";
 @import "error";
 @import "spinner";
-@import "users-table";
+@import "table";
 @import "restaurants";
 @import "./employees";
 @import "delivery-schedule";
-
+@import "meal-item";
+@import "menu";
+@import "meal-form";
+@import "meal-details";
+@import "alergens";
+@import "addons";
 
 * {
   margin: 0;

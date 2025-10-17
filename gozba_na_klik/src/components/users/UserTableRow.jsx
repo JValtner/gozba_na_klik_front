@@ -10,14 +10,13 @@ const UserTableRow = ({
 }) => {
   return (
     <tr className="table-row">
-      <td>{id}</td>
       <td>{username}</td>
       <td>{email}</td>
       <td>
         <select value={role} onChange={(e) => onRoleChange(id, e.target.value)}>
-          <option value="User">User</option>
+          <option value="User">Kupac</option>
           <option value="Kurir">Kurir</option>
-          <option value="Vlasnik">Vlasnik</option>
+          <option value="RestaurantOwner">Vlasnik</option>
           <option value="Admin">Admin</option>
         </select>
       </td>

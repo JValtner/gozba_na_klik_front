@@ -71,7 +71,6 @@ const WelcomePage = () => {
       }
 
       alert(`Uspešna prijava! Dobrodošli ${username}`);
-
       redirectToDashboard(role, id);
 
     } catch (error) {
