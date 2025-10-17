@@ -34,12 +34,22 @@ export default function WorkingHours() {
       
       const initialSchedules = DAYS.map(day => {
         const existing = data.workSchedules?.find(ws => ws.dayOfWeek === day.id);
+        
+        const formatTime = (timeString) => {
+          if (!timeString) return "";
+          if (timeString.length >= 5) {
+            return timeString.substring(0, 5);
+          }
+          return timeString;
+        };
+
         return {
           dayOfWeek: day.id,
-          openTime: existing?.openTime || "09:00:00",
-          closeTime: existing?.closeTime || "21:00:00"
+          openTime: formatTime(existing?.openTime) || "09:00",
+          closeTime: formatTime(existing?.closeTime) || "21:00"
         };
       });
+      
       setSchedules(initialSchedules);
     } catch (err) {
       console.error("Greška pri učitavanju restorana:", err);
@@ -50,11 +60,14 @@ export default function WorkingHours() {
   };
 
   const handleTimeChange = (dayOfWeek, field, value) => {
-    setSchedules(prev => prev.map(schedule =>
-      schedule.dayOfWeek === dayOfWeek
-        ? { ...schedule, [field]: value}
-        : schedule
-    ));
+    setSchedules(prev => {
+      const updated = prev.map(schedule =>
+        schedule.dayOfWeek === dayOfWeek
+          ? { ...schedule, [field]: value }
+          : schedule
+      );
+      return updated;
+    });
   };
 
   const handleSave = async () => {
@@ -63,17 +76,17 @@ export default function WorkingHours() {
       setError("");
 
       const schedulesForBackend = schedules.map(s => ({
-  dayOfWeek: s.dayOfWeek,
-  openTime: s.openTime.includes(':') ? s.openTime : s.openTime + ":00",
-  closeTime: s.closeTime.includes(':') ? s.closeTime : s.closeTime + ":00"
-}));
+        dayOfWeek: s.dayOfWeek,
+        openTime: s.openTime.length === 5 ? `${s.openTime}:00` : s.openTime,
+        closeTime: s.closeTime.length === 5 ? `${s.closeTime}:00` : s.closeTime
+      }));
       
       await updateWorkSchedules(Number(id), schedulesForBackend);
       alert("Radno vreme je uspešno sačuvano!");
       navigate(`/restaurants/edit/${id}`);
     } catch (err) {
       console.error("Greška pri čuvanju radnog vremena:", err);
-      setError("Greška pri čuvanju radnog vremena. Pokušajte ponovo.");
+      setError(err.response?.data?.message || "Greška pri čuvanju radnog vremena. Pokušajte ponovo.");
     } finally {
       setSaving(false);
     }
@@ -112,23 +125,30 @@ export default function WorkingHours() {
         <div className="days-grid">
           {DAYS.map(day => {
             const schedule = schedules.find(s => s.dayOfWeek === day.id);
+            
+            if (!schedule) {
+              return null;
+            }
+
             return (
               <div key={day.id} className="day-card">
                 <h3>{day.name}</h3>
                 <div className="time-inputs">
                   <div className="time-input">
-                    <label>Otvaranje:</label>
+                    <label htmlFor={`open-${day.id}`}>Otvaranje:</label>
                     <input
+                      id={`open-${day.id}`}
                       type="time"
-                      value={schedule?.openTime.substring(0, 5) || "09:00"}
+                      value={schedule.openTime}
                       onChange={(e) => handleTimeChange(day.id, "openTime", e.target.value)}
                     />
                   </div>
                   <div className="time-input">
-                    <label>Zatvaranje:</label>
+                    <label htmlFor={`close-${day.id}`}>Zatvaranje:</label>
                     <input
+                      id={`close-${day.id}`}
                       type="time"
-                      value={schedule?.closeTime.substring(0, 5) || "21:00"}
+                      value={schedule.closeTime}
                       onChange={(e) => handleTimeChange(day.id, "closeTime", e.target.value)}
                     />
                   </div>
