@@ -8,45 +8,14 @@
   height: 65px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
-  .logo-and-links {
-    display: flex;
-    align-items: center;
-    gap: 40px;
+  .logo {
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
 
-    .logo {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .navbar-links {
-      ul {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      li {
-        display: inline-flex;
-
-        a {
-          color: white;
-          text-decoration: none;
-          font-weight: 500;
-          font-size: 16px;
-          padding: 6px 10px;
-          border-radius: 6px;
-          transition: background 0.3s ease, color 0.3s ease;
-
-          &:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #f1c40f;
-          }
-        }
-      }
+    &:hover {
+      color: #f1c40f;
     }
   }
 
@@ -59,17 +28,81 @@
       color: #f1c40f;
     }
 
-    .logout-btn {
-      background: #e74c3c;
+    // Dashboard dugme (za vlasnike)
+    .dashboard-btn {
+      background: #3498db;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      &:hover {
+        background: #2980b9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    // Profil dugme
+    .profile-btn {
+      background: #27ae60;
       border: none;
       padding: 6px 12px;
       border-radius: 6px;
       color: white;
       cursor: pointer;
       transition: background 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+
+      &:hover {
+        background: #229954;
+      }
+
+      a {
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+
+    // Odjava dugme
+    .logout-btn {
+      background: #e74c3c;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
 
       &:hover {
         background: #c0392b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
       }
     }
 
@@ -92,6 +125,41 @@
 
       &:hover {
         color: #f1c40f;
+      }
+    }
+  }
+}
+
+.profile-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .app-header {
+    padding: 10px 15px;
+    height: auto;
+    flex-wrap: wrap;
+
+    .user-info {
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+
+      span {
+        width: 100%;
+        text-align: center;
+      }
+
+      .dashboard-btn,
+      .profile-btn,
+      .logout-btn {
+        font-size: 12px;
+        padding: 6px 10px;
       }
     }
   }
