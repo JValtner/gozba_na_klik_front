@@ -5,7 +5,7 @@ import { getUserById } from "../service/userService";
 import { baseUrl } from "../../config/routeConfig";
 
 export default function Header() {
-  const { username, userId, isAuth, logout } = useUser();
+  const { username, userId, isAuth, logout, role } = useUser();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
@@ -39,6 +39,18 @@ export default function Header() {
       <div className="logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
         🍴 Gozba na klik
       </div>
+        {isAuth && role === "Admin" && (
+          <div className="navbar-links">
+            <ul>
+              <li>
+                <Link to={"admin-users"}>Korisnici</Link>
+              </li>
+              <li>
+                <Link to={"admin-restaurants"}>Restorani</Link>
+              </li>
+            </ul>
+          </div>
+        )}
       <div className="user-info">
         {isAuth && (
           <>

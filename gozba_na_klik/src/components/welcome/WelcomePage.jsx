@@ -69,11 +69,8 @@ const WelcomePage = () => {
       if (token) {
         localStorage.setItem("token", token);
       }
-
       alert(`Uspešna prijava! Dobrodošli ${username}`);
-
       redirectToDashboard(role, id);
-
     } catch (error) {
       const message =
         error.response?.data?.message ||

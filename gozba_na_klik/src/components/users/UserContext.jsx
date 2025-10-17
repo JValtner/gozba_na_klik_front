@@ -26,7 +26,7 @@ export function UserProvider({ children }) {
       localStorage.removeItem("userId");
       localStorage.removeItem("role");
     }
-  }, [username, userId]);
+  }, [username, userId, role]);
 
   function logout() {
     setUsername(null);
