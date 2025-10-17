@@ -13,6 +13,8 @@ import ClosedDates from "./components/restaurants/ClosedDates";
 import Footer from "./components/welcome/Footer";
 import "./styles/main.scss";
 import EmployeesDashboard from "./components/employees/EmployeesDashboard";
+import DeliveryDashboard from "./components/delivery/DeliveryDashboard";  // ← NOVO
+import DeliverySchedule from "./components/delivery/DeliverySchedule";
 
 export default function App() {
   return (
@@ -38,6 +40,8 @@ export default function App() {
             <Route path="/restaurants/:id/working-hours" element={<WorkingHours />} />
             <Route path="/restaurants/:id/closed-dates" element={<ClosedDates />} />
             <Route path="/restaurants/:id/employees" element={<EmployeesDashboard />} />
+            <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
+            <Route path="/delivery/schedule" element={<DeliverySchedule />} />
           </Routes>
 
         </main>
