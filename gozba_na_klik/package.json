@@ -13,7 +13,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.63.0",
-    "react-router-dom": "^7.9.1",
+    "react-router-dom": "^7.9.4",
     "sass": "^1.93.0"
   },
   "devDependencies": {

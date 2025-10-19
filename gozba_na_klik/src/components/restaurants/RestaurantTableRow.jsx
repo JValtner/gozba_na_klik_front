@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const RestaurantTableRow = ({ id, name, address, phone, owner, onDelete }) => {
+const RestaurantTableRow = ({ id, name, address, phone, owner, restaurant }) => {
   return (
     <tr className="table-row">
       <td>{name}</td>
@@ -10,7 +10,7 @@ const RestaurantTableRow = ({ id, name, address, phone, owner, onDelete }) => {
       <td>{owner}</td>
       <td>
         <div className="btn-container">
-          <button className="delete-btn" onClick={onDelete}>
+          <button className="delete-btn" onClick={() => handleDelete(id, name)}>
             Obriši
           </button>
           <Link
@@ -19,6 +19,9 @@ const RestaurantTableRow = ({ id, name, address, phone, owner, onDelete }) => {
           >
             Izmeni
           </Link>
+          <button className="details-btn" onClick={() => handleDetails(restaurant)}>
+            Detalji
+          </button>
         </div>
       </td>
     </tr>
