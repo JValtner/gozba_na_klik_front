@@ -27,6 +27,10 @@ const RestaurantDashboard = () => {
     loadData();
   }, []);
 
+  const handleDetails = (restaurant) => {
+    navigate(`/restaurants/${restaurant.id}/details`);
+  };
+
   const handleEdit = (restaurantId) => {
     navigate(`/restaurants/edit/${restaurantId}`);
   };
@@ -47,7 +51,7 @@ const RestaurantDashboard = () => {
     }
   };
 
-  const handleMenu =(restaurant) => {
+  const handleMenu = (restaurant) => {
     navigate(`/restaurants/${restaurant.id}/menu`);
   };
 
@@ -120,6 +124,13 @@ const RestaurantDashboard = () => {
                     title="Jelovnik"
                   >
                     Menu
+                  </button>
+
+                  <button
+                    className="btn btn--secondary btn--small"
+                    onClick={() => handleDetails(restaurant)}
+                  >
+                    Detalji
                   </button>
                 </div>
 
