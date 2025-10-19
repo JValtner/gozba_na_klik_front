@@ -23,10 +23,16 @@ export async function createUser(userData) {
 }
 
 export async function updateUser(id, userData) {
-  const response = await AxiosConfig.put(`${RESOURCE}/${id}`, userData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const response = await AxiosConfig.put(`${RESOURCE}/${id}`, userData);
+  return response.data;
+}
 
+// ADMIN UPDATE USER ROLE
+export async function updateUserRoleByAdmin(id, userData) {
+  const response = await AxiosConfig.put(
+    `${RESOURCE}/${id}/admin-users`,
+    userData
+  );
   return response.data;
 }
 

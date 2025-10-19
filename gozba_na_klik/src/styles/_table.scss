@@ -1,14 +1,37 @@
-h1 {
-  padding-left: 32px;
-  margin-top: 20px;
+.table-container {
+  // Preuzeto iz dashboard__container
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  background: white; // bela pozadina kao kartice
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
 }
 
-.table-container {
-  padding: 2rem;
-  background: #f9fafb;
-  border-radius: 1rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  overflow-x: auto;
+.title-container {
+  max-width: 80rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+  }
+
+  p {
+    color: #4b5563;
+    margin: 0;
+  }
 }
 
 .table {
@@ -91,7 +114,7 @@ button {
   text-decoration: none;
 
   &:hover {
-    transform: scale(1.03); // ispravljeno sa transform: 1.03
+    transform: scale(1.03);
     background-color: #f02849;
   }
 }

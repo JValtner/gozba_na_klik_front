@@ -14,6 +14,17 @@ const RestaurantTable = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(""); // uklanja error posle 5 sekundi
+      }, 5000);
+
+      // Čišćenje timeout-a ako se error promeni ili komponenta unmount-uje
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   const loadRestaurants = async () => {
     try {
       const data = await getAllRestaurants();
@@ -47,43 +58,50 @@ const RestaurantTable = () => {
 
   return (
     <div>
-      <div className="title-container">
-        <h1>Restaurants</h1>
-        <button
-          className="btn btn--secondary"
-          onClick={() => navigate("/admin-restaurant-form")}
-        >
-          + Dodaj restoran
-        </button>
-      </div>
       <div className="error-container">
         {error && <span className="error-span show">{error}</span>}
       </div>
       <div className="table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Address</th>
-              <th>Phone</th>
-              <th>Owner</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {restaurants.map((restaurant) => (
-              <RestaurantTableRow
-                key={restaurant.id}
-                id={restaurant.id}
-                name={restaurant.name}
-                address={restaurant.address}
-                phone={restaurant.phone}
-                owner={restaurant.owner?.username}
-                onDelete={() => handleDelete(restaurant.id)}
-              />
-            ))}
-          </tbody>
-        </table>
+        <div className="title-container">
+          <div>
+            <h1>Restorani</h1>
+            <p>Pregledajte i upravljajte restoranima</p>
+          </div>
+          <button
+            className="btn btn--secondary"
+            onClick={() => navigate("/admin-restaurant-form")}
+          >
+            + Dodaj restoran
+          </button>
+        </div>
+        {!restaurants.length > 0 ? (
+          <p>Nema evidentiranih restorana.</p>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Naziv</th>
+                <th>Adresa</th>
+                <th>Telefon</th>
+                <th>Vlasnik</th>
+                <th>Opcije</th>
+              </tr>
+            </thead>
+            <tbody>
+              {restaurants.map((restaurant) => (
+                <RestaurantTableRow
+                  key={restaurant.id}
+                  id={restaurant.id}
+                  name={restaurant.name}
+                  address={restaurant.address}
+                  phone={restaurant.phone}
+                  owner={restaurant.owner?.username}
+                  onDelete={() => handleDelete(restaurant.id)}
+                />
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

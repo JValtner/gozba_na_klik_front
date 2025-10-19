@@ -10,15 +10,15 @@ const RestaurantTableRow = ({ id, name, address, phone, owner, onDelete }) => {
       <td>{owner}</td>
       <td>
         <div className="btn-container">
-          <button className="delete-btn" onClick={onDelete}>
-            Obriši
-          </button>
           <Link
             to={`/admin-restaurant-form/${id}`}
             className="btn btn--secondary"
           >
-            Izmeni
+            Uredi
           </Link>
+          <button className="delete-btn" onClick={onDelete}>
+            Obriši
+          </button>
         </div>
       </td>
     </tr>

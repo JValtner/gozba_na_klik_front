@@ -8,21 +8,27 @@ export async function getRestaurantById(id) {
 
 // UPDATE restoran
 export async function updateRestaurant(id, formData) {
-  const response = await AxiosConfig.put(`/api/restaurants/${id}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data"
+  const response = await AxiosConfig.put(`/api/restaurants/${id}`, formData);
+  return response.data;
+}
+
+// ADMIN UPDATE restoran
+export async function updateRestaurantByAdmin(id, formData) {
+  const response = await AxiosConfig.put(
+    `/api/restaurants/${id}/admin-edit`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
-  });
+  );
   return response.data;
 }
 
 // CREATE restoran
 export async function createRestaurant(formData) {
-  const response = await AxiosConfig.post("/api/restaurants", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
-  });
+  const response = await AxiosConfig.post("/api/restaurants", formData);
   return response.data;
 }
 
@@ -46,18 +52,26 @@ export async function deleteRestaurant(id) {
 
 // UPDATE work schedules
 export async function updateWorkSchedules(restaurantId, schedules) {
-  const response = await AxiosConfig.put(`/api/restaurants/${restaurantId}/workschedules`, schedules);
+  const response = await AxiosConfig.put(
+    `/api/restaurants/${restaurantId}/workschedules`,
+    schedules
+  );
   return response.data;
 }
 
 // ADD closed date
 export async function addClosedDate(restaurantId, closedDate) {
-  const response = await AxiosConfig.post(`/api/restaurants/${restaurantId}/closeddates`, closedDate);
+  const response = await AxiosConfig.post(
+    `/api/restaurants/${restaurantId}/closeddates`,
+    closedDate
+  );
   return response.data;
 }
 
 // REMOVE closed date
 export async function removeClosedDate(restaurantId, dateId) {
-  const response = await AxiosConfig.delete(`/api/restaurants/${restaurantId}/closeddates/${dateId}`);
+  const response = await AxiosConfig.delete(
+    `/api/restaurants/${restaurantId}/closeddates/${dateId}`
+  );
   return response.data;
 }
