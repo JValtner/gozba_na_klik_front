@@ -51,7 +51,6 @@ export default function Header() {
             </ul>
           </div>
         )}
-
       <div className="user-info">
         {isAuth && (
           <>
@@ -63,7 +62,6 @@ export default function Header() {
               </button>
             )}
             
-
             <button className="profile-btn">
               <Link to={`/profile/${userId}`} className="profile-btn">
                 <img

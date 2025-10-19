@@ -19,7 +19,6 @@ const RestaurantDashboard = () => {
         const data = await getMyRestaurants();
         setRestaurants(data);
       } catch (err) {
-        console.error("Greška:", err);
         setError("Greška pri učitavanju.");
       } finally {
         setLoading(false);
