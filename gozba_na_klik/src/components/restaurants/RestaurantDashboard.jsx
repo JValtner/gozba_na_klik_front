@@ -19,7 +19,6 @@ const RestaurantDashboard = () => {
         const data = await getMyRestaurants();
         setRestaurants(data);
       } catch (err) {
-        console.error("Greška:", err);
         setError("Greška pri učitavanju.");
       } finally {
         setLoading(false);
@@ -108,6 +107,12 @@ const RestaurantDashboard = () => {
                     Obriši
                   </button>
                   <button
+                    className="btn btn--info"
+                    onClick={() => navigate(`/restaurants/${restaurant.id}/employees`)}
+                  >
+                    Zaposleni
+                  </button>
+                  <button
                     className="btn btn--secondary btn--small"
                     onClick={() => handleMenu(restaurant)}
                     title="Jelovnik"
@@ -115,6 +120,7 @@ const RestaurantDashboard = () => {
                     Menu
                   </button>
                 </div>
+
               </div>
             ))}
           </div>

@@ -31,6 +31,7 @@ export function UserProvider({ children }) {
   function logout() {
     setUsername(null);
     setUserId(null);
+    setRole(null);
     localStorage.removeItem("username");
     localStorage.removeItem("userId");
     localStorage.removeItem("token");
