@@ -8,11 +8,32 @@
   height: 65px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
-  .logo {
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
+  .logo-and-links {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #f1c40f;
+      }
+    }
+
+    .navbar-links {
+      ul {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
 
     &:hover {
       color: #f1c40f;

@@ -39,7 +39,8 @@ const RestaurantDashboard = () => {
     try {
       await deleteRestaurant(restaurantId);
       alert("Restoran je uspešno obrisan!");
-      getMyRestaurants();
+      const data = await getMyRestaurants();
+      setRestaurants(data);
     } catch (err) {
       console.error("Greška pri brisanju restorana:", err);
       alert("Greška pri brisanju restorana. Pokušajte ponovo.");
@@ -100,6 +101,7 @@ const RestaurantDashboard = () => {
                   >
                     Uredi
                   </button>
+
                   <button
                     className="btn btn--secondary"
                     onClick={() => handleDelete(restaurant.id, restaurant.name)}

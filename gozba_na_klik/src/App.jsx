@@ -14,6 +14,8 @@ import ClosedDates from "./components/restaurants/ClosedDates";
 import Footer from "./components/welcome/Footer";
 import "./styles/main.scss";
 import EmployeesDashboard from "./components/employees/EmployeesDashboard";
+import DeliveryDashboard from "./components/delivery/DeliveryDashboard";
+import DeliverySchedule from "./components/delivery/DeliverySchedule";
 import RestaurantTable from "./components/restaurants/RestaurantTable";
 import AdminRestaurantForm from "./components/restaurants/AdminRestaurantForm";
 import CreateMeal from "./components/restaurants/meal/CreateMeal";
@@ -74,6 +76,8 @@ export default function App() {
             <Route path="/restaurants/:id/working-hours" element={<WorkingHours />} />
             <Route path="/restaurants/:id/closed-dates" element={<ClosedDates />} />
             <Route path="/restaurants/:id/employees" element={<EmployeesDashboard />} />
+            <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
+            <Route path="/delivery/schedule" element={<DeliverySchedule />} />
             <Route path="/restaurants/:id/menu" element ={<Menu/>}/>
             <Route path="/restaurants/:id/menu/new" element={<CreateMeal />} />
             <Route path="/restaurants/:id/menu/:mealId/edit" element={<EditMeal />} />
