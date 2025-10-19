@@ -30,11 +30,7 @@ const AdminRestaurantForm = () => {
 
   useEffect(() => {
     if (error) {
-      const timer = setTimeout(() => {
-        setError(""); // uklanja error posle 5 sekundi
-      }, 5000);
-
-      // Čišćenje timeout-a ako se error promeni ili komponenta unmount-uje
+      const timer = setTimeout(() => setError(""), 5000);
       return () => clearTimeout(timer);
     }
   }, [error]);
@@ -100,7 +96,7 @@ const AdminRestaurantForm = () => {
 
         {error && <p className="error-span show">{error}</p>}
 
-        {!owners.length > 0 ? (
+        {owners.length === 0 ? (
           <p>
             Trenutno nema evidentiranih vlasnika restorana kojima bi se dodelio
             restoran.
