@@ -3,10 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { getUserById, updateUser } from "../service/userService";
 import { baseUrl } from "../../config/routeConfig";
+import { useUser } from "./UserContext";
 
 export default function UserProfile() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { isAuth, role } = useUser();
   const [user, setUser] = useState(null);
   const [statusMsg, setStatusMsg] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
@@ -84,61 +86,80 @@ export default function UserProfile() {
     : `${baseUrl}/assets/profileImg/default_profile.png`;
 
   return (
-    <div className="user-profile-container">
-      <h2>Profil korisnika</h2>
+    <>
+      {" "}
+      <div className="user-profile-container">
+        <h2>Profil korisnika</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-        <div className="statusMsg">{statusMsg}</div>
+        <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+          <div className="statusMsg">{statusMsg}</div>
 
-        <div className="profile-image">
-          <img
-            src={imageSrc}
-            alt="Profile Preview"
-            onError={(e) => {
-              e.target.src = `${baseUrl}/assets/profileImg/default_profile.png`;
-            }}
-          />
-          <input
-            type="file"
-            {...register("userimage")}
-            onChange={handleImageChange}
-          />
-        </div>
+          <div className="profile-image">
+            <img
+              src={imageSrc}
+              alt="Profile Preview"
+              onError={(e) => {
+                e.target.src = `${baseUrl}/assets/profileImg/default_profile.png`;
+              }}
+            />
+            <input
+              type="file"
+              {...register("userimage")}
+              onChange={handleImageChange}
+            />
+          </div>
 
+          <div>
+            <label>Korisničko ime</label>
+            <input
+              type="text"
+              disabled
+              {...register("username", {
+                required: "Korisničko ime je obavezno",
+              })}
+            />
+            {errors.username && <p>{errors.username.message}</p>}
+          </div>
+
+          <div>
+            <label>Lozinka (ostavite prazno ako ne menjate)</label>
+            <input type="password" {...register("password")} />
+          </div>
+
+          <div>
+            <label>Email</label>
+            <input
+              type="email"
+              {...register("email", {
+                required: "Email je obavezan",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Unesite validan email",
+                },
+              })}
+            />
+            {errors.email && <p>{errors.email.message}</p>}
+          </div>
+
+          <button type="submit">Sačuvaj izmene</button>
+        </form>
+      </div>
+      {isAuth && role === "User" && (
         <div>
-          <label>Korisničko ime</label>
-          <input
-            type="text"
-            disabled
-            {...register("username", {
-              required: "Korisničko ime je obavezno",
-            })}
-          />
-          {errors.username && <p>{errors.username.message}</p>}
+          {/* Moji alergeni */}
+          <div className="alergens-section-container">
+            <div className="alergens-title-container">
+              <h2>Moji alergeni 🥜</h2>
+              <button
+                className="btn btn--primary"
+                onClick={() => navigate(`/profile/${id}/alergens`)}
+              >
+                Izmeni
+              </button>
+            </div>
+          </div>
         </div>
-
-        <div>
-          <label>Lozinka (ostavite prazno ako ne menjate)</label>
-          <input type="password" {...register("password")} />
-        </div>
-
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            {...register("email", {
-              required: "Email je obavezan",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Unesite validan email",
-              },
-            })}
-          />
-          {errors.email && <p>{errors.email.message}</p>}
-        </div>
-
-        <button type="submit">Sačuvaj izmene</button>
-      </form>
-    </div>
+      )}
+    </>
   );
 }
