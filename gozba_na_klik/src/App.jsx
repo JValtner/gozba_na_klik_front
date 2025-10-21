@@ -21,6 +21,11 @@ import AdminRestaurantForm from "./components/restaurants/AdminRestaurantForm";
 import CreateMeal from "./components/restaurants/meal/CreateMeal";
 import EditMeal from "./components/restaurants/meal/EditMeal";
 import MealDetails from "./components/restaurants/meal/MealDetail";
+<<<<<<< Updated upstream
+=======
+import EditUserAlergens from "./components/users/EditUserAlergens";
+import HomeRestaurants from "./components/restaurants/HomeRestaurants";
+>>>>>>> Stashed changes
 
 export default function App() {
   return (
@@ -30,6 +35,7 @@ export default function App() {
         <main>
           <Routes>
             <Route path="/" element={<WelcomePage />} />
+            <Route path="/restaurants/home" element={<HomeRestaurants />} />
             <Route path="/register" element={<RegisterUserForm />} />
             <Route path="/profile/:id" element={<UserProfile />} />
 
