@@ -11,7 +11,7 @@ import { baseUrl } from "../../../config/routeConfig";
 const Menu = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { userId } = useUser()
+  const { userId, role} = useUser()
 
   const [restaurant, setRestaurant] = useState(null)
   const [meals, setMeals] = useState([])
@@ -70,9 +70,12 @@ const Menu = () => {
         </div>
       </div>
       {/* --- New meal btn --- */}
+      {role==="RestaurantOwner" && (
       <div className="restaurant-meal-new">
         <button className="new-meal-btn" onClick={handleNewMeal}>Add meal</button>
       </div>
+      )}
+      
       {/* --- Meals Section --- */}
       <div className="meals-section">
         <h2>Jelovnik</h2>

@@ -13,6 +13,21 @@
     transform: scale(1.02);
   }
 
+  &--alert { // <-- modifier class for allergen alert
+    border: 2px solid red;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+  }
+
+  &--highlight { // <-- modifier class for highlighted meal (from URL param)
+    border: 3px solid orange;
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 0 15px rgba(255, 165, 0, 0.8);
+    }
+  }
+
   &__image img {
     width: 100%;
     height: 220px;
@@ -50,7 +65,8 @@
     margin-bottom: 0.5rem;
   }
 
-  &__addons, &__alergens {
+  &__addons,
+  &__alergens {
     margin-top: 0.5rem;
     h4 {
       margin-bottom: 0.3rem;
@@ -78,14 +94,17 @@
       cursor: pointer;
       font-size: 0.9rem;
       border: none;
+
       &--primary {
         background: #007bff;
         color: white;
       }
+
       &--danger {
         background: #dc3545;
         color: white;
       }
+
       &--small {
         font-size: 0.85rem;
       }

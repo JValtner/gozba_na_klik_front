@@ -39,6 +39,11 @@ export default function Header() {
       <div className="logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
         🍴 Gozba na klik
       </div>
+      {isAuth &&(
+        <div className="navbar-links search">
+          <Link to={"/search"}>Pretraga jela</Link>
+        </div>
+      )}
         {isAuth && role === "Admin" && (
           <div className="navbar-links">
             <ul>
@@ -52,6 +57,11 @@ export default function Header() {
           </div>
         )}
       <div className="user-info">
+        {!isAuth &&  (
+          <button className="login-btn" onClick={() => navigate("/login")}>
+            Login
+          </button> 
+        )}
         {isAuth && (
           <>
             <span>Dobrodošli, <strong>{username}</strong></span>

@@ -22,7 +22,7 @@ const Pagination = ({
         </button>
 
         <span>
-          Strana {page + 1} od {pageCount} ({totalCount} ukupno)
+          Strana {page + 1} od {pageCount} ({totalCount} rezutata)
         </span>
 
         <button

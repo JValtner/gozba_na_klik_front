@@ -14,6 +14,9 @@ const WelcomePage = () => {
     if (isAuth && role && userId) {
       redirectToDashboard(role, userId);
     }
+    if (role==="Guest") {
+      redirectToDashboard(role, null );
+    }
   }, [isAuth, role, userId]);
 
   const redirectToDashboard = (userRole, id) => {
@@ -25,8 +28,10 @@ const WelcomePage = () => {
       navigate("/employee/dashboard", { replace: true });
     } else if (userRole === "DeliveryPerson") {
       navigate("/delivery/dashboard", { replace: true });
+    } else if (userRole === "Buyer") {
+      navigate("/restaurants/home", { replace: true });
     } else {
-      navigate(`/profile/${id}`, { replace: true });
+      navigate("/login", { replace: true });
     }
   };
 

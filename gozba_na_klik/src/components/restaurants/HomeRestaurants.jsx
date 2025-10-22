@@ -13,7 +13,6 @@ import RestaurantBuyerCard from "../restaurants/RestauranBuyerCard";
 const HomeRestaurants = () => {
   const navigate = useNavigate();
   const { userId, role } = useUser();
-  // State
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -25,12 +24,9 @@ const HomeRestaurants = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [pageCount, setPageCount] = useState(0);
-  const [filter, setFilter] = useState({
-    Name: null,
-    Address: null
-  });
+  const [filter, setFilter] = useState({Name: null,Address: null});
+  const [showWelcome, setShowWelcome] = useState(false);
 
-  // Load sort types and user role
   useEffect(() => {
     const loadSortTypes = async () => {
       try {
@@ -47,7 +43,6 @@ const HomeRestaurants = () => {
     loadSortTypes();
   }, []);
 
-  // Load restaurants
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -75,19 +70,15 @@ const HomeRestaurants = () => {
     loadData();
   }, [filter, page, pageSize, chosenType]);
 
-  const formatDate = (dateString) =>
-    new Date(dateString).toLocaleDateString("sr-RS");
-
-  const handleMenu = (id) => {
-    navigate(`/restaurants/${id}/menu`);
-  };
 
   return (
     <div className="dashboard">
       <div className="dashboard__container">
         {role === "Guest" && (
-          <div className="guest-welcome-wrapper">
-            <WelcomePage />
+          <div className="guest-placeholder">
+              <div className="guest-login-prompt">
+                <p>Za bolje iskustvo u pretrazi se prijavite</p>
+              </div>
           </div>
         )}
 
