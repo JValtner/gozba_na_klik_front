@@ -25,8 +25,6 @@ const WelcomePage = () => {
       navigate("/employee/dashboard", { replace: true });
     } else if (userRole === "DeliveryPerson") {
       navigate("/delivery/dashboard", { replace: true });
-    } else if (userRole === "Buyer") {
-      navigate("/restaurants/home", { replace: true });
     } else {
       navigate(`/profile/${id}`, { replace: true });
     }

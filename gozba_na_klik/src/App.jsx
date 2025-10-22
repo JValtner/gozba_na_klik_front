@@ -21,11 +21,7 @@ import AdminRestaurantForm from "./components/restaurants/AdminRestaurantForm";
 import CreateMeal from "./components/restaurants/meal/CreateMeal";
 import EditMeal from "./components/restaurants/meal/EditMeal";
 import MealDetails from "./components/restaurants/meal/MealDetail";
-<<<<<<< Updated upstream
-=======
 import EditUserAlergens from "./components/users/EditUserAlergens";
-import HomeRestaurants from "./components/restaurants/HomeRestaurants";
->>>>>>> Stashed changes
 
 export default function App() {
   return (
@@ -35,10 +31,14 @@ export default function App() {
         <main>
           <Routes>
             <Route path="/" element={<WelcomePage />} />
-            <Route path="/restaurants/home" element={<HomeRestaurants />} />
             <Route path="/register" element={<RegisterUserForm />} />
             <Route path="/profile/:id" element={<UserProfile />} />
 
+            {/* Ruta za izmenu korisnikovih alergena */}
+            <Route
+              path="/profile/:id/alergens"
+              element={<EditUserAlergens />}
+            />
             {/* Admin rute */}
             <Route
               path="/admin-users"
@@ -79,17 +79,31 @@ export default function App() {
               element={<RestaurantDashboard />}
             />
             <Route path="/restaurants/edit/:id" element={<EditRestaurant />} />
-            <Route path="/restaurants/:id/working-hours" element={<WorkingHours />} />
-            <Route path="/restaurants/:id/closed-dates" element={<ClosedDates />} />
-            <Route path="/restaurants/:id/employees" element={<EmployeesDashboard />} />
+            <Route
+              path="/restaurants/:id/working-hours"
+              element={<WorkingHours />}
+            />
+            <Route
+              path="/restaurants/:id/closed-dates"
+              element={<ClosedDates />}
+            />
+            <Route
+              path="/restaurants/:id/employees"
+              element={<EmployeesDashboard />}
+            />
             <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
             <Route path="/delivery/schedule" element={<DeliverySchedule />} />
-            <Route path="/restaurants/:id/menu" element ={<Menu/>}/>
+            <Route path="/restaurants/:id/menu" element={<Menu />} />
             <Route path="/restaurants/:id/menu/new" element={<CreateMeal />} />
-            <Route path="/restaurants/:id/menu/:mealId/edit" element={<EditMeal />} />
-            <Route path="/restaurants/:id/menu/:mealId" element={<MealDetails />} />
+            <Route
+              path="/restaurants/:id/menu/:mealId/edit"
+              element={<EditMeal />}
+            />
+            <Route
+              path="/restaurants/:id/menu/:mealId"
+              element={<MealDetails />}
+            />
           </Routes>
-
         </main>
         <Footer />
       </div>

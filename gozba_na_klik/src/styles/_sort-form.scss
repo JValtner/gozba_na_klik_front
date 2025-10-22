@@ -1,0 +1,29 @@
+.sort-form {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    color: #374151;
+
+    select {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      background-color: white;
+      font-size: 0.95rem;
+      color: #374151;
+      cursor: pointer;
+
+      &:focus {
+        outline: none;
+        border-color: #ea580c;
+        box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+      }
+    }
+  }
+}

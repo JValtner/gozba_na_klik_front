@@ -5,6 +5,8 @@ import { getRestaurantById } from "../../service/restaurantsService"
 import { getMealsByRestaurantId } from "../../service/menuService"
 import Spinner from "../../spinner/Spinner"
 import MenuItem from "./menuItem"
+import { baseUrl } from "../../../config/routeConfig";
+
 
 const Menu = () => {
   const { id } = useParams()
@@ -58,7 +60,7 @@ const Menu = () => {
       <div className="restaurant-header">
         <div className="restaurant-image-wrapper">
           <img
-            src={`http://localhost:5065${restaurant.photoUrl}`}
+            src={`${baseUrl}${restaurant.photoUrl}`}
             alt={restaurant.name}
             onError={(e) => (e.target.src = "")}
           />

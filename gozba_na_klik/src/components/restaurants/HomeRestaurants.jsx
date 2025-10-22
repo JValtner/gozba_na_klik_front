@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../users/UserContext";
-import {getSortedFilteredPagedRestaurants, getSortTypes} from "../service/restaurantsService";
+import { getSortedFilteredPagedRestaurants, getSortTypes } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
 import Pagination from "../utils/Pagination";
 import SortForm from "../utils/SortForm";
 import RestaurantFilterSection from "../utils/RestaurantFilterSection";
 import { baseUrl } from "../../config/routeConfig";
+import WelcomePage from "../welcome/WelcomePage";
+import RestaurantBuyerCard from "../restaurants/RestauranBuyerCard";
 
 const HomeRestaurants = () => {
   const navigate = useNavigate();
-  const { userId } = useUser();
-
+  const { userId, role } = useUser();
   // State
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +30,7 @@ const HomeRestaurants = () => {
     Address: null
   });
 
-  // Load sort types (e.g., from backend)
+  // Load sort types and user role
   useEffect(() => {
     const loadSortTypes = async () => {
       try {
@@ -37,7 +38,6 @@ const HomeRestaurants = () => {
         setSortTypes(data || []);
       } catch (err) {
         console.error("Greška pri učitavanju tipova sortiranja:", err.message);
-        // fallback to defaults
         setSortTypes([
           { key: "A_Z", name: "Naziv A-Z" },
           { key: "Z_A", name: "Naziv Z-A" }
@@ -47,7 +47,7 @@ const HomeRestaurants = () => {
     loadSortTypes();
   }, []);
 
-  // Load restaurants (paged + filter + sort)
+  // Load restaurants
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -78,78 +78,67 @@ const HomeRestaurants = () => {
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString("sr-RS");
 
-  // Loading state
-  if (loading) return <Spinner />;
+  const handleMenu = (id) => {
+    navigate(`/restaurants/${id}/menu`);
+  };
 
   return (
     <div className="dashboard">
       <div className="dashboard__container">
-        <header className="dashboard__header">
-          <div>
-            <h1>Restorani</h1>
-            <p>Pregled i upravljanje restoranima</p>
+        {role === "Guest" && (
+          <div className="guest-welcome-wrapper">
+            <WelcomePage />
           </div>
-        </header>
+        )}
 
         {/* Filter + Sort */}
-        <div className="dashboard__filter-sort">
-          <RestaurantFilterSection filter={filter} setFilter={setFilter} />
+        <div className="dashboard__controls">
+          {role === "Buyer" && (
+            <>
+              <RestaurantFilterSection filter={filter} setFilter={setFilter} />
 
-          <SortForm
-            sortTypes={sortTypes}
-            chosenType={chosenType}
-            onSortChange={(value) => {
-              setChosenType(value);
-              setPage(0);
-            }}
+              <SortForm
+                sortTypes={sortTypes}
+                chosenType={chosenType}
+                onSortChange={(value) => {
+                  setChosenType(value);
+                  setPage(0);
+                }}
+              />
+            </>
+          )}
+
+          {/* Pagination Controls */}
+          <Pagination
+            page={page}
+            pageCount={pageCount}
+            totalCount={totalItems}
+            hasPreviousPage={hasPreviousPage}
+            hasNextPage={hasNextPage}
+            pageSize={pageSize}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
           />
         </div>
-
-        {/* Pagination Controls */}
-        <Pagination
-          page={page}
-          pageCount={pageCount}
-          totalCount={totalItems}
-          hasPreviousPage={hasPreviousPage}
-          hasNextPage={hasNextPage}
-          pageSize={pageSize}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
-        />
-
         {/* Error */}
         {error && <p className="error-message">{error}</p>}
 
         {/* Restaurant Grid */}
-        {restaurants.length === 0 ? (
-          <div className="dashboard__empty">
-            <h2>Nema dostupnih restorana</h2>
-            <p>Trenutno nema unetih restorana u sistem.</p>
-          </div>
-        ) : (
-          <div className="dashboard__grid">
-            {restaurants.map((r) => (
-              <div key={r.id} className="dashboard__card">
-                {r.photoUrl && (
-                  <img
-                    src={`${baseUrl}${r.photoUrl}`}
-                    alt={r.name}
-                    className="restaurant-image"
-                  />
-                )}
-                <h2>{r.name}</h2>
-                {r.address && <p>Adresa: {r.address}</p>}
-                <p>Kreiran: {formatDate(r.createdAt)}</p>
+        <div className="dashboard__grid">
+          {loading ? (
+            <Spinner />
+          ) : restaurants.length === 0 ? (
+            <div className="dashboard__empty">
+              <h2>Nema dostupnih restorana</h2>
+              <p>Trenutno nema unetih restorana u sistem.</p>
+            </div>
+          ) : (
+            restaurants.map((r) => (
+              <RestaurantBuyerCard key={r.id} restaurant={r} />
+            ))
+          )}
+        </div>
 
-                <div className="card-actions">
-                    <button className="btn btn--tertiary" onClick={() => handleMenu(r.id)}>
-                    Jelovnik
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

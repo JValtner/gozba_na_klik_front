@@ -12,8 +12,9 @@ export function UserProvider({ children }) {
     return storedId ? Number(storedId) : null;
   });
 
+  // Default to "Guest" if nothing is in localStorage
   const [role, setRole] = useState(() => {
-    return localStorage.getItem("role");
+    return localStorage.getItem("role") || "Guest";
   });
 
   useEffect(() => {
@@ -22,20 +23,23 @@ export function UserProvider({ children }) {
       localStorage.setItem("userId", userId);
       localStorage.setItem("role", role);
     } else {
+      // if logged out, keep role as Guest instead of removing it
       localStorage.removeItem("username");
       localStorage.removeItem("userId");
-      localStorage.removeItem("role");
+      localStorage.removeItem("token");
+      localStorage.setItem("role", "Guest");
+      setRole("Guest");
     }
   }, [username, userId, role]);
 
   function logout() {
     setUsername(null);
     setUserId(null);
-    setRole(null);
+    setRole("Guest"); // explicitly set Guest on logout
     localStorage.removeItem("username");
     localStorage.removeItem("userId");
     localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    localStorage.setItem("role", "Guest");
   }
 
   const isAuth = !!username;
