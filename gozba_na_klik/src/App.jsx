@@ -37,14 +37,27 @@ export default function App() {
         <Header />
         <main>
           <Routes>
-            <Route path="/" element={<HomeRestaurants/>} />
+            <Route path="/" element={<HomeRestaurants />} />
             <Route path="/search" element={<GlobalMealSearch />} />
             <Route path="/register" element={<RegisterUserForm />} />
             <Route path="/login" element={<WelcomePage />} />
             <Route path="/profile/:id" element={<UserProfile />} />
             <Route path="/restaurants/home" element={<HomeRestaurants />} />
             {/* Ruta za izmenu korisnikovih alergena */}
-            <Route path="/profile/:id/alergens" element={<EditUserAlergens />} />
+            <Route
+              path="/profile/:id/alergens"
+              element={<EditUserAlergens />}
+            />
+
+            {/* Ruta za prikaz dostave dostavljaca*/}
+            <Route
+              path="/delivery/CourierOrderDashboard"
+              element={<CourierOrderDashboard />}
+            />
+            <Route
+              path="/delivery/CourierOrderCard"
+              element={<CourierOrderCard />}
+            />
 
             {/* Admin rute */}
             <Route
@@ -81,25 +94,49 @@ export default function App() {
             />
 
             {/* Restaurant rute */}
-            <Route path="/restaurants/dashboard" element={<RestaurantDashboard />} />
+            <Route
+              path="/restaurants/dashboard"
+              element={<RestaurantDashboard />}
+            />
             <Route path="/restaurants/edit/:id" element={<EditRestaurant />} />
-            <Route path="/restaurants/:id/working-hours" element={<WorkingHours />} />
-            <Route path="/restaurants/:id/closed-dates" element={<ClosedDates />} />
-            <Route path="/restaurants/:id/employees" element={<EmployeesDashboard />} />
-            
+            <Route
+              path="/restaurants/:id/working-hours"
+              element={<WorkingHours />}
+            />
+            <Route
+              path="/restaurants/:id/closed-dates"
+              element={<ClosedDates />}
+            />
+            <Route
+              path="/restaurants/:id/employees"
+              element={<EmployeesDashboard />}
+            />
+
             {/* Delivery rute */}
             <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
             <Route path="/delivery/schedule" element={<DeliverySchedule />} />
-            
+
             {/* Menu rute (za vlasnike) */}
             <Route path="/restaurants/:id/menu" element={<Menu />} />
             <Route path="/restaurants/:id/menu/new" element={<CreateMeal />} />
-            <Route path="/restaurants/:id/menu/:mealId/edit" element={<EditMeal />} />
-            <Route path="/restaurants/:id/menu/:mealId" element={<MealDetails />} />
-            
+            <Route
+              path="/restaurants/:id/menu/:mealId/edit"
+              element={<EditMeal />}
+            />
+            <Route
+              path="/restaurants/:id/menu/:mealId"
+              element={<MealDetails />}
+            />
+
             {/* Order rute */}
-            <Route path="/restaurants/:restaurantId/orders" element={<RestaurantOrdersPage />}/>
-            <Route path="/restaurants/:restaurantId/order-summary" element={<OrderSummary />} />
+            <Route
+              path="/restaurants/:restaurantId/orders"
+              element={<RestaurantOrdersPage />}
+            />
+            <Route
+              path="/restaurants/:restaurantId/order-summary"
+              element={<OrderSummary />}
+            />
             <Route path="/orders/:orderId" element={<OrderDetails />} />
           </Routes>
         </main>
