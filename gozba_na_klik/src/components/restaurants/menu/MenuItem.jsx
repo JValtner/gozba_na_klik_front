@@ -24,7 +24,6 @@ const MenuItem = ({ meal, onEdit, onDelete }) => {
         console.error("Failed to fetch user data:", err);
       }
     };
-
     fetchUserData();
   }, [userId]);
 
@@ -33,93 +32,95 @@ const MenuItem = ({ meal, onEdit, onDelete }) => {
   };
 
   const handleOrder = () => {
-    //navigate(`/restaurants/${meal.restaurant.id}/menu/${meal.id}/order`);
+    // navigate(`/restaurants/${meal.restaurant.id}/menu/${meal.id}/order`);
   };
 
-  // ✅ Check if this meal contains allergens that match the user’s allergens
   const hasSensitiveAllergen = meal.alergens?.some(a =>
     userData?.userAlergens?.some(ua => ua.id === a.id)
-  )
+  );
 
-  console.log("Meal:", meal.name, meal.alergens);
-  console.log("User alergens:", userData?.alergens);
   return (
-    <div className={`meal-card 
-    ${hasSensitiveAllergen ? "meal-card--alert" : ""} 
-    ${isHighlighted ? "meal-card--highlight" : ""}`}
+    <div
+      className={`meal-card 
+      ${hasSensitiveAllergen ? "meal-card--alert" : ""} 
+      ${isHighlighted ? "meal-card--highlight" : ""}`}
     >
-
-      {/* --- Image --- */}
+      {/* --- Image Section --- */}
       <div className="meal-card__image">
-        <img
-          src={`${baseUrl}${meal.imagePath}`}
-          alt={meal.name}
-          onError={(e) => (e.target.src = "")}
-        />
+        {meal.imagePath ? (
+          <img src={`${baseUrl}${meal.imagePath}`} alt={meal.name} />
+        ) : (
+          <div className="meal-card__placeholder">
+            <p>No Image</p>
+          </div>
+        )}
         <div className="meal-card__overlay">
-          <h3>{meal.name}</h3>
-          <p>{meal.price.toFixed(2)} €</p>
+          <h3 className="meal-card__title">{meal.name}</h3>
+          <p className="meal-card__price">{meal.price.toFixed(2)} €</p>
         </div>
       </div>
 
-      {/* --- Addons --- */}
-      {meal.addons?.length > 0 && (
-        <div className="meal-card__addons">
-          <h4>Dodaci</h4>
-          <ul>
-            {meal.addons.map((addon) => (
-              <li key={addon.id}>{addon.name}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div className="meal-card__content">
+        {/* --- Addons --- */}
+        {meal.addons?.length > 0 && (
+          <div className="meal-card__addons">
+            <h4>Dodaci</h4>
+            <ul>
+              {meal.addons.map(addon => (
+                <li key={addon.id}>{addon.name}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-      {/* --- Alergens --- */}
-      {meal.alergens?.length > 0 && (
-        <div className="meal-card__alergens">
-          <h4>Alergeni</h4>
-          <ul>
-            {meal.alergens.map((a) => {
-              const isUserSensitive = userData?.alergens?.some(
-                (ua) => ua.id === a.id
-              );
+        {/* --- Allergens --- */}
+        {meal.alergens?.length > 0 && (
+          <div className="meal-card__alergens">
+            <h4>Alergeni</h4>
+            <ul>
+              {meal.alergens.map(a => {
+                const isUserSensitive = userData?.userAlergens?.some(
+                  ua => ua.id === a.id
+                );
+                return (
+                  <li
+                    key={a.id}
+                    className={isUserSensitive ? "alergen--alert" : ""}
+                  >
+                    {a.name}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
 
-              return (
-                <li
-                  key={a.id}
-                  style={
-                    isUserSensitive
-                      ? { color: "red", fontWeight: "bold" }
-                      : undefined
-                  }
-                >
-                  {a.name}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
-
-      {/* --- Actions --- */}
-      <div className="meal-card__actions">
-        {role === "RestaurantOwner" && (
-          <>
-            <button onClick={handleDetails}>Detalji</button>
-            {onEdit && <button onClick={() => onEdit(meal)}>Izmeni</button>}
-            {onDelete && (
-              <button onClick={() => onDelete(meal.id)} className="danger">
-                Obriši
+        {/* --- Actions --- */}
+        <div className="meal-card__actions">
+          {role === "RestaurantOwner" && (
+            <>
+              <button className="btn btn--primary" onClick={handleDetails}>
+                Izmeni detalje
               </button>
-            )}
-          </>
-        )}
+              
+              {onDelete && (
+                <button className="btn btn--danger" onClick={() => onDelete(meal.id)}>
+                  Obriši
+                </button>
+              )}
+            </>
+          )}
 
-        {role === "Buyer" && <button onClick={handleOrder}>Poruči</button>}
+          {role === "Buyer" && (
+            <button className="btn btn--primary" onClick={handleOrder}>
+              Poruči
+            </button>
+          )}
 
-        {role === "Guest" && (
-          <p className="login-hint">Prijavite se da biste poručili</p>
-        )}
+          {role === "Guest" && (
+            <p className="login-hint">Prijavite se da biste poručili</p>
+          )}
+        </div>
       </div>
     </div>
   );

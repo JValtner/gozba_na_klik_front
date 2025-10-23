@@ -36,7 +36,10 @@ const MealFilterSection = ({ filter, setFilter }) => {
             min="0"
             value={filter.MinPrice ?? ""}
             onChange={(e) =>
-              handleChange("MinPrice", e.target.value ? Number(e.target.value) : 0)
+              handleChange(
+                "MinPrice",
+                e.target.value ? Number(e.target.value) : null
+              )
             }
           />
         </label>
@@ -48,7 +51,10 @@ const MealFilterSection = ({ filter, setFilter }) => {
             min="0"
             value={filter.MaxPrice ?? ""}
             onChange={(e) =>
-              handleChange("MaxPrice", e.target.value ? Number(e.target.value) : 0)
+              handleChange(
+                "MaxPrice",
+                e.target.value ? Number(e.target.value) : null
+              )
             }
           />
         </label>

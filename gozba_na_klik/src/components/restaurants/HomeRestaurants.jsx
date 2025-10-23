@@ -121,7 +121,7 @@ const HomeRestaurants = () => {
           ) : restaurants.length === 0 ? (
             <div className="dashboard__empty">
               <h2>Nema dostupnih restorana</h2>
-              <p>Trenutno nema unetih restorana u sistem.</p>
+              <p>Trenutno nema restorana koji su otvoreni.</p>
             </div>
           ) : (
             restaurants.map((r) => (

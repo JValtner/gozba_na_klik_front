@@ -14,7 +14,7 @@
   span,
   select {
     background-color: transparent;
-    border: 2px solid #f97316;
+    border: 1px solid #f97316;
     color: #f97316;
     border-radius: 8px;
     padding: 10px 15px;
@@ -27,7 +27,7 @@
     transition: all 0.3s ease;
 
     &:hover:not(:disabled) {
-      background-color: #f97316;
+      background-color: #fbeade;
       color: #fff;
       transform: scale(1.05);
       box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);

@@ -1,4 +1,5 @@
-.restaurant-filter-section {
+
+.restaurant-filter-section, .meal-filter-section {
   .filter-row {
     display: flex;
     flex-wrap: wrap;
@@ -18,8 +19,8 @@
         flex: 1;
         padding: 10px;
         height: 45px; // same as pagination buttons
-        border: 2px solid #f97316; // orange border
-        border-radius: 8px; // rounded square
+        border: 1px solid #f97316; // orange border
+        border-radius: 5px; // rounded square
         background-color: transparent;
         color: #f97316;
         font-weight: 600;
@@ -29,7 +30,7 @@
         transition: all 0.3s ease;
 
         &:hover {
-          background-color: #f97316;
+          background-color: #fbeade;
           color: #fff;
           transform: scale(1.02);
           box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);

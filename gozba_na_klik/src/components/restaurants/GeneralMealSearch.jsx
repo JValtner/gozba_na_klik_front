@@ -123,7 +123,7 @@ const GeneralMealSearch = () => {
                     ) : meals.length === 0 ? (
                         <div className="dashboard__empty">
                             <h2>Nema dostupnih jela</h2>
-                            <p>Trenutno nema unetih jela u sistem.</p>
+                            <p>Trenutno nema raspolozivih jela.</p>
                         </div>
                     ) : (
                         meals.map((meal) =>

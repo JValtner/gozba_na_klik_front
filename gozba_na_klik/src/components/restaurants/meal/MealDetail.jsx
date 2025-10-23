@@ -66,7 +66,7 @@ export default function MealDetails() {
           Edit
         </button>
         <button className="btn btn--danger" onClick={() => navigate(-1)}>
-          Delete
+          Nazad
         </button>
       </div>
     </div>
