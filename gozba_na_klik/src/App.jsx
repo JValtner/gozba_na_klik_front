@@ -22,6 +22,7 @@ import CreateMeal from "./components/restaurants/meal/CreateMeal";
 import EditMeal from "./components/restaurants/meal/EditMeal";
 import MealDetails from "./components/restaurants/meal/MealDetail";
 import EditUserAlergens from "./components/users/EditUserAlergens";
+import OrderHistoryPage from "./components/orders/OrderHistoryPage";
 
 export default function App() {
   return (
@@ -38,6 +39,11 @@ export default function App() {
             <Route
               path="/profile/:id/alergens"
               element={<EditUserAlergens />}
+            />
+            {/* Ruta za istoriju porudžbina korisnika */}
+            <Route
+              path="/profile/:id/orders"
+              element={<OrderHistoryPage />}
             />
             {/* Admin rute */}
             <Route

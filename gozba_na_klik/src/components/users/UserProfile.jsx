@@ -158,6 +158,19 @@ export default function UserProfile() {
               </button>
             </div>
           </div>
+
+          {/* Istorija porudžbina */}
+          <div className="alergens-section-container">
+            <div className="alergens-title-container">
+              <h2>Istorija porudžbina 📦</h2>
+              <button
+                className="btn btn--primary"
+                onClick={() => navigate(`/profile/${id}/orders`)}
+              >
+                Pregledaj
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>
