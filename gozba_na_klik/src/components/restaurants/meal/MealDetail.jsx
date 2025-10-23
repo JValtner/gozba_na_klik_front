@@ -60,13 +60,13 @@ export default function MealDetails() {
       {/* --- Buttons --- */}
       <div className="meal-details__actions">
         <button
-          className="btn btn--primary"
+          className="btn btn--secondary"
           onClick={() => navigate(`/restaurants/${restaurantId}/menu/${mealId}/edit`)}
         >
           Edit
         </button>
-        <button className="btn btn--danger" onClick={() => navigate(-1)}>
-          Delete
+        <button className="btn btn--secondary" onClick={() => navigate(-1)}>
+          ← Nazad
         </button>
       </div>
     </div>

@@ -25,7 +25,8 @@ import EditUserAlergens from "./components/users/EditUserAlergens";
 import OrderSummary from "./components/orders/OrderSummary";
 import OrderDetails from "./components/orders/OrderDetails";
 import RestaurantOrdersPage from "./components/orders/RestaurantOrdersPage";
-
+import HomeRestaurants from "./components/restaurants/HomeRestaurants";
+import GlobalMealSearch from "./components/restaurants/GeneralMealSearch";
 
 export default function App() {
   return (
@@ -34,10 +35,12 @@ export default function App() {
         <Header />
         <main>
           <Routes>
-            <Route path="/" element={<WelcomePage />} />
+            <Route path="/" element={<HomeRestaurants/>} />
+            <Route path="/search" element={<GlobalMealSearch />} />
             <Route path="/register" element={<RegisterUserForm />} />
+            <Route path="/login" element={<WelcomePage />} />
             <Route path="/profile/:id" element={<UserProfile />} />
-
+            <Route path="/restaurants/home" element={<HomeRestaurants />} />
             {/* Ruta za izmenu korisnikovih alergena */}
             <Route path="/profile/:id/alergens" element={<EditUserAlergens />} />
 

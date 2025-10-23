@@ -13,7 +13,7 @@ const UserTableRow = ({ id, username, email, role, onRoleChange }) => {
           style={{ cursor: role === "Admin" ? "not-allowed" : "pointer" }}
         >
           <option value="User">Kupac</option>
-          <option value="Kurir">Kurir</option>
+          <option value="DeliveryPerson">Dostavljac</option>
           <option value="RestaurantOwner">Vlasnik</option>
           <option value="Admin">Admin</option>
         </select>

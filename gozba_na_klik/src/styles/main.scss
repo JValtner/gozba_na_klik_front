@@ -15,10 +15,13 @@
 @import "meal-details";
 @import "alergens";
 @import "addons";
+@import "filter";
+@import "pagination";
+@import "sort-form";
 @import "user-alergen-form";
 @import "orders";
 @import "./restaurant-orders";
-
+@import "restaurant-buy-card";
 
 * {
   margin: 0;

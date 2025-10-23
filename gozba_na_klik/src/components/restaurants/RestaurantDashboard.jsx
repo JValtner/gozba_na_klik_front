@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../users/UserContext";
 import { getMyRestaurants, deleteRestaurant } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
+import { baseUrl } from "../../config/routeConfig";
 
 
 const RestaurantDashboard = () => {
@@ -86,7 +87,7 @@ const RestaurantDashboard = () => {
               <div key={restaurant.id} className="dashboard__card">
                 {restaurant.photoUrl && (
                   <img
-                    src={`http://localhost:5065${restaurant.photoUrl}`}
+                    src={`${baseUrl}${restaurant.photoUrl}`}
                     alt={restaurant.name}
                     className="restaurant-image"
                   />
