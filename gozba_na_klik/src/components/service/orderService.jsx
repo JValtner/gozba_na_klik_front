@@ -5,6 +5,9 @@ const RESOURCE = "/api/orders";
 export async function getActiveOrderByCourier(userId) {
   const response = await AxiosConfig.get(
     `${RESOURCE}/courier/${userId}/active-pickup`
+  );
+}
+
 export async function getOrderPreview(restaurantId, userId, orderData) {
   const response = await AxiosConfig.post(
     `${RESOURCE}/preview/restaurant/${restaurantId}`,
@@ -47,6 +50,9 @@ export async function getRestaurantOrders(restaurantId, userId, status = "") {
 export async function updateOrderToInDelivery(orderId) {
   const response = await AxiosConfig.put(
     `${RESOURCE}/${orderId}/status/to-in-delivery`
+  );
+}
+
 export async function acceptOrder(orderId, userId, estimatedMinutes) {
   const response = await AxiosConfig.put(
     `${RESOURCE}/${orderId}/accept`,
@@ -63,6 +69,9 @@ export async function acceptOrder(orderId, userId, estimatedMinutes) {
 export async function updateOrderToDelivered(orderId) {
   const response = await AxiosConfig.put(
     `${RESOURCE}/${orderId}/status/to-delivered`
+  );
+}
+
 export async function cancelOrder(orderId, userId, reason) {
   const response = await AxiosConfig.put(
     `${RESOURCE}/${orderId}/cancel`,
