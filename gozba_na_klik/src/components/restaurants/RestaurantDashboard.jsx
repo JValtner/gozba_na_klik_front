@@ -47,7 +47,7 @@ const RestaurantDashboard = () => {
     }
   };
 
-  const handleMenu =(restaurant) => {
+  const handleMenu = (restaurant) => {
     navigate(`/restaurants/${restaurant.id}/menu`);
   };
 
@@ -120,6 +120,12 @@ const RestaurantDashboard = () => {
                     title="Jelovnik"
                   >
                     Menu
+                  </button>
+                  <button
+                    className="btn btn--info"
+                    onClick={() => navigate(`/restaurants/${restaurant.id}/orders`)}
+                  >
+                    Porudžbine
                   </button>
                 </div>
 

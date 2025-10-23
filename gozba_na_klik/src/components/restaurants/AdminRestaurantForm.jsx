@@ -5,7 +5,7 @@ import { getAllRestaurantOwners } from "../service/userService";
 import {
   createRestaurant,
   getRestaurantById,
-  updateRestaurant,
+  updateRestaurantByAdmin,
 } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
 
@@ -27,6 +27,13 @@ const AdminRestaurantForm = () => {
       ownerId: "",
     },
   });
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   useEffect(() => {
     const loadOwners = async () => {
@@ -66,7 +73,7 @@ const AdminRestaurantForm = () => {
     setLoading(true);
     try {
       if (id) {
-        await updateRestaurant(Number(id), restaurant);
+        await updateRestaurantByAdmin(Number(id), restaurant);
       } else {
         await createRestaurant(restaurant);
       }
@@ -84,67 +91,75 @@ const AdminRestaurantForm = () => {
     <div className="edit-restaurant">
       <div className="edit-restaurant__container">
         <div className="edit-restaurant__header">
-          <h1>{id ? "Izmeni Restoran" : "Dodaj Restoran"}</h1>
+          <h1>{id ? "Uredi Restoran" : "Dodaj Restoran"}</h1>
         </div>
 
         {error && <p className="error-span show">{error}</p>}
 
-        <form className="restaurant-form" onSubmit={handleSubmit(onSubmit)}>
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
-            <input
-              id="name"
-              type="text"
-              className="form-input"
-              {...register("name", { required: "Naziv je obavezno polje." })}
-              placeholder="Naziv restorana"
-            />
-            {errors.name && (
-              <span className="error-msg">{errors.name.message}</span>
-            )}
-          </div>
+        {owners.length === 0 ? (
+          <p>
+            Trenutno nema evidentiranih vlasnika restorana kojima bi se dodelio
+            restoran.
+          </p>
+        ) : (
+          <form className="restaurant-form" onSubmit={handleSubmit(onSubmit)}>
+            <div className="form-group">
+              <label htmlFor="name">Naziv</label>
+              <input
+                id="name"
+                type="text"
+                className="form-input"
+                {...register("name", { required: "Naziv je obavezno polje." })}
+                placeholder="Naziv restorana"
+              />
+              {errors.name && (
+                <span className="error-msg">{errors.name.message}</span>
+              )}
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="ownerId">Vlasnik</label>
-            <select
-              id="ownerId"
-              className="form-input"
-              {...register("ownerId", {
-                required: "Morate odabrati vlasnika restorana",
-                valueAsNumber: true,
-              })}
-            >
-              <option value="" disabled hidden>
-                Izaberite vlasnika restorana
-              </option>
-              {owners.map((owner) => (
-                <option key={owner.id} value={owner.id}>
-                  {owner.username}
+            <div className="form-group">
+              <label htmlFor="ownerId">Vlasnik</label>
+              <select
+                id="ownerId"
+                className="form-input"
+                {...register("ownerId", {
+                  required: "Morate odabrati vlasnika restorana",
+                  valueAsNumber: true,
+                })}
+              >
+                <option value="" disabled hidden>
+                  Izaberite vlasnika restorana
                 </option>
-              ))}
-            </select>
-            {errors.ownerId && (
-              <span className="error-msg">{errors.ownerId.message}</span>
-            )}
-          </div>
+                {owners.map((owner) => (
+                  <option key={owner.id} value={owner.id}>
+                    {owner.username}
+                  </option>
+                ))}
+              </select>
+              {errors.ownerId && (
+                <span className="error-msg">{errors.ownerId.message}</span>
+              )}
+            </div>
 
-          <div className="form-actions">
-            <button
-              className="btn btn--primary"
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? "Čuvanje..." : id ? "Sačuvaj" : "Dodaj"}
-            </button>
-            <button
-              className="btn btn--secondary"
-              type="button"
-              onClick={() => navigate("/admin-restaurants")}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+            <div className="form-actions">
+              <button
+                className="btn btn--secondary"
+                type="button"
+                onClick={() => navigate("/admin-restaurants")}
+              >
+                Otkaži
+              </button>
+
+              <button
+                className="btn btn--primary"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? "Čuvanje..." : id ? "💾 Sačuvaj izmene" : "Dodaj"}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

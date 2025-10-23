@@ -17,16 +17,35 @@ export async function getUserById(id) {
   return response.data;
 }
 
+export async function getUserAlergensById(id) {
+  const response = await AxiosConfig.get(`${RESOURCE}/${id}/alergens`);
+  return response.data;
+}
+
 export async function createUser(userData) {
   const response = await AxiosConfig.post(RESOURCE, userData);
   return response.data;
 }
 
 export async function updateUser(id, userData) {
-  const response = await AxiosConfig.put(`${RESOURCE}/${id}`, userData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const response = await AxiosConfig.put(`${RESOURCE}/${id}`, userData);
+  return response.data;
+}
 
+// ADMIN UPDATE USER ROLE
+export async function updateUserRoleByAdmin(id, userData) {
+  const response = await AxiosConfig.put(
+    `${RESOURCE}/${id}/admin-users`,
+    userData
+  );
+  return response.data;
+}
+
+// USER UPDATE USER ALERGENS
+export async function UpdateUserAlergens(id, alergensIds) {
+  const response = await AxiosConfig.put(`${RESOURCE}/${id}/alergens`, {
+    AlergensIds: alergensIds.alergens,
+  });
   return response.data;
 }
 

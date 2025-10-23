@@ -26,7 +26,7 @@ const WelcomePage = () => {
     } else if (userRole === "DeliveryPerson") {
       navigate("/delivery/dashboard", { replace: true });
     } else {
-      navigate(`/profile/${id}`, { replace: true });
+      navigate("/home", { replace: true });
     }
   };
 

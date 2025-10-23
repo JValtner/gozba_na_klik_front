@@ -1,0 +1,278 @@
+.edit-user-alergens-wrapper {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+
+  .alergens-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 1000px;
+    width: 100%;
+    background-color: white;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+
+    .alergens-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid #f3f4f6;
+
+      h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0 0 0.5rem 0;
+      }
+
+      p {
+        font-size: 1.125rem;
+        color: #6b7280;
+        margin: 0;
+      }
+    }
+
+    .alergens-content {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+
+      .alergen-user-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+
+        h3 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+          color: #1f2937;
+          text-align: center;
+        }
+
+        .alergens-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          flex: 1;
+          overflow-y: auto;
+          max-height: 400px;
+        }
+
+        p {
+          color: #6b7280;
+          font-style: italic;
+          text-align: center;
+          padding: 2rem;
+          margin: 0;
+        }
+
+        li {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.75rem 1rem;
+          margin-bottom: 0.5rem;
+          background-color: white;
+          border-radius: 0.5rem;
+          border: 1px solid #e5e7eb;
+          transition: all 0.2s ease;
+
+          &:hover {
+            border-color: #ea580c;
+            box-shadow: 0 2px 8px rgba(234, 88, 12, 0.1);
+          }
+
+          .alergen-name {
+            font-weight: 500;
+            color: #1f2937;
+            flex: 1;
+          }
+
+          .btn {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &.btn--primary {
+              background-color: #ea580c;
+              color: white;
+
+              &:hover {
+                background-color: #c2410c;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(234, 88, 12, 0.3);
+              }
+            }
+
+            &.btn--danger {
+              background-color: #ef4444;
+              color: white;
+
+              &:hover {
+                background-color: #dc2626;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+              }
+            }
+
+            &.btn--small {
+              min-width: 32px;
+              height: 32px;
+              font-size: 0.875rem;
+            }
+          }
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #f3f4f6;
+
+      .btn {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 140px;
+
+        &.btn--primary {
+          background-color: #ea580c;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background-color: #c2410c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+          }
+        }
+
+        &.btn--secondary {
+          background-color: transparent;
+          color: #ea580c;
+          border: 2px solid #ea580c;
+
+          &:hover:not(:disabled) {
+            background-color: #ea580c;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .edit-user-alergens-wrapper {
+    padding: 1rem;
+
+    .alergens-container {
+      padding: 1.5rem;
+
+      .alergens-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+
+        h1 {
+          font-size: 1.75rem;
+        }
+
+        p {
+          font-size: 1rem;
+        }
+      }
+
+      .alergens-content {
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+
+        .alergen-user-column {
+          min-height: 200px;
+
+          .alergens-list {
+            max-height: 300px;
+          }
+        }
+      }
+
+      .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+
+        .btn {
+          width: 100%;
+          min-width: auto;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-user-alergens-wrapper {
+    padding: 0.5rem;
+
+    .alergens-container {
+      padding: 1rem;
+
+      .alergens-header {
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        p {
+          font-size: 0.875rem;
+        }
+      }
+
+      .alergens-content {
+        .alergen-user-column {
+          padding: 1rem;
+
+          h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.75rem;
+          }
+
+          li {
+            padding: 0.5rem 0.75rem;
+
+            .btn {
+              min-width: 28px;
+              height: 28px;
+              font-size: 0.75rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

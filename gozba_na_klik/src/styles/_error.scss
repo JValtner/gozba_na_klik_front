@@ -18,3 +18,29 @@
     transform: translateY(0);
   }
 }
+
+.error-msg {
+  color: #f02849;
+  font-weight: 500;
+}
+
+.status-span {
+  position: fixed; // stoji iznad sadrzaja
+  top: 2rem;
+  right: 2rem;
+  background-color: #095f14;
+  color: #f9fafb;
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  &.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
