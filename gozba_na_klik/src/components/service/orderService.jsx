@@ -1,10 +1,10 @@
 import AxiosConfig from "../../config/axios.config";
 
-const RESOURCE = "api/orders";
+const RESOURCE = "/api/orders";
 
-export async function getActiveOrderByCourier(courierId) {
+export async function getActiveOrderByCourier(userId) {
   const response = await AxiosConfig.get(
-    `${RESOURCE}/courier/${courierId}/active-pickup`
+    `${RESOURCE}/courier/${userId}/active-pickup`
   );
   return response.data;
 }

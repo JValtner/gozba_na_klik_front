@@ -15,13 +15,22 @@ export default function DeliveryDashboard() {
         </div>
 
         <div className="dashboard-cards">
-          <div 
+          <div
             className="dashboard-card"
             onClick={() => navigate("/delivery/schedule")}
           >
             <span className="dashboard-card__icon">📅</span>
             <h3>Radno vreme</h3>
             <p>Podesite vaše radno vreme za svaki dan u nedelji</p>
+          </div>
+
+          <div
+            className="dashboard-card"
+            onClick={() => navigate("/delivery/CourierOrderDashboard")}
+          >
+            <span className="dashboard-card__icon">🚴‍♂️</span>
+            <h3>Aktivne dostave</h3>
+            <p>Pregledajte vaše pristigle dostave</p>
           </div>
         </div>
       </div>

@@ -22,6 +22,8 @@ import CreateMeal from "./components/restaurants/meal/CreateMeal";
 import EditMeal from "./components/restaurants/meal/EditMeal";
 import MealDetails from "./components/restaurants/meal/MealDetail";
 import EditUserAlergens from "./components/users/EditUserAlergens";
+import CourierOrderDashboard from "./components/delivery/CourierOrderDashboard";
+import CourierOrderCard from "./components/delivery/CourierOrderCard";
 
 export default function App() {
   return (
@@ -91,10 +93,6 @@ export default function App() {
               path="/restaurants/:id/employees"
               element={<EmployeesDashboard />}
             />
-            <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
-            <Route path="/delivery/schedule" element={<DeliverySchedule />} />
-            <Route path="/restaurants/:id/menu" element={<Menu />} />
-            <Route path="/restaurants/:id/menu/new" element={<CreateMeal />} />
             <Route
               path="/restaurants/:id/menu/:mealId/edit"
               element={<EditMeal />}
@@ -102,6 +100,20 @@ export default function App() {
             <Route
               path="/restaurants/:id/menu/:mealId"
               element={<MealDetails />}
+            />
+            <Route path="/restaurants/:id/menu" element={<Menu />} />
+            <Route path="/restaurants/:id/menu/new" element={<CreateMeal />} />
+
+            {/* Delivery rute */}
+            <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
+            <Route path="/delivery/schedule" element={<DeliverySchedule />} />
+            <Route
+              path="/delivery/CourierOrderDashboard"
+              element={<CourierOrderDashboard />}
+            />
+            <Route
+              path="/delivery/CourierOrderCard"
+              element={<CourierOrderCard />}
             />
           </Routes>
         </main>
