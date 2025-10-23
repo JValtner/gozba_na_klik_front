@@ -18,18 +18,18 @@ const Pagination = ({
           onClick={() => onPageChange(page - 1)}
           disabled={!hasPreviousPage}
         >
-          ← Prethodna
+          {"<"}
         </button>
 
         <span>
-          Strana {page + 1} od {pageCount} ({totalCount} rezutata)
+          {page + 1} / {pageCount} ({totalCount} hits)
         </span>
 
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={!hasNextPage}
         >
-          Sledeća →
+          {">"}
         </button>
 
         <select
@@ -39,7 +39,7 @@ const Pagination = ({
           }}
         >
           {[5, 10, 20, 50].map((size) => (
-            <option key={size} value={size}>
+            <option key={size} value={size} defaultValue={5}>
               {size} po strani
             </option>
           ))}

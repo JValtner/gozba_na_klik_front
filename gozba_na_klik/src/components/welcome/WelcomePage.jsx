@@ -31,7 +31,7 @@ const WelcomePage = () => {
     } else if (userRole === "Buyer") {
       navigate("/restaurants/home", { replace: true });
     } else {
-      navigate("/login", { replace: true });
+      navigate("/restaurants/home", { replace: true });
     }
   };
 

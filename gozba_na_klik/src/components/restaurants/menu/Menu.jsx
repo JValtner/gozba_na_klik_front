@@ -38,7 +38,7 @@ const Menu = () => {
     loadData()
   }, [id])
 
-  const onEdit = (mealId) => navigate(`/restaurants/${id}/menu/${mealId}/edit`)
+  const onEdit = (meal) => navigate(`/restaurants/${id}/menu/${meal.id}/edit`)
 
   const onDelete = async (mealId) => {
     if (window.confirm("Da li ste sigurni da želite obrisati ovo jelo?")) {

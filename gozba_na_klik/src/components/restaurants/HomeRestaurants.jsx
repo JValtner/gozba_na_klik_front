@@ -77,7 +77,7 @@ const HomeRestaurants = () => {
         {role === "Guest" && (
           <div className="guest-placeholder">
               <div className="guest-login-prompt">
-                <p>Za bolje iskustvo u pretrazi se prijavite</p>
+                <WelcomePage />
               </div>
           </div>
         )}

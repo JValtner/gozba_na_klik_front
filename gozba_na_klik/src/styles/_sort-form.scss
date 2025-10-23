@@ -1,28 +1,53 @@
-.sort-form {
+.sort-form-wrapper {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
 
-  label {
+  .sort-label {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    font-weight: 500;
-    color: #374151;
+    gap: 5px; // gap between arrow and select
 
-    select {
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      background-color: white;
-      font-size: 0.95rem;
-      color: #374151;
+    .arrow {
+      font-size: 2rem; // same approximate size as select
+      color: #000000; // black arrow
+    }
+
+    .sort-select {
+      background-color: transparent;
+      border: 2px solid #f97316; // orange border
+      color: #f97316;
+      border-radius: 8px;
+      padding: 10px;
+      font-weight: 600;
+      height: 45px; // match pagination buttons
+      min-width: 50px;
       cursor: pointer;
+      text-align: center;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+      transition: all 0.3s ease;
+      font-size: 1.2rem; // match arrow size
+
+      &:hover {
+        background-color: #f97316;
+        color: #fff;
+        transform: scale(1.05);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        background-color: #c75c0f;
+        transform: scale(0.95);
+      }
 
       &:focus {
         outline: none;
-        border-color: #ea580c;
-        box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+      }
+
+      option {
+        font-size: 1rem; // smaller for dropdown items
+        text-align: center;
       }
     }
   }

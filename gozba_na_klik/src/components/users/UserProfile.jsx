@@ -71,7 +71,7 @@ export default function UserProfile() {
       await updateUser(Number(id), formData);
 
       alert("Profil je uspešno ažuriran!");
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       setStatusMsg("Greška prilikom ažuriranja profila");
       setTimeout(() => setStatusMsg(""), 3000);
