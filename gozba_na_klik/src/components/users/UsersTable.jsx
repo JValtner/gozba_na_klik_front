@@ -7,18 +7,20 @@ import { getAllUsers, updateUserRoleByAdmin } from "../service/userService";
 const UsersTable = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
+  const [statusMsg, setStatusMsg] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (error) {
+    if (error || statusMsg) {
       const timer = setTimeout(() => {
         setError(""); // uklanja error posle 5 sekundi
+        setStatusMsg("");
       }, 5000);
 
       // Čišćenje timeout-a ako se error promeni ili komponenta unmount-uje
       return () => clearTimeout(timer);
     }
-  }, [error]);
+  }, [error, statusMsg]);
 
   const loadUsers = async () => {
     try {
@@ -52,6 +54,15 @@ const UsersTable = () => {
         prev.map((user) => (user.id === userId ? updatedUser : user))
       );
       console.log(`Uloga korisnika ${userId} promenjena u ${newRole}`);
+      let role = null;
+      if (newRole == "User") {
+        role = "Kupac";
+      } else if (newRole == "DeliveryPerson") {
+        role = "Dostavljač";
+      } else if (newRole == "RestaurantOwner") {
+        role = "Vlasnik restorana";
+      }
+      setStatusMsg(`Uloga korisnika je promenjena u ${role}`);
     } catch (error) {
       console.error("Greska pri promeni uloge:", error);
       setError("Promena uloge nije uspela. Molimo pokusajte ponovo.");
@@ -70,6 +81,7 @@ const UsersTable = () => {
     <div>
       <div className="error-container">
         {error && <span className="error-span show">{error}</span>}
+        {statusMsg && <span className="status-span show">{statusMsg}</span>}
       </div>
       <div className="table-container">
         <div className="title-container">
