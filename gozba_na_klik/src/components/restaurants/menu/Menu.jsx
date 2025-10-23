@@ -5,11 +5,13 @@ import { getRestaurantById } from "../../service/restaurantsService"
 import { getMealsByRestaurantId } from "../../service/menuService"
 import Spinner from "../../spinner/Spinner"
 import MenuItem from "./menuItem"
+import { baseUrl } from "../../../config/routeConfig";
+
 
 const Menu = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { userId } = useUser()
+  const { userId, role} = useUser()
 
   const [restaurant, setRestaurant] = useState(null)
   const [meals, setMeals] = useState([])
@@ -36,7 +38,7 @@ const Menu = () => {
     loadData()
   }, [id])
 
-  const onEdit = (mealId) => navigate(`/restaurants/${id}/menu/${mealId}/edit`)
+  const onEdit = (meal) => navigate(`/restaurants/${id}/menu/${meal.id}/edit`)
 
   const onDelete = async (mealId) => {
     if (window.confirm("Da li ste sigurni da želite obrisati ovo jelo?")) {
@@ -58,7 +60,7 @@ const Menu = () => {
       <div className="restaurant-header">
         <div className="restaurant-image-wrapper">
           <img
-            src={`http://localhost:5065${restaurant.photoUrl}`}
+            src={`${baseUrl}${restaurant.photoUrl}`}
             alt={restaurant.name}
             onError={(e) => (e.target.src = "")}
           />
@@ -68,9 +70,12 @@ const Menu = () => {
         </div>
       </div>
       {/* --- New meal btn --- */}
+      {role==="RestaurantOwner" && (
       <div className="restaurant-meal-new">
         <button className="new-meal-btn" onClick={handleNewMeal}>Add meal</button>
       </div>
+      )}
+      
       {/* --- Meals Section --- */}
       <div className="meals-section">
         <h2>Jelovnik</h2>
