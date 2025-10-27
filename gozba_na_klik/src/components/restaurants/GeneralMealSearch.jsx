@@ -89,7 +89,7 @@ const GeneralMealSearch = () => {
     return (
         <div className="dashboard">
             <div className="dashboard__container">
-                {role === "Buyer" && (
+                {role === "User" && (
                     <div className="dashboard__controls">
                         <MealFilterSection filter={filter} setFilter={setFilter} />
 
