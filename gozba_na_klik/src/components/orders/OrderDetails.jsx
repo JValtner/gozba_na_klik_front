@@ -183,13 +183,13 @@ export default function OrderDetails() {
         <div className="order-details-actions">
           <button
             className="btn btn--secondary"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/")}
           >
             Nazad na početnu
           </button>
           <button
             className="btn btn--primary"
-            onClick={() => navigate(`/customer/restaurants/${order.restaurantId}/menu`)}
+            onClick={() => navigate(`/restaurants/${order.restaurantId}/menu`)}
           >
             Pogledaj meni ponovo
           </button>

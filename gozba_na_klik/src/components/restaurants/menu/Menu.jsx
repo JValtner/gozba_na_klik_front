@@ -4,8 +4,9 @@ import { useUser } from "../../users/UserContext"
 import { getRestaurantById } from "../../service/restaurantsService"
 import { getMealsByRestaurantId } from "../../service/menuService"
 import Spinner from "../../spinner/Spinner"
-import MenuItem from "./menuItem"
+import MenuItem from "../../restaurants/menu/MenuItem"
 import { baseUrl } from "../../../config/routeConfig";
+import { getCartItemCount } from "../../orders/AddToCart";
 
 
 const Menu = () => {
@@ -17,6 +18,7 @@ const Menu = () => {
   const [meals, setMeals] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [cartItemCount, setCartItemCount] = useState(0)
 
   useEffect(() => {
     const loadData = async () => {
@@ -37,6 +39,34 @@ const Menu = () => {
 
     loadData()
   }, [id])
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      if (restaurant) {
+        const count = getCartItemCount(restaurant.id);
+        setCartItemCount(count);
+      }
+    };
+
+    updateCartCount();
+    
+    const interval = setInterval(updateCartCount, 2000);
+    return () => clearInterval(interval);
+  }, [restaurant]);
+
+  const handleGoToCart = () => {
+  if (!restaurant) {
+    console.error("Restaurant nije još učitan!");
+    return;
+  }
+
+  if (cartItemCount === 0) {
+    alert("Korpa je prazna.");
+    return;
+  }
+
+  navigate(`/restaurants/${restaurant.id}/order-summary`);
+};
 
   const onEdit = (meal) => navigate(`/restaurants/${id}/menu/${meal.id}/edit`)
 
@@ -74,6 +104,19 @@ const Menu = () => {
       <div className="restaurant-meal-new">
         <button className="new-meal-btn" onClick={handleNewMeal}>Add meal</button>
       </div>
+      )}
+      
+      {/* --- Cart Button for Buyers --- */}
+      {role === "Buyer" && (
+        <div className="restaurant-cart-button">
+          <button 
+            className="cart-btn" 
+            onClick={handleGoToCart}
+            disabled={cartItemCount === 0}
+          >
+            🛒 Korpa ({cartItemCount})
+          </button>
+        </div>
       )}
       
       {/* --- Meals Section --- */}

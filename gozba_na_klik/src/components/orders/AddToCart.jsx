@@ -1,65 +1,78 @@
-export const addToCart = (restaurantId, meal, quantity = 1, selectedAddons = []) => {
-  const cartKey = `cart_${restaurantId}`;
-  const cart = JSON.parse(localStorage.getItem(cartKey) || "[]");
+export function addToCart(restaurantId, meal, quantity, selectedAddons = []) {
+  if (!meal || !meal.id) {
+    console.error("❌ Pokušaj dodavanja jela bez ID-a u korpu:", meal);
+    return;
+  }
 
-  const existingItemIndex = cart.findIndex(
-    item => item.mealId === meal.id && 
-    JSON.stringify(item.selectedAddons) === JSON.stringify(selectedAddons)
+  const key = `cart_${restaurantId}`;
+  const existingCart = JSON.parse(localStorage.getItem(key)) || [];
+
+  const newItem = {
+    mealId: meal.id,
+    mealName: meal.name,
+    mealImagePath: meal.imagePath,
+    unitPrice: meal.price,
+    quantity: quantity || 1,
+    selectedAddons: selectedAddons || [],
+  };
+
+  const existingIndex = existingCart.findIndex(
+    (item) =>
+      item.mealId === newItem.mealId &&
+      JSON.stringify((item.selectedAddons || []).map(a => a.id).sort()) ===
+        JSON.stringify((newItem.selectedAddons || []).map(a => a.id).sort())
   );
 
-  if (existingItemIndex >= 0) {
-    cart[existingItemIndex].quantity += quantity;
+  if (existingIndex >= 0) {
+    existingCart[existingIndex].quantity += newItem.quantity;
   } else {
-    cart.push({
-      mealId: meal.id,
-      mealName: meal.name,
-      mealImagePath: meal.imagePath,
-      unitPrice: meal.price,
-      quantity: quantity,
-      selectedAddons: selectedAddons
-    });
+    existingCart.push(newItem);
   }
 
-  localStorage.setItem(cartKey, JSON.stringify(cart));
-  return cart;
-};
-
-export const updateCartItemQuantity = (restaurantId, itemIndex, newQuantity) => {
-  const cartKey = `cart_${restaurantId}`;
-  const cart = JSON.parse(localStorage.getItem(cartKey) || "[]");
-  
-  if (itemIndex >= 0 && itemIndex < cart.length) {
-    if (newQuantity > 0) {
-      cart[itemIndex].quantity = newQuantity;
-    } else {
-      cart.splice(itemIndex, 1);
-    }
-    localStorage.setItem(cartKey, JSON.stringify(cart));
+  localStorage.setItem(key, JSON.stringify(existingCart));
+  try {
+    localStorage.setItem("last_cart_restaurant_id", String(restaurantId));
+  } catch (e) {
+    // ignore storage errors
   }
-  
-  return cart;
-};
+}
 
-export const removeFromCart = (restaurantId, index) => {
-  const cartKey = `cart_${restaurantId}`;
-  const cart = JSON.parse(localStorage.getItem(cartKey) || "[]");
-  
+export function getCart(restaurantId) {
+  const key = `cart_${restaurantId}`;
+  const cart = JSON.parse(localStorage.getItem(key)) || [];
+
+  const validCart = cart.filter(item => item.mealId);
+  if (validCart.length !== cart.length) {
+    console.warn("🧹 Uklonjene neispravne stavke bez mealId iz korpe");
+    localStorage.setItem(key, JSON.stringify(validCart));
+  }
+
+  return validCart;
+}
+
+export function removeFromCart(restaurantId, index) {
+  const key = `cart_${restaurantId}`;
+  const cart = getCart(restaurantId);
   cart.splice(index, 1);
-  localStorage.setItem(cartKey, JSON.stringify(cart));
-  return cart;
-};
+  localStorage.setItem(key, JSON.stringify(cart));
+}
 
-export const getCart = (restaurantId) => {
-  const cartKey = `cart_${restaurantId}`;
-  return JSON.parse(localStorage.getItem(cartKey) || "[]");
-};
+export function clearCart(restaurantId) {
+  const key = `cart_${restaurantId}`;
+  localStorage.removeItem(key);
+}
 
-export const clearCart = (restaurantId) => {
-  const cartKey = `cart_${restaurantId}`;
-  localStorage.removeItem(cartKey);
-};
+export function updateCartItemQuantity(restaurantId, index, newQuantity) {
+  const key = `cart_${restaurantId}`;
+  const cart = getCart(restaurantId);
+  if (cart[index]) {
+    cart[index].quantity = newQuantity;
+    localStorage.setItem(key, JSON.stringify(cart));
+  }
+}
 
-export const getCartItemCount = (restaurantId) => {
+export function getCartItemCount(restaurantId) {
+  const key = `cart_${restaurantId}`;
   const cart = getCart(restaurantId);
   return cart.reduce((total, item) => total + item.quantity, 0);
-};
+}
