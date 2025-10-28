@@ -64,6 +64,9 @@ export default function CourierOrderDashboard() {
   };
 
   useEffect(() => {
+    if (order) {
+      return;
+    }
     loadOrder();
 
     const interval = setInterval(() => {
@@ -71,7 +74,7 @@ export default function CourierOrderDashboard() {
     }, 12000);
 
     return () => clearInterval(interval);
-  }, [userId]);
+  }, [userId, order]);
 
   if (loading) return <Spinner />;
 

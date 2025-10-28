@@ -5,7 +5,6 @@ import WelcomePage from "./components/welcome/WelcomePage";
 import RegisterUserForm from "./components/users/RegisterUserForm";
 import UserProfile from "./components/users/UserProfile";
 import UsersTable from "./components/users/UsersTable";
-import AdminRoute from "./components/users/AdminRoute";
 import RestaurantDashboard from "./components/restaurants/RestaurantDashboard";
 import Menu from "./components/restaurants/menu/Menu";
 import EditRestaurant from "./components/restaurants/EditRestaurant";
@@ -29,6 +28,8 @@ import OrderDetails from "./components/orders/OrderDetails";
 import RestaurantOrdersPage from "./components/orders/RestaurantOrdersPage";
 import HomeRestaurants from "./components/restaurants/HomeRestaurants";
 import GlobalMealSearch from "./components/restaurants/GeneralMealSearch";
+import { LOGGED_IN_ROLES } from "./routes/roles";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 export default function App() {
   return (
@@ -37,107 +38,191 @@ export default function App() {
         <Header />
         <main>
           <Routes>
+            {/* SVI */}
             <Route path="/" element={<HomeRestaurants />} />
             <Route path="/search" element={<GlobalMealSearch />} />
             <Route path="/register" element={<RegisterUserForm />} />
             <Route path="/login" element={<WelcomePage />} />
-            <Route path="/profile/:id" element={<UserProfile />} />
             <Route path="/restaurants/home" element={<HomeRestaurants />} />
-            {/* Ruta za izmenu korisnikovih alergena */}
+            <Route path="/restaurants/:id/menu" element={<Menu />} />
+
+            {/* SVI SEM GUEST */}
+            <Route
+              path="/profile/:id"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.EveryRole}>
+                  <UserProfile />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* KUPAC - User */}
             <Route
               path="/profile/:id/alergens"
-              element={<EditUserAlergens />}
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.User}>
+                  <EditUserAlergens />
+                </ProtectedRoute>
+              }
             />
 
-            {/* Ruta za prikaz dostave dostavljaca*/}
-            <Route
-              path="/delivery/CourierOrderDashboard"
-              element={<CourierOrderDashboard />}
-            />
-            <Route
-              path="/delivery/CourierOrderCard"
-              element={<CourierOrderCard />}
-            />
-
-            {/* Admin rute */}
+            {/* ADMIN - Admin */}
             <Route
               path="/admin-users"
               element={
-                <AdminRoute>
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
                   <UsersTable />
-                </AdminRoute>
+                </ProtectedRoute>
               }
             />
             <Route
               path="/admin-restaurants"
               element={
-                <AdminRoute>
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
                   <RestaurantTable />
-                </AdminRoute>
+                </ProtectedRoute>
               }
             />
             <Route
               path="/admin-restaurant-form"
               element={
-                <AdminRoute>
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
                   <AdminRestaurantForm />
-                </AdminRoute>
+                </ProtectedRoute>
               }
             />
             <Route
               path="/admin-restaurant-form/:id"
               element={
-                <AdminRoute>
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
                   <AdminRestaurantForm />
-                </AdminRoute>
+                </ProtectedRoute>
               }
             />
 
-            {/* Restaurant rute */}
+            {/* VLASNIK - RestaurantOwner*/}
             <Route
               path="/restaurants/dashboard"
-              element={<RestaurantDashboard />}
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <RestaurantDashboard />
+                </ProtectedRoute>
+              }
             />
-            <Route path="/restaurants/edit/:id" element={<EditRestaurant />} />
+            <Route
+              path="/restaurants/edit/:id"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <EditRestaurant />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/restaurants/:id/working-hours"
-              element={<WorkingHours />}
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <WorkingHours />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/restaurants/:id/closed-dates"
-              element={<ClosedDates />}
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <ClosedDates />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/restaurants/:id/employees"
-              element={<EmployeesDashboard />}
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <EmployeesDashboard />
+                </ProtectedRoute>
+              }
             />
-
-            {/* Delivery rute */}
-            <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
-            <Route path="/delivery/schedule" element={<DeliverySchedule />} />
-
-            {/* Menu rute (za vlasnike) */}
-            <Route path="/restaurants/:id/menu" element={<Menu />} />
-            <Route path="/restaurants/:id/menu/new" element={<CreateMeal />} />
+            <Route
+              path="/restaurants/:id/menu/new"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <CreateMeal />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/restaurants/:id/menu/:mealId/edit"
-              element={<EditMeal />}
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <EditMeal />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/restaurants/:id/menu/:mealId"
-              element={<MealDetails />}
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <MealDetails />
+                </ProtectedRoute>
+              }
             />
-
-            {/* Order rute */}
             <Route
               path="/restaurants/:restaurantId/orders"
-              element={<RestaurantOrdersPage />}
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <RestaurantOrdersPage />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/restaurants/:restaurantId/order-summary"
-              element={<OrderSummary />}
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <OrderSummary />
+                </ProtectedRoute>
+              }
             />
-            <Route path="/orders/:orderId" element={<OrderDetails />} />
+            <Route
+              path="/orders/:orderId"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                  <OrderDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* DOSTAVLJAC - DeliveryPerson*/}
+            <Route
+              path="/delivery/CourierOrderDashboard"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.DeliveryPerson}>
+                  <CourierOrderDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/delivery/CourierOrderCard"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.DeliveryPerson}>
+                  <CourierOrderCard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/delivery/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.DeliveryPerson}>
+                  <DeliveryDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/delivery/schedule"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.DeliveryPerson}>
+                  <DeliverySchedule />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </main>
         <Footer />
