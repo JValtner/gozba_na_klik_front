@@ -4,15 +4,35 @@ import { useUser } from "../users/UserContext";
 import { getOrderPreview, createOrder } from "../service/orderService";
 import { getRestaurantById } from "../service/restaurantsService";
 import { getUserAddresses, createAddress } from "../service/addressService";
-import {
-  getCart,
-  removeFromCart,
-  clearCart,
-  updateCartItemQuantity,
-} from "../orders/AddToCart";
+import { getCart, removeFromCart, clearCart, updateCartItemQuantity} from "../orders/AddToCart";
 import AllergenWarningModal from "./AllergenWarningModal";
 import Spinner from "../spinner/Spinner";
 import { baseUrl } from "../../config/routeConfig";
+
+const isRestaurantCurrentlyOpen = (restaurant) => {
+  if (!restaurant || !restaurant.workSchedules) return false;
+
+  const now = new Date();
+  const currentDay = now.getDay();
+  const currentTime = now.toTimeString().slice(0, 8);
+  const todayDate = now.toISOString().split('T')[0];
+
+  const isClosedToday = restaurant.closedDates?.some(cd => {
+    const closedDate = new Date(cd.date).toISOString().split('T')[0];
+    return closedDate === todayDate;
+  });
+
+  if (isClosedToday) return false;
+
+  const todaySchedule = restaurant.workSchedules.find(
+    ws => ws.dayOfWeek === currentDay
+  );
+
+  if (!todaySchedule) return false;
+
+  return currentTime >= todaySchedule.openTime && 
+         currentTime <= todaySchedule.closeTime;
+};
 
 export default function OrderSummary() {
   const { restaurantId } = useParams();
@@ -86,21 +106,20 @@ export default function OrderSummary() {
       }
 
       const orderData = {
-        addressId: defaultAddressId,
-        customerNote: "",
-        items: cartData.map((item) => ({
-          mealId: item.mealId,
-          quantity: item.quantity,
-          selectedAddonIds: item.selectedAddons
+        AddressId: defaultAddressId,
+        CustomerNote: "",
+        Items: cartData.map((item) => ({
+          MealId: item.mealId,
+          Quantity: item.quantity,
+          SelectedAddonIds: item.selectedAddons
             ? item.selectedAddons.map((a) => a.id)
             : [],
         })),
-        allergenWarningAccepted: false,
+        AllergenWarningAccepted: false,
       };
 
       const previewData = await getOrderPreview(restaurantId, userId, orderData);
       setPreview(previewData);
-      console.log("=== PREVIEW DATA ===", previewData);
     } catch (err) {
       console.error("Greška pri učitavanju:", err);
       setError(err.response?.data?.error || "Greška pri učitavanju porudžbine.");
@@ -130,22 +149,19 @@ export default function OrderSummary() {
 
     const updatedCart = getCart(restaurantId);
     if (updatedCart.length === 0) {
+      setCart([]);
+      setPreview(null);
       alert("Korpa je prazna. Vraćamo vas nazad.");
-      //navigate(`treba uvezati na josipov deo za meni`);
+      navigate(`/restaurants/${restaurantId}/menu`);
       return;
     }
 
     loadData();
   };
 
-  const handleSubmitOrder = async () => {
+  const submitOrderDirectly = async (allergenAccepted) => {
     if (!addressForm.street || !addressForm.city || !addressForm.postalCode) {
       alert("Molimo popunite sve podatke o adresi.");
-      return;
-    }
-
-    if (preview?.hasAllergens && !allergenWarningAccepted) {
-      setShowAllergenModal(true);
       return;
     }
 
@@ -171,16 +187,16 @@ export default function OrderSummary() {
       }
 
       const orderData = {
-        addressId: finalAddressId,
-        customerNote: customerNote.trim() || null,
-        items: cart.map((item) => ({
-          mealId: item.mealId,
-          quantity: item.quantity,
-          selectedAddonIds: item.selectedAddons
+        AddressId: finalAddressId,
+        CustomerNote: customerNote.trim() || null,
+        Items: cart.map((item) => ({
+          MealId: item.mealId,
+          Quantity: item.quantity,
+          SelectedAddonIds: item.selectedAddons
             ? item.selectedAddons.map((a) => a.id)
             : [],
         })),
-        allergenWarningAccepted: allergenWarningAccepted,
+        AllergenWarningAccepted: allergenAccepted,
       };
 
       const createdOrder = await createOrder(restaurantId, userId, orderData);
@@ -196,21 +212,33 @@ export default function OrderSummary() {
     }
   };
 
+  const handleSubmitOrder = async () => {
+    if (!addressForm.street || !addressForm.city || !addressForm.postalCode) {
+      alert("Molimo popunite sve podatke o adresi.");
+      return;
+    }
+
+    if (preview?.hasAllergens && !allergenWarningAccepted) {
+      setShowAllergenModal(true);
+      return;
+    }
+
+    await submitOrderDirectly(allergenWarningAccepted);
+  };
+
   const handleAllergenAccept = () => {
     setShowAllergenModal(false);
     setAllergenWarningAccepted(true);
-    
-    setTimeout(() => {
-      handleSubmitOrder();
-    }, 100);
+    submitOrderDirectly(true);
   };
 
   const handleAllergenCancel = () => {
     setShowAllergenModal(false);
+    navigate(`/restaurants/${restaurantId}/menu`);
   };
 
   const handleCancel = () => {
-    //navigate(`treba spojiti na josipov deo`);
+    navigate(`/restaurants/${restaurantId}/menu`);
   };
 
   const handleAddressToggle = (checked) => {
@@ -235,53 +263,52 @@ export default function OrderSummary() {
     }
   };
 
-  const handleSavedAddressChange = (addrId) => {
-    setSelectedAddressId(addrId);
-    const addr = savedAddresses.find((a) => a.id === addrId);
-    if (addr) {
+  const handleSavedAddressChange = (addressId) => {
+    const selectedAddr = savedAddresses.find((a) => a.id === addressId);
+    if (selectedAddr) {
       setAddressForm({
-        street: addr.street,
-        city: addr.city,
-        postalCode: addr.postalCode,
-        label: addr.label,
+        street: selectedAddr.street,
+        city: selectedAddr.city,
+        postalCode: selectedAddr.postalCode,
+        label: selectedAddr.label,
       });
+      setSelectedAddressId(addressId);
     }
   };
 
-  if (loading) return <Spinner />;
+  if (loading) {
+    return <Spinner />;
+  }
 
-  if (error && !preview)
+  if (error && cart.length === 0) {
     return (
-      <div className="order-error">
+      <div className="order-summary-page">
         <div className="error-message">
           <p className="error-message__text">{error}</p>
-          <button className="btn btn--primary" onClick={handleCancel}>
+          <button
+            className="btn btn--primary"
+            onClick={() => navigate(`/restaurants/${restaurantId}/menu`)}
+          >
             Nazad na meni
           </button>
         </div>
       </div>
     );
+  }
 
-  if (!preview || !restaurant) return null;
-
-  const isRestaurantClosed = !preview.isRestaurantOpen;
+  const isRestaurantClosed = restaurant && !isRestaurantCurrentlyOpen(restaurant);
 
   return (
-    <div className="order-summary">
-      <div className="order-summary__container">
-        <div className="order-summary__header">
+    <div className="order-summary-page">
+      <div className="order-summary-page__container">
+        <div className="order-summary-page__header">
           <h1>Pregled porudžbine</h1>
-          <p>
-            Restoran: <strong>{preview.restaurantName}</strong>
-          </p>
+          <p>Restoran: {restaurant?.name}</p>
         </div>
 
         {isRestaurantClosed && (
-          <div className="warning-message">
-            <p className="warning-message__text">
-              ⚠️ Restoran je trenutno zatvoren. {preview.closedReason}
-            </p>
-            <p>Ne možete kreirati porudžbinu dok restoran nije otvoren.</p>
+          <div className="restaurant-closed-warning">
+            <p>⚠️ Restoran je trenutno zatvoren. Ne možete kreirati porudžbinu.</p>
           </div>
         )}
 
@@ -292,8 +319,8 @@ export default function OrderSummary() {
         )}
 
         <div className="order-items">
-          <h2>Stavke porudžbine</h2>
-          <div className="order-items__list">
+          <h2>Stavke u korpi</h2>
+          <div className="order-items-list">
             {cart.map((item, index) => (
               <div key={index} className="order-item">
                 <div className="order-item__image">

@@ -2,7 +2,7 @@
 // ORDER SUMMARY
 // ============================================
 
-.order-summary {
+.order-summary, .order-summary-page {
   min-height: 100vh;
   background-color: #f9fafb;
   padding: 2rem;
@@ -115,6 +115,13 @@
     flex-direction: column;
     gap: 1.5rem;
   }
+}
+
+// OrderSummary.jsx koristi klasnu imenicu "order-items-list"
+.order-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .order-item {
@@ -321,7 +328,7 @@
 // ALLERGEN INFO
 // ============================================
 
-.allergen-info {
+.allergen-info, .allergen-notice {
   background-color: #fef2f2;
   border: 2px solid #fca5a5;
   border-radius: 0.5rem;
@@ -378,12 +385,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   padding: 1rem;
+  animation: fadeIn 0.2s ease-in-out;
+  backdrop-filter: blur(2px);
 }
 
 .modal-content {
@@ -896,4 +905,9 @@
       }
     }
   }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
