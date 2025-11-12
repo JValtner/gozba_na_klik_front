@@ -1,0 +1,386 @@
+// ============================================
+// MEAL ORDER MODAL
+// ============================================
+
+.meal-order-modal {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+
+  // Close button
+  .modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+    color: #6b7280;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.2);
+      color: #1f2937;
+    }
+  }
+
+  // Modal header
+  .modal-header {
+    padding: 1.5rem;
+    border-bottom: 2px solid #e5e7eb;
+
+    .meal-image {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .meal-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f3f4f6;
+      font-size: 48px;
+    }
+
+    .meal-info {
+      h2 {
+        margin: 0 0 0.75rem 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .meal-description {
+        color: #6b7280;
+        margin: 0 0 1rem 0;
+        line-height: 1.6;
+        font-size: 0.875rem;
+      }
+
+      .meal-base-price {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #ea580c;
+        margin: 0;
+      }
+    }
+  }
+
+  // Modal body
+  .modal-body {
+    padding: 1.5rem;
+
+    p {
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+
+    // Addons section
+    .addons-section {
+      margin-bottom: 1.5rem;
+
+      h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #374151;
+        margin: 0 0 1rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .addons-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+    }
+
+    // Addon item
+    .addon-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: white;
+
+      &:hover {
+        border-color: #d1d5db;
+        background-color: #f9fafb;
+      }
+
+      &--selected {
+        border-color: #ea580c;
+        background-color: #fff7ed;
+      }
+
+      input[type="checkbox"],
+      input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #ea580c;
+      }
+
+      .addon-name {
+        flex: 1;
+        font-weight: 500;
+        color: #1f2937;
+        font-size: 0.9375rem;
+      }
+
+      .addon-price {
+        font-weight: 600;
+        color: #ea580c;
+        font-size: 0.9375rem;
+      }
+    }
+
+    // Quantity section
+    .quantity-section {
+      margin-bottom: 1.5rem;
+
+      h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #374151;
+        margin: 0 0 1rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        justify-content: center;
+        padding: 1rem;
+        background: #f9fafb;
+        border-radius: 0.5rem;
+
+        .quantity-btn {
+          width: 40px;
+          height: 40px;
+          border: 2px solid #ea580c;
+          background: white;
+          border-radius: 0.5rem;
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: #ea580c;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover:not(:disabled) {
+            background: #ea580c;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(234, 88, 12, 0.2);
+          }
+
+          &:active:not(:disabled) {
+            transform: translateY(0);
+          }
+
+          &:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: #d1d5db;
+            color: #9ca3af;
+          }
+        }
+
+        .quantity-value {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #1f2937;
+          min-width: 50px;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  // Modal footer
+  .modal-footer {
+    padding: 1.5rem;
+    border-top: 2px solid #e5e7eb;
+    background: #f9fafb;
+
+    .total-price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #374151;
+
+      .price-value {
+        color: #ea580c;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        min-width: 120px;
+
+        &--secondary {
+          background: white;
+          color: #374151;
+          border: 2px solid #e5e7eb;
+
+          &:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+          }
+        }
+
+        &--primary {
+          background: #ea580c;
+          color: white;
+
+          &:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// CART BUTTON IN MENU
+// ============================================
+
+.restaurant-cart-button {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 0;
+  width: 60%;
+  margin: 0 auto;
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@media (max-width: 768px) {
+  .meal-order-modal {
+    margin: 1rem;
+    max-height: 95vh;
+
+    .modal-header {
+      padding: 1rem;
+
+      .meal-image {
+        height: 180px;
+      }
+    }
+
+    .modal-body {
+      padding: 1rem;
+
+      .quantity-section {
+        .quantity-controls {
+          gap: 1rem;
+
+          .quantity-btn {
+            width: 36px;
+            height: 36px;
+          }
+        }
+      }
+    }
+
+    .modal-footer {
+      padding: 1rem;
+
+      .modal-actions {
+        flex-direction: column;
+
+        .btn {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .restaurant-cart-button {
+    width: 90%;
+    padding: 0.75rem 0;
+  }
+}
+
+// ============================================
+// MODAL OVERLAY FIX
+// ============================================
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-in-out;
+  backdrop-filter: blur(2px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
