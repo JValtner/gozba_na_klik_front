@@ -2,6 +2,13 @@ import AxiosConfig from "../../config/axios.config";
 
 const RESOURCE = "/api/orders";
 
+export async function getActiveOrderByCourier(userId) {
+  const response = await AxiosConfig.get(
+    `${RESOURCE}/courier/${userId}/active-pickup`
+  );
+  return response.data;
+}
+
 export async function getOrderPreview(restaurantId, userId, orderData) {
   const response = await AxiosConfig.post(
     `${RESOURCE}/preview/restaurant/${restaurantId}`,
@@ -41,6 +48,13 @@ export async function getRestaurantOrders(restaurantId, userId, status = "") {
   return response.data;
 }
 
+export async function updateOrderToInDelivery(orderId) {
+  const response = await AxiosConfig.put(
+    `${RESOURCE}/${orderId}/status/to-in-delivery`
+  );
+  return response.data;
+}
+
 export async function acceptOrder(orderId, userId, estimatedMinutes) {
   const response = await AxiosConfig.put(
     `${RESOURCE}/${orderId}/accept`,
@@ -50,6 +64,13 @@ export async function acceptOrder(orderId, userId, estimatedMinutes) {
         "X-User-Id": userId,
       },
     }
+  );
+  return response.data;
+}
+
+export async function updateOrderToDelivered(orderId) {
+  const response = await AxiosConfig.put(
+    `${RESOURCE}/${orderId}/status/to-delivered`
   );
   return response.data;
 }

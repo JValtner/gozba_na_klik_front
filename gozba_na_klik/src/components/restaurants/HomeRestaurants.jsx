@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../users/UserContext";
-import { getSortedFilteredPagedRestaurants, getSortTypes } from "../service/restaurantsService";
+import {
+  getSortedFilteredPagedRestaurants,
+  getSortTypes,
+} from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
 import Pagination from "../utils/Pagination";
 import SortForm from "../utils/SortForm";
@@ -24,7 +27,7 @@ const HomeRestaurants = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [pageCount, setPageCount] = useState(0);
-  const [filter, setFilter] = useState({Name: null,Address: null});
+  const [filter, setFilter] = useState({ Name: null, Address: null });
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
@@ -36,7 +39,7 @@ const HomeRestaurants = () => {
         console.error("Greška pri učitavanju tipova sortiranja:", err.message);
         setSortTypes([
           { key: "A_Z", name: "Naziv A-Z" },
-          { key: "Z_A", name: "Naziv Z-A" }
+          { key: "Z_A", name: "Naziv Z-A" },
         ]);
       }
     };
@@ -70,21 +73,20 @@ const HomeRestaurants = () => {
     loadData();
   }, [filter, page, pageSize, chosenType]);
 
-
   return (
     <div className="dashboard">
       <div className="dashboard__container">
         {role === "Guest" && (
           <div className="guest-placeholder">
-              <div className="guest-login-prompt">
-                <WelcomePage />
-              </div>
+            <div className="guest-login-prompt">
+              <WelcomePage />
+            </div>
           </div>
         )}
 
         {/* Filter + Sort */}
         <div className="dashboard__controls">
-          {role === "Buyer" && (
+          {role === "User" && (
             <>
               <RestaurantFilterSection filter={filter} setFilter={setFilter} />
 
@@ -129,7 +131,6 @@ const HomeRestaurants = () => {
             ))
           )}
         </div>
-
       </div>
     </div>
   );
