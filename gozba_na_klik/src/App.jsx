@@ -176,7 +176,7 @@ export default function App() {
             <Route
               path="/restaurants/:restaurantId/order-summary"
               element={
-                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                <ProtectedRoute allowedRoles={["Buyer", LOGGED_IN_ROLES.User, LOGGED_IN_ROLES.RestaurantOwner]}>
                   <OrderSummary />
                 </ProtectedRoute>
               }
@@ -184,7 +184,7 @@ export default function App() {
             <Route
               path="/orders/:orderId"
               element={
-                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.RestaurantOwner}>
+                <ProtectedRoute allowedRoles={["Buyer", LOGGED_IN_ROLES.User, LOGGED_IN_ROLES.RestaurantOwner]}>
                   <OrderDetails />
                 </ProtectedRoute>
               }
