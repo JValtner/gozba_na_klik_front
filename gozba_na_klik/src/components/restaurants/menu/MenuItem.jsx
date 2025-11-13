@@ -32,9 +32,8 @@ const MenuItem = ({ meal, onEdit, onDelete }) => {
   };
 
   const handleOrder = () => {
-    navigate(`/restaurants/${meal.restaurant.id}/menu/${meal.id}`);
+    // navigate(`/restaurants/${meal.restaurant.id}/menu/${meal.id}/order`);
   };
-  
 
   const hasSensitiveAllergen = meal.alergens?.some(a =>
     userData?.userAlergens?.some(ua => ua.id === a.id)
