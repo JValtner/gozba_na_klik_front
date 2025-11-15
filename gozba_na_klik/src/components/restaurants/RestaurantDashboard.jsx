@@ -104,26 +104,26 @@ const RestaurantDashboard = () => {
                   </button>
 
                   <button
-                    className="btn btn--secondary"
+                    className="btn btn--danger"
                     onClick={() => handleDelete(restaurant.id, restaurant.name)}
                   >
                     Obriši
                   </button>
                   <button
-                    className="btn btn--info"
+                    className="btn btn--primary"
                     onClick={() => navigate(`/restaurants/${restaurant.id}/employees`)}
                   >
                     Zaposleni
                   </button>
                   <button
-                    className="btn btn--secondary btn--small"
+                    className="btn btn--primary"
                     onClick={() => handleMenu(restaurant)}
                     title="Jelovnik"
                   >
                     Menu
                   </button>
                   <button
-                    className="btn btn--info"
+                    className="btn btn--primary"
                     onClick={() => navigate(`/restaurants/${restaurant.id}/orders`)}
                   >
                     Porudžbine

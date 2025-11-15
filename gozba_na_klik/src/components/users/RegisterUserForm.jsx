@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { register as registerService } from "../service/userService";
 
@@ -27,6 +28,7 @@ export default function RegisterUserForm() {
         email: data.email,
       });
 
+
       setStatusMsg("Uspešno ste se registrovali!");
       // redirect after 2 seconds
       setTimeout(() => {
@@ -43,65 +45,75 @@ export default function RegisterUserForm() {
     }
   };
 
-  return (
-    <div style={{ maxWidth: "400px", margin: "50px auto" }}>
-      <h2>Registracija korisnika</h2>
+    return (
+        <div className="welcome-page">
+            <div className="welcome-page__content">
+                <div className="welcome-page__right">
+                    <div className="login-form-container">
+                        <div className="login-form__header">
+                            <h1 className="login-form__title">Registracija korisnika</h1>
+                            <p className="login-form__subtitle">Kreirajte novi nalog</p>
+                        </div>
 
-      {/* Status and error messages */}
-      {statusMsg && (
-        <div style={{ color: "green", marginBottom: "10px" }}>{statusMsg}</div>
-      )}
-      {errorMsg && (
-        <div style={{ color: "red", marginBottom: "10px" }}>{errorMsg}</div>
-      )}
+                        <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
+                            <div className="form-group">
+                                <label className="form-label">Korisničko ime</label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    {...register("username", { required: "Korisničko ime je obavezno" })}
+                                />
+                                {errors.username && (
+                                    <p className="error-message__text">{errors.username.message}</p>
+                                )}
+                            </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label>Korisničko ime</label>
-          <input
-            type="text"
-            {...register("username", { required: "Korisničko ime je obavezno" })}
-            disabled={isLoading}
-          />
-          {errors.username && (
-            <p style={{ color: "red" }}>{errors.username.message}</p>
-          )}
+                            <div className="form-group">
+                                <label className="form-label">Lozinka</label>
+                                <input
+                                    type="password"
+                                    className="form-input"
+                                    {...register("password", { required: "Lozinka je obavezna" })}
+                                />
+                                {errors.password && (
+                                    <p className="error-message__text">{errors.password.message}</p>
+                                )}
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Email</label>
+                                <input
+                                    type="email"
+                                    className="form-input"
+                                    {...register("email", {
+                                        required: "Email je obavezan",
+                                        pattern: {
+                                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                            message: "Unesite validan email",
+                                        },
+                                    })}
+                                />
+                                {errors.email && (
+                                    <p className="error-message__text">{errors.email.message}</p>
+                                )}
+                            </div>
+
+                            <button type="submit" className="btn btn--primary btn--full-width">
+                                Registruj se
+                            </button>
+                        </form>
+
+                        <div className="login-form__footer">
+                            <p className="footer-text">
+                                Već imate nalog?{" "}
+                                <Link to="/login" style={{ color: "#ea580c", textDecoration: "none", fontWeight: 600 }}>
+                                    Prijavite se
+                                </Link>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div>
-          <label>Lozinka</label>
-          <input
-            type="password"
-            {...register("password", { required: "Lozinka je obavezna" })}
-            disabled={isLoading}
-          />
-          {errors.password && (
-            <p style={{ color: "red" }}>{errors.password.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            {...register("email", {
-              required: "Email je obavezan",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Unesite validan email",
-              },
-            })}
-            disabled={isLoading}
-          />
-          {errors.email && (
-            <p style={{ color: "red" }}>{errors.email.message}</p>
-          )}
-        </div>
-
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "Registracija..." : "Registruj se"}
-        </button>
-      </form>
-    </div>
   );
 }
