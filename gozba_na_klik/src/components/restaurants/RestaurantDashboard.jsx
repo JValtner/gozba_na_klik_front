@@ -8,7 +8,7 @@ import { baseUrl } from "../../config/routeConfig";
 
 const RestaurantDashboard = () => {
   const navigate = useNavigate();
-  const { userId } = useUser();
+  const { user } = useUser();
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -17,7 +17,7 @@ const RestaurantDashboard = () => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const data = await getMyRestaurants();
+        const data = await getMyRestaurants(user.id);
         setRestaurants(data);
       } catch (err) {
         setError("Greška pri učitavanju.");

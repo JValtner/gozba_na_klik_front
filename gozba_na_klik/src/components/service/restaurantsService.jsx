@@ -71,8 +71,8 @@ export const getSortTypes = async () => {
 };
 
 // GET moji restorani
-export async function getMyRestaurants() {
-  const response = await AxiosConfig.get("/api/restaurants/my");
+export async function getMyRestaurants(userId) {
+  const response = await AxiosConfig.get(`/api/restaurants/${userId}/my`);
   return response.data;
 }
 

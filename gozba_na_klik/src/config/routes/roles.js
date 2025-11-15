@@ -4,6 +4,7 @@ export const ALL_ROLES = {
   Admin: "Admin",
   RestaurantOwner: "RestaurantOwner",
   DeliveryPerson: "DeliveryPerson",
+  RestaurantEmployee: "RestaurantEmployee",
 };
 
 export const LOGGED_IN_ROLES = {
@@ -11,5 +12,6 @@ export const LOGGED_IN_ROLES = {
   Admin: "Admin",
   RestaurantOwner: "RestaurantOwner",
   DeliveryPerson: "DeliveryPerson",
+  RestaurantEmployee: "RestaurantEmployee",
   EveryRole: ["User", "Admin", "RestaurantOwner", "DeliveryPerson"],
 };
