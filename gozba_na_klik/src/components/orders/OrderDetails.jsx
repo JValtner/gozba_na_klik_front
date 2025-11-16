@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { baseUrl } from "../../config/routeConfig";
 import Spinner from "../spinner/Spinner";
 import AxiosConfig from "../../config/axios.config";
+import InvoiceButton from "../invoices/InvoiceButton";
 
 export default function OrderDetails() {
   const { orderId } = useParams();
@@ -29,30 +30,28 @@ export default function OrderDetails() {
   }, [orderId]);
 
   const getStatusLabel = (status) => {
-    const statusMap = {
-      "NA_CEKANJU": "Na čekanju",
-      "PRIHVAĆENA": "Prihvaćena",
-      "U_PRIPREMI": "U pripremi",
-      "SPREMNA": "Spremna",
-      "U_DOSTAVI": "U dostavi",
-      "ISPORUČENA": "Isporučena",
-      "OTKAZANA": "Otkazana"
-    };
-    return statusMap[status] || status;
+  const statusMap = {
+    "NA_CEKANJU": "Na čekanju",
+    "PRIHVAĆENA": "Prihvaćena",
+    "PREUZIMANJE U TOKU": "Preuzimanje u toku",
+    "DOSTAVA U TOKU": "U dostavi",
+    "ZAVRŠENO": "Završeno",
+    "OTKAZANA": "Otkazana"
   };
+  return statusMap[status] || status;
+};
 
   const getStatusColor = (status) => {
-    const statusColors = {
-      "NA_CEKANJU": "#f59e0b",
-      "PRIHVAĆENA": "#10b981",
-      "U_PRIPREMI": "#3b82f6",
-      "SPREMNA": "#8b5cf6",
-      "U_DOSTAVI": "#6366f1",
-      "ISPORUČENA": "#10b981",
-      "OTKAZANA": "#ef4444"
-    };
-    return statusColors[status] || "#6b7280";
+  const statusColors = {
+    "NA_CEKANJU": "#f59e0b",
+    "PRIHVAĆENA": "#10b981",
+    "PREUZIMANJE U TOKU": "#8b5cf6",
+    "DOSTAVA U TOKU": "#6366f1",
+    "ZAVRŠENO": "#10b981",
+    "OTKAZANA": "#ef4444"
   };
+  return statusColors[status] || "#6b7280";
+};
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString("sr-RS", {
@@ -89,11 +88,22 @@ export default function OrderDetails() {
             <h1>Porudžbina #{order.id}</h1>
             <p>Kreirana: {formatDate(order.orderDate)}</p>
           </div>
-          <div 
-            className="order-status-badge"
-            style={{ backgroundColor: getStatusColor(order.status) }}
-          >
-            {getStatusLabel(order.status)}
+          <div className="order-details-page__header-actions">
+            <div 
+              className="order-status-badge"
+              style={{ backgroundColor: getStatusColor(order.status) }}
+            >
+              {getStatusLabel(order.status)}
+            </div>
+            
+            <InvoiceButton 
+              orderId={order.id}
+              orderStatus={order.status}
+              variant="primary"
+              size="normal"
+            >
+              Prikaži račun
+            </InvoiceButton>
           </div>
         </div>
 
@@ -187,6 +197,16 @@ export default function OrderDetails() {
           >
             Nazad na početnu
           </button>
+          
+          <InvoiceButton 
+            orderId={order.id}
+            orderStatus={order.status}
+            variant="secondary"
+            size="normal"
+          >
+             Račun
+          </InvoiceButton>
+          
           <button
             className="btn btn--primary"
             onClick={() => navigate(`/restaurants/${order.restaurantId}/menu`)}

@@ -6,7 +6,7 @@ import { getUserById } from "../../service/userService";
 import { addToCart } from "../../orders/AddToCart";
 import MealOrderModal from "../meal/MealOrderModal";
 
-const MenuItem = ({ meal, onEdit, onDelete }) => {
+const MenuItem = ({ meal, onEdit, onDelete, isOwner }) => {
   const navigate = useNavigate();
   const { userId, role } = useUser();
   const [userData, setUserData] = useState(null);
@@ -113,7 +113,7 @@ const MenuItem = ({ meal, onEdit, onDelete }) => {
 
           {/* --- Actions --- */}
           <div className="meal-card__actions">
-            {role === "RestaurantOwner" && (
+            {isOwner && (
               <>
                 <button className="btn btn--primary" onClick={handleDetails}>
                   Izmeni detalje

@@ -19,6 +19,7 @@ const Menu = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [cartItemCount, setCartItemCount] = useState(0)
+  const [isOwner, setIsOwner] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
@@ -26,6 +27,13 @@ const Menu = () => {
         setLoading(true)
         const restaurantData = await getRestaurantById(id)
         setRestaurant(restaurantData)
+
+        // Check if current user is the owner of this restaurant
+        const userIsOwner = role === "RestaurantOwner" && 
+                           userId && 
+                           restaurantData.ownerId && 
+                           Number(userId) === Number(restaurantData.ownerId)
+        setIsOwner(userIsOwner)
 
         const mealsData = await getMealsByRestaurantId(restaurantData.id)
         setMeals(mealsData)
@@ -38,7 +46,7 @@ const Menu = () => {
     }
 
     loadData()
-  }, [id])
+  }, [id, userId, role])
 
   useEffect(() => {
     const updateCartCount = () => {
@@ -100,7 +108,7 @@ const Menu = () => {
         </div>
       </div>
       {/* --- New meal btn --- */}
-      {role==="RestaurantOwner" && (
+      {isOwner && (
       <div className="restaurant-meal-new">
         <button className="new-meal-btn" onClick={handleNewMeal}>Add meal</button>
       </div>
@@ -127,7 +135,7 @@ const Menu = () => {
         ) : (
           <div className="meals-grid">
             {meals.map((meal) => (
-              <MenuItem key={meal.id} meal={meal} onEdit={onEdit} onDelete={onDelete} />
+              <MenuItem key={meal.id} meal={meal} onEdit={onEdit} onDelete={onDelete} isOwner={isOwner} />
             ))}
           </div>
         )}

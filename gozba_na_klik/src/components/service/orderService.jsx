@@ -87,3 +87,75 @@ export async function cancelOrder(orderId, userId, reason) {
   );
   return response.data;
 }
+
+export async function getUserOrderHistory(userId, statusFilter = null, page = 1, pageSize = 10) {
+  try {
+    const params = {
+      page,
+      pageSize
+    };
+
+    if (statusFilter) {
+      params.statusFilter = statusFilter;
+    }
+
+    const response = await AxiosConfig.get(`${RESOURCE}/user/${userId}`, {
+      params,
+      headers: {
+        "X-User-Id": userId
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user order history:', error);
+    
+    if (error.response?.status === 401) {
+      throw new Error('Nemate dozvolu da vidite ove porudžbine');
+    } else if (error.response?.status === 404) {
+      throw new Error('Korisnik nije pronađen');
+    } else {
+      throw new Error('Greška pri učitavanju istorije porudžbina');
+    }
+  }
+}
+
+export async function getUserOrderById(orderId, userId) {
+  try {
+    const response = await AxiosConfig.get(`${RESOURCE}/${orderId}`, {
+      headers: {
+        "X-User-Id": userId
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user order:', error);
+    
+    if (error.response?.status === 401) {
+      throw new Error('Nemate dozvolu da vidite ovu porudžbinu');
+    } else if (error.response?.status === 404) {
+      throw new Error('Porudžbina nije pronađena');
+    } else {
+      throw new Error('Greška pri učitavanju porudžbine');
+    }
+  }
+}
+
+export const ORDER_STATUS_LABELS = {
+  "NA_CEKANJU": "Na čekanju",
+  "PRIHVAĆENA": "Prihvaćena", 
+  "PREUZIMANJE U TOKU": "Preuzimanje u toku",
+  "DOSTAVA U TOKU": "U dostavi",
+  "ZAVRŠENO": "Završeno",
+  "OTKAZANA": "Otkazana"
+};
+
+export const ORDER_STATUS_COLORS = {
+  "NA_CEKANJU": "#f59e0b",
+  "PRIHVAĆENA": "#10b981",
+  "PREUZIMANJE U TOKU": "#8b5cf6",
+  "DOSTAVA U TOKU": "#6366f1",
+  "ZAVRŠENO": "#10b981",
+  "OTKAZANA": "#ef4444"
+};

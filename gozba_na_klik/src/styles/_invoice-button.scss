@@ -1,0 +1,164 @@
+.invoice-button-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.invoice-button-error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin-top: 4px;
+  padding: 8px 12px;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .error-message__text {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.btn--loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.8;
+
+  .loading-spinner--small {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 6px;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+.order-details-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.order-details-page__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+
+.order-status-badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.btn--primary:has-text("📄") {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: none;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+    transform: translateY(-1px);
+  }
+}
+
+.btn--secondary:has-text("📄") {
+  background: white;
+  border: 2px solid #e5e7eb;
+  color: #374151;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+  }
+}
+
+.btn--small {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .invoice-button-wrapper {
+    width: 100%;
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .order-details-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+
+.invoice-button-wrapper:hover {
+  .invoice-button-error {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+}
+
+.btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+@media print {
+  .invoice-button-wrapper,
+  .order-details-actions {
+    display: none !important;
+  }
+}
