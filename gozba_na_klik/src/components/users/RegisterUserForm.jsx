@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { register as registerService } from "../service/userService";
+import Spinner from "../spinner/Spinner";
 
 export default function RegisterUserForm() {
   const navigate = useNavigate();
@@ -38,9 +39,9 @@ export default function RegisterUserForm() {
         error.response?.data?.message ||
         "Greška pri registraciji. Pokušajte ponovo.";
       setErrorMsg(msg);
+      setTimeout(() => setErrorMsg(""), 3000);
     } finally {
       setIsLoading(false);
-      setErrorMsg("");
     }
   };
 
@@ -53,7 +54,12 @@ export default function RegisterUserForm() {
                             <h1 className="login-form__title">Registracija korisnika</h1>
                             <p className="login-form__subtitle">Kreirajte novi nalog</p>
                         </div>
-
+                        {isLoading && <Spinner />}
+                        <div className="status-messages">
+                            {isLoading && <Spinner />}
+                            {statusMsg && <p className="status-message__text">{statusMsg}</p>}
+                            {errorMsg && <p className="error-message__text">{errorMsg}</p>}
+                        </div>
                         <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
                             <div className="form-group">
                                 <label className="form-label">Korisničko ime</label>
