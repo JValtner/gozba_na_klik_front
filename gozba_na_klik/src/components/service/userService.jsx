@@ -103,3 +103,33 @@ export async function deleteUser(id) {
   const response = await AxiosConfig.delete(`${RESOURCE}/${id}`);
   return response.data;
 }
+export async function UseStrong(length) 
+{
+  if(!length || length < 8) length = 10; // default length
+  
+  const lowercase = "abcdefghijklmnopqrstuvwxyz";
+  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers = "0123456789";
+  const special = "!@#$%^&*()-_=+[]{};:,.<>?";
+
+  // Ensure at least one of each required type
+  let password = "";
+  password += uppercase[Math.floor(Math.random() * uppercase.length)];
+  password += special[Math.floor(Math.random() * special.length)];
+  password += numbers[Math.floor(Math.random() * numbers.length)];
+
+  // Fill the rest with a mix
+  const allChars = lowercase + uppercase + numbers + special;
+  for (let i = password.length; i < length; i++) {
+    password += allChars[Math.floor(Math.random() * allChars.length)];
+  }
+
+  // Shuffle to avoid predictable placement
+  return password
+    .split("")
+    .sort(() => Math.random() - 0.5)
+    .join("");
+}
+
+  
+

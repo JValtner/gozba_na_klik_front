@@ -1,49 +1,62 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { register as registerService } from "../service/userService";
+import { UseStrong, register as registerService } from "../service/userService";
 import Spinner from "../spinner/Spinner";
 
 export default function RegisterUserForm() {
-  const navigate = useNavigate();
-  const [statusMsg, setStatusMsg] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
-  const onSubmit = async (data) => {
-    setIsLoading(true);
-    setErrorMsg("");
-    setStatusMsg("");
-
-    try {
-      await registerService({
-        username: data.username,
-        password: data.password,
-        email: data.email,
-      });
+    const navigate = useNavigate();
+    const [statusMsg, setStatusMsg] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [strongPassword, setStrongPassword] = useState(UseStrong(10));
 
 
-      setStatusMsg("Uspešno ste se registrovali!");
-      // redirect after 2 seconds
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
-    } catch (error) {
-      const msg =
-        error.response?.data?.message ||
-        "Greška pri registraciji. Pokušajte ponovo.";
-      setErrorMsg(msg);
-      setTimeout(() => setErrorMsg(""), 3000);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        formState: { errors },
+    } = useForm();
+
+    useEffect(() => {
+        const generatePassword = async () => {
+            const pwd = await UseStrong(10);
+            setStrongPassword(pwd);
+            setValue("password", pwd);
+        };
+        generatePassword();
+    }, [setValue]);
+
+    const onSubmit = async (data) => {
+        setIsLoading(true);
+        setErrorMsg("");
+        setStatusMsg("");
+
+        try {
+            await registerService({
+                username: data.username,
+                password: data.password,
+                email: data.email,
+            });
+
+
+            setStatusMsg("Uspešno ste se registrovali!");
+            // redirect after 2 seconds
+            setTimeout(() => {
+                navigate("/");
+            }, 2000);
+        } catch (error) {
+            const msg =
+                error.response?.data?.message ||
+                "Greška pri registraciji. Pokušajte ponovo.";
+            setErrorMsg(msg);
+            setTimeout(() => setErrorMsg(""), 3000);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="welcome-page">
@@ -76,10 +89,38 @@ export default function RegisterUserForm() {
                             <div className="form-group">
                                 <label className="form-label">Lozinka</label>
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     className="form-input"
-                                    {...register("password", { required: "Lozinka je obavezna" })}
+                                    {...register("password", {
+                                        required: "Lozinka je obavezna",
+                                        minLength: {
+                                            value: 10,
+                                            message: "Lozinka mora imati najmanje 10 karaktera",
+                                        },
+                                        validate: {
+                                            hasUppercase: (value) =>
+                                                /[A-Z]/.test(value) || "Lozinka mora sadržati barem jedno veliko slovo",
+                                            hasNumber: (value) =>
+                                                /\d/.test(value) || "Lozinka mora sadržati barem jedan broj",
+                                            hasSpecial: (value) =>
+                                                /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
+                                                "Lozinka mora sadržati barem jedan specijalni znak",
+                                        },
+                                    })}
+                                    defaultValue={strongPassword}
                                 />
+
+                                {/* 👇 button that shows password while pressed */}
+                                <button
+                                    type="button"
+                                    className="show-password-btn"
+                                    onMouseDown={() => setShowPassword(true)}
+                                    onMouseUp={() => setShowPassword(false)}
+                                    onMouseLeave={() => setShowPassword(false)}
+                                >
+                                    👁
+                                </button>
+
                                 {errors.password && (
                                     <p className="error-message__text">{errors.password.message}</p>
                                 )}
@@ -120,5 +161,5 @@ export default function RegisterUserForm() {
                 </div>
             </div>
         </div>
-  );
+    );
 }
