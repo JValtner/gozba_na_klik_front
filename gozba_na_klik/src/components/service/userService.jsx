@@ -130,6 +130,16 @@ export async function UseStrong(length)
     .sort(() => Math.random() - 0.5)
     .join("");
 }
+export function getPasswordStrength(password) {
+  let score = 0;
+  if (password.length >= 10) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/\d/.test(password)) score++;
+  if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
+
+  return score; // 0–4
+}
+
 
   
 
