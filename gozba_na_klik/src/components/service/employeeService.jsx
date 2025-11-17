@@ -2,9 +2,7 @@ import AxiosConfig from "../../config/axios.config";
 
 // GET employees by restaurant
 export const getEmployeesByRestaurant = async (restaurantId, ownerId) => {
-  const response = await AxiosConfig.get(`/api/Employee/restaurant/${restaurantId}`, {
-    headers: { "X-User-Id": ownerId }
-  });
+  const response = await AxiosConfig.get(`/api/Employee/restaurant/${restaurantId}&ownerId=${ownerId}`);
   return response.data;
 };
 

@@ -1,67 +1,99 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  getToken,
+  setToken,
+  removeToken,
+  login as loginService,
+  register as registerService,
+  getCurrentProfile,
+  getUserRolesFromToken,
+  logout as logoutService,
+} from "../service/userService";
 
-const UserContext = createContext();
+const UserContext = createContext(null);
+export const useUser = () => useContext(UserContext);
 
-export function UserProvider({ children }) {
-  const [username, setUsername] = useState(() => {
-    return localStorage.getItem("username") || null;
-  });
+export default function UserProvider({ children }) {
+  const [token, setTokenState] = useState(() => getToken());
+  const [user, setUser] = useState(null);
+  const [roles, setRoles] = useState(() => getUserRolesFromToken(getToken()));
+  const [loading, setLoading] = useState(Boolean(token));
 
-  const [userId, setUserId] = useState(() => {
-    const storedId = localStorage.getItem("userId");
-    return storedId ? Number(storedId) : null;
-  });
-
-  // Default to "Guest" if nothing is in localStorage
-  const [role, setRole] = useState(() => {
-    return localStorage.getItem("role") || "Guest";
-  });
-
+  // Load profile when token exists
   useEffect(() => {
-    if (username && userId) {
-      localStorage.setItem("username", username);
-      localStorage.setItem("userId", userId);
-      localStorage.setItem("role", role);
-    } else {
-      // if logged out, keep role as Guest instead of removing it
-      localStorage.removeItem("username");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("token");
-      localStorage.setItem("role", "Guest");
-      setRole("Guest");
+    if (!token) {
+      setLoading(false);
+      setUser(null);
+      setRoles([]);
+      return;
     }
-  }, [username, userId, role]);
 
-  function logout() {
-    setUsername(null);
-    setUserId(null);
-    setRole("Guest"); // explicitly set Guest on logout
-    localStorage.removeItem("username");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("token");
-    localStorage.setItem("role", "Guest");
+    let mounted = true;
+    setLoading(true);
+
+    getCurrentProfile()
+      .then((data) => mounted && setUser(data))
+      .catch(() => {
+        logoutService();
+        removeToken();
+        setTokenState(null);
+        setUser(null);
+        setRoles([]);
+      })
+      .finally(() => mounted && setLoading(false));
+
+    return () => {
+      mounted = false;
+    };
+  }, [token]);
+
+  const login = async (credentials) => {
+  const data = await loginService(credentials);
+  const t = typeof data === "string" ? data : data.token ?? data.accessToken;
+
+  if (t) {
+    setToken(t);
+    setTokenState(t);
+    setRoles(getUserRolesFromToken(t));
+
+    // fetch profile immediately after login
+    const profile = await getCurrentProfile();
+    setUser(profile);
+
+    // return the token you just stored
+    return t;
   }
 
-  const isAuth = !!username;
+  return null;
+};
+
+
+  const register = async (payload) => {
+    await registerService(payload);
+  };
+
+  const logout = () => {
+    logoutService();
+    removeToken();
+    setTokenState(null);
+    setUser(null);
+    setRoles([]);
+  };
 
   return (
     <UserContext.Provider
       value={{
-        username,
-        setUsername,
-        userId,
-        setUserId,
-        isAuth,
+        user,
+        role: roles?.[0] || null,
+        token,
+        loading,
+        isAuth: Boolean(user),
+        login,
+        register,
         logout,
-        role,
-        setRole,
       }}
     >
       {children}
     </UserContext.Provider>
   );
-}
-
-export function useUser() {
-  return useContext(UserContext);
 }

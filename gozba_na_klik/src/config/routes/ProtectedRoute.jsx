@@ -1,5 +1,5 @@
 import React from "react";
-import { useUser } from "../components/users/UserContext";
+import { useUser } from "../../components/users/UserContext";
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ allowedRoles, children }) => {
