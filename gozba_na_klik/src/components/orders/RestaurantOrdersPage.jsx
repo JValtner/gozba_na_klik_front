@@ -8,6 +8,7 @@ import {
 } from "../service/orderService";
 import Spinner from "../spinner/Spinner";
 import InvoiceButton from "../invoices/InvoiceButton";
+import { getStatusLabel } from "../../constants/orderConstants";
 import "../../styles/_restaurant-orders.scss";
 
 const RestaurantOrdersPage = () => {
@@ -65,19 +66,6 @@ const RestaurantOrdersPage = () => {
     }
   };
 
-  const getStatusLabel = (status) => {
-    const statusMap = {
-      "NA_CEKANJU": "Na čekanju",
-      "PRIHVAĆENA": "Prihvaćena",
-      "U_PRIPREMI": "U pripremi",
-      "SPREMNA": "Spremna",
-      "U_DOSTAVI": "U dostavi",
-      "ISPORUČENA": "Isporučena",
-      "ZAVRŠENO": "Završeno",
-      "OTKAZANA": "Otkazana"
-    };
-    return statusMap[status] || status;
-  };
 
   if (loading) return <Spinner />;
 

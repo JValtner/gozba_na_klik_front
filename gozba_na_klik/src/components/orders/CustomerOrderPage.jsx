@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../users/UserContext";
-import { 
-  getUserOrderHistory, 
-  ORDER_STATUS_LABELS, 
-  ORDER_STATUS_COLORS 
-} from "../service/orderService";
+import { getUserOrderHistory } from "../service/orderService";
+import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "../../constants/orderConstants";
 import InvoiceButton from "../invoices/InvoiceButton";
 import Spinner from "../spinner/Spinner";
 import Pagination from "../utils/Pagination";

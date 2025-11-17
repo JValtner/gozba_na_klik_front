@@ -141,21 +141,3 @@ export async function getUserOrderById(orderId, userId) {
     }
   }
 }
-
-export const ORDER_STATUS_LABELS = {
-  "NA_CEKANJU": "Na čekanju",
-  "PRIHVAĆENA": "Prihvaćena", 
-  "PREUZIMANJE U TOKU": "Preuzimanje u toku",
-  "DOSTAVA U TOKU": "U dostavi",
-  "ZAVRŠENO": "Završeno",
-  "OTKAZANA": "Otkazana"
-};
-
-export const ORDER_STATUS_COLORS = {
-  "NA_CEKANJU": "#f59e0b",
-  "PRIHVAĆENA": "#10b981",
-  "PREUZIMANJE U TOKU": "#8b5cf6",
-  "DOSTAVA U TOKU": "#6366f1",
-  "ZAVRŠENO": "#10b981",
-  "OTKAZANA": "#ef4444"
-};

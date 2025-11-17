@@ -4,6 +4,7 @@ import { baseUrl } from "../../config/routeConfig";
 import Spinner from "../spinner/Spinner";
 import AxiosConfig from "../../config/axios.config";
 import InvoiceButton from "../invoices/InvoiceButton";
+import { getStatusLabel, getStatusColor } from "../../constants/orderConstants";
 
 export default function OrderDetails() {
   const { orderId } = useParams();
@@ -29,29 +30,6 @@ export default function OrderDetails() {
     loadOrder();
   }, [orderId]);
 
-  const getStatusLabel = (status) => {
-  const statusMap = {
-    "NA_CEKANJU": "Na čekanju",
-    "PRIHVAĆENA": "Prihvaćena",
-    "PREUZIMANJE U TOKU": "Preuzimanje u toku",
-    "DOSTAVA U TOKU": "U dostavi",
-    "ZAVRŠENO": "Završeno",
-    "OTKAZANA": "Otkazana"
-  };
-  return statusMap[status] || status;
-};
-
-  const getStatusColor = (status) => {
-  const statusColors = {
-    "NA_CEKANJU": "#f59e0b",
-    "PRIHVAĆENA": "#10b981",
-    "PREUZIMANJE U TOKU": "#8b5cf6",
-    "DOSTAVA U TOKU": "#6366f1",
-    "ZAVRŠENO": "#10b981",
-    "OTKAZANA": "#ef4444"
-  };
-  return statusColors[status] || "#6b7280";
-};
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString("sr-RS", {
