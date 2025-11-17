@@ -1,6 +1,6 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { updateUser } from "../service/userService";
 import { baseUrl } from "../../config/routeConfig";
 import { useUser } from "./UserContext";
