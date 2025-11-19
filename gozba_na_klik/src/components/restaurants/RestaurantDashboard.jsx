@@ -8,7 +8,7 @@ import { baseUrl } from "../../config/routeConfig";
 
 const RestaurantDashboard = () => {
   const navigate = useNavigate();
-  const { userId } = useUser();
+  const { user } = useUser();
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

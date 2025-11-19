@@ -1,36 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../users/UserContext";
-import { getUserById } from "../service/userService";
+import { getCurrentProfile } from "../service/userService";
 import { baseUrl } from "../../config/routeConfig";
 
 export default function Header() {
   const { username, userId, isAuth, logout, role } = useUser();
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const [profileImage, setProfileImage] = useState(
+    `${baseUrl}/assets/profileImg/default_profile.png`
+  );
 
   useEffect(() => {
-    const fetchUser = async () => {
-      if (userId) {
+    const fetchProfile = async () => {
+      if (isAuth) {
         try {
-          const existingUser = await getUserById(Number(userId));
-          if (existingUser) setUser(existingUser);
+          const userProfile = await getCurrentProfile();
+          if (userProfile?.userImage) {
+            setProfileImage(`${baseUrl}${userProfile.userImage}`);
+          }
         } catch (err) {
-          console.error("Failed to fetch user", err);
+          console.error("Failed to fetch user profile image", err);
         }
       }
     };
-    fetchUser();
-  }, [userId]);
+
+    fetchProfile();
+  }, [isAuth]);
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
-
-  const profileImageSrc = user?.userImage
-    ? `${baseUrl}${user.userImage}`
-    : `${baseUrl}/assets/profileImg/default_profile.png`;
 
   return (
     <header className="app-header">
@@ -81,7 +82,7 @@ export default function Header() {
               Dobrodošli, <strong>{username}</strong>
             </span>
 
-            {user?.role === "RestaurantOwner" && (
+            {role === "RestaurantOwner" && (
               <button
                 className="dashboard-btn"
                 onClick={() => navigate("/restaurants/dashboard")}
@@ -90,12 +91,10 @@ export default function Header() {
               </button>
             )}
 
-            <Link to={`/profile/${userId}`} className="profile-btn">
-             <button className="profile-btn" name="Profile"><img
-                alt="Profile"
-                className="profile-icon"
-                src={profileImageSrc}
-              />Profile
+            <Link to={`/profile`} className="profile-btn">
+              <button className="profile-btn" name="Profile">
+                <img alt="Profile" className="profile-icon" src={profileImage} /> 
+                Profile
               </button>
             </Link>
 

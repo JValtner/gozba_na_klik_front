@@ -29,8 +29,8 @@ import RestaurantOrdersPage from "./components/orders/RestaurantOrdersPage";
 import CustomerOrdersPage from "./components/orders/CustomerOrderPage";
 import HomeRestaurants from "./components/restaurants/HomeRestaurants";
 import GlobalMealSearch from "./components/restaurants/GeneralMealSearch";
-import { LOGGED_IN_ROLES } from "./routes/roles";
-import ProtectedRoute from "./routes/ProtectedRoute";
+import { LOGGED_IN_ROLES } from "./config/routes/roles";
+import ProtectedRoute from "./config/routes/ProtectedRoute";
 
 export default function App() {
   return (
@@ -49,7 +49,7 @@ export default function App() {
 
             {/* SVI SEM GUEST */}
             <Route
-              path="/profile/:id"
+              path="/profile"
               element={
                 <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.EveryRole}>
                   <UserProfile />

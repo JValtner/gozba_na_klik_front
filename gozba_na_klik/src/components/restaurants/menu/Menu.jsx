@@ -28,7 +28,6 @@ const Menu = () => {
         const restaurantData = await getRestaurantById(id)
         setRestaurant(restaurantData)
 
-        // Check if current user is the owner of this restaurant
         const userIsOwner = role === "RestaurantOwner" && 
                            userId && 
                            restaurantData.ownerId && 
@@ -114,8 +113,8 @@ const Menu = () => {
       </div>
       )}
       
-      {/* --- Cart Button for Buyers --- */}
-      {role === "Buyer" && (
+      {/* --- Cart Button for Users --- */}
+      {(role === "User" || role === "Buyer") && (
         <div className="restaurant-cart-button">
           <button 
             className="cart-btn" 

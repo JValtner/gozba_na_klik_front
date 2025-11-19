@@ -10,7 +10,7 @@ import Spinner from "../spinner/Spinner";
 import { useNavigate } from "react-router-dom";
 
 export default function CourierOrderDashboard() {
-  const { userId } = useUser();
+  const { user } = useUser();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -22,15 +22,12 @@ export default function CourierOrderDashboard() {
     try {
       setLoading(true);
       setError("");
-      const orderData = await getActiveOrderByCourier(userId);
-      setOrder(orderData);
+      const orderData = await getActiveOrderByCourier(user.id);
+      setOrder(orderData); // Može biti null ako nema aktivne porudžbine
     } catch (err) {
       console.error("Greška pri učitavanju porudžbine:", err);
-      if (err.response?.status === 404) {
-        setOrder(null); // Nema aktivne porudžbine
-      } else {
-        setError("Greška pri učitavanju porudžbine.");
-      }
+      setError("Greška pri učitavanju porudžbine.");
+      setOrder(null);
     } finally {
       setLoading(false);
     }
@@ -74,7 +71,7 @@ export default function CourierOrderDashboard() {
     }, 12000);
 
     return () => clearInterval(interval);
-  }, [userId, order]);
+  }, [user, order]);
 
   if (loading) return <Spinner />;
 

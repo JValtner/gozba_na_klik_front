@@ -24,7 +24,7 @@ const RestaurantOrdersPage = () => {
   const loadOrders = async () => {
     try {
       setLoading(true);
-      const data = await getRestaurantOrders(restaurantId, userId, filterStatus);
+      const data = await getRestaurantOrders(restaurantId, filterStatus);
       setOrders(data);
     } catch (err) {
       console.error("Greška pri učitavanju porudžbina:", err);
@@ -43,7 +43,7 @@ const RestaurantOrdersPage = () => {
     if (!minutes) return;
 
     try {
-      await acceptOrder(orderId, userId, parseInt(minutes, 10));
+      await acceptOrder(orderId, parseInt(minutes, 10));
       alert("Porudžbina je uspešno prihvaćena!");
       loadOrders();
     } catch (err) {
@@ -57,7 +57,7 @@ const RestaurantOrdersPage = () => {
     if (!reason) return;
 
     try {
-      await cancelOrder(orderId, userId, reason);
+      await cancelOrder(orderId, reason);
       alert("Porudžbina je otkazana.");
       loadOrders();
     } catch (err) {

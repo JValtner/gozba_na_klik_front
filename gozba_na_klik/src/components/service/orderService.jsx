@@ -3,46 +3,52 @@ import AxiosConfig from "../../config/axios.config";
 const RESOURCE = "/api/orders";
 
 export async function getActiveOrderByCourier(userId) {
-  const response = await AxiosConfig.get(
-    `${RESOURCE}/courier/${userId}/active-pickup`
-  );
-  return response.data;
+  try {
+    const response = await AxiosConfig.get(
+      `${RESOURCE}/courier/${userId}/active-pickup`,
+      {
+        validateStatus: function (status) {
+          // Tretiraj 200, 204 NoContent i 404 kao uspešne odgovore
+          // 404 znači da nema aktivne porudžbine, što je normalno stanje
+          return (status >= 200 && status < 300) || status === 204 || status === 404;
+        }
+      }
+    );
+    // 204 NoContent ili 404 znači da nema aktivne porudžbine
+    if (response.status === 204 || response.status === 404 || !response.data) {
+      return null;
+    }
+    return response.data;
+  } catch (error) {
+    // Ako axios ipak baci grešku, tretiraj 404 kao "nema aktivne porudžbine"
+    if (error.response?.status === 404 || error.response?.status === 204) {
+      return null;
+    }
+    throw error;
+  }
 }
 
-export async function getOrderPreview(restaurantId, userId, orderData) {
+export async function getOrderPreview(restaurantId, orderData) {
   const response = await AxiosConfig.post(
     `${RESOURCE}/preview/restaurant/${restaurantId}`,
-    orderData,
-    {
-      headers: {
-        "X-User-Id": userId,
-      },
-    }
+    orderData
   );
   return response.data;
 }
 
-export async function createOrder(restaurantId, userId, orderData) {
+export async function createOrder(restaurantId, orderData) {
   const response = await AxiosConfig.post(
     `${RESOURCE}/restaurant/${restaurantId}`,
-    orderData,
-    {
-      headers: {
-        "X-User-Id": userId,
-      },
-    }
+    orderData
   );
   return response.data;
 }
 
-export async function getRestaurantOrders(restaurantId, userId, status = "") {
+export async function getRestaurantOrders(restaurantId, status = "") {
   const response = await AxiosConfig.get(
     `${RESOURCE}/restaurant/${restaurantId}`,
     {
-      params: { status },
-      headers: {
-        "X-User-Id": userId,
-      },
+      params: { status }
     }
   );
   return response.data;
@@ -55,15 +61,10 @@ export async function updateOrderToInDelivery(orderId) {
   return response.data;
 }
 
-export async function acceptOrder(orderId, userId, estimatedMinutes) {
+export async function acceptOrder(orderId, estimatedMinutes) {
   const response = await AxiosConfig.put(
     `${RESOURCE}/${orderId}/accept`,
-    { estimatedPreparationMinutes: estimatedMinutes },
-    {
-      headers: {
-        "X-User-Id": userId,
-      },
-    }
+    { estimatedPreparationMinutes: estimatedMinutes }
   );
   return response.data;
 }
@@ -75,15 +76,10 @@ export async function updateOrderToDelivered(orderId) {
   return response.data;
 }
 
-export async function cancelOrder(orderId, userId, reason) {
+export async function cancelOrder(orderId, reason) {
   const response = await AxiosConfig.put(
     `${RESOURCE}/${orderId}/cancel`,
-    { reason },
-    {
-      headers: {
-        "X-User-Id": userId,
-      },
-    }
+    { reason }
   );
   return response.data;
 }
@@ -100,10 +96,7 @@ export async function getUserOrderHistory(userId, statusFilter = null, page = 1,
     }
 
     const response = await AxiosConfig.get(`${RESOURCE}/user/${userId}`, {
-      params,
-      headers: {
-        "X-User-Id": userId
-      }
+      params
     });
 
     return response.data;
@@ -120,13 +113,9 @@ export async function getUserOrderHistory(userId, statusFilter = null, page = 1,
   }
 }
 
-export async function getUserOrderById(orderId, userId) {
+export async function getUserOrderById(orderId) {
   try {
-    const response = await AxiosConfig.get(`${RESOURCE}/${orderId}`, {
-      headers: {
-        "X-User-Id": userId
-      }
-    });
+    const response = await AxiosConfig.get(`${RESOURCE}/${orderId}`);
 
     return response.data;
   } catch (error) {
