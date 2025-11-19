@@ -28,6 +28,7 @@ const Menu = () => {
         const restaurantData = await getRestaurantById(id)
         setRestaurant(restaurantData)
 
+        // Check if current user is the owner of this restaurant
         const userIsOwner = role === "RestaurantOwner" && 
                            userId && 
                            restaurantData.ownerId && 
