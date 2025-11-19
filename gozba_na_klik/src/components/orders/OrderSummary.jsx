@@ -9,55 +9,6 @@ import AllergenWarningModal from "./AllergenWarningModal";
 import Spinner from "../spinner/Spinner";
 import { baseUrl } from "../../config/routeConfig";
 
-const formatTime12Hour = (timeString) => {
-  if (!timeString) return "";
-  const [hours, minutes] = timeString.split(':').map(Number);
-  const hour12 = hours % 12 || 12;
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  return `${hour12}:${minutes.toString().padStart(2, '0')} ${ampm}`;
-};
-
-const timeToSeconds = (timeString) => {
-  if (!timeString) return 0;
-  const [hours, minutes, seconds] = timeString.split(':').map(Number);
-  return (hours || 0) * 3600 + (minutes || 0) * 60 + (seconds || 0);
-};
-
-const isRestaurantCurrentlyOpen = (restaurant) => {
-  if (!restaurant || !restaurant.workSchedules || restaurant.workSchedules.length === 0) {
-    return false;
-  }
-
-  const now = new Date();
-  const currentDay = now.getDay();
-  const currentTime = now.toTimeString().slice(0, 8);
-  const todayDate = now.toISOString().split('T')[0];
-
-  const isClosedToday = restaurant.closedDates?.some(cd => {
-    if (!cd || !cd.date) return false;
-    const closedDate = new Date(cd.date).toISOString().split('T')[0];
-    return closedDate === todayDate;
-  });
-
-  if (isClosedToday) {
-    return false;
-  }
-
-  const todaySchedule = restaurant.workSchedules.find(
-    ws => ws.dayOfWeek === currentDay
-  );
-
-  if (!todaySchedule) {
-    return false;
-  }
-
-  const currentSeconds = timeToSeconds(currentTime);
-  const openSeconds = timeToSeconds(todaySchedule.openTime);
-  const closeSeconds = timeToSeconds(todaySchedule.closeTime);
-  
-  return currentSeconds >= openSeconds && currentSeconds <= closeSeconds;
-};
-
 export default function OrderSummary() {
   const { restaurantId } = useParams();
   const navigate = useNavigate();
@@ -92,8 +43,6 @@ export default function OrderSummary() {
   const loadData = async () => {
     try {
       setLoading(true);
-      setError("");
-      
       const cartData = getCart(restaurantId);
 
       if (cartData.length === 0) {
@@ -104,68 +53,51 @@ export default function OrderSummary() {
 
       setCart(cartData);
 
-      try {
-        const restaurantData = await getRestaurantById(restaurantId);
-        setRestaurant(restaurantData);
-      } catch (restErr) {
-        setError("Greška pri učitavanju restorana.");
-        setLoading(false);
-        return;
-      }
+      const restaurantData = await getRestaurantById(restaurantId);
+      setRestaurant(restaurantData);
 
       let defaultAddressId = null;
-      let userAddresses = [];
-      
       try {
-        userAddresses = await getUserAddresses();
-        setSavedAddresses(userAddresses || []);
+        const userAddresses = await getUserAddresses(userId);
+        setSavedAddresses(userAddresses);
 
-        if (userAddresses && userAddresses.length > 0) {
-          const defaultAddress = userAddresses.find((a) => a.isDefault);
-          if (defaultAddress) {
-            setAddressForm({
-              street: defaultAddress.street,
-              city: defaultAddress.city,
-              postalCode: defaultAddress.postalCode,
-              label: defaultAddress.label || "Adresa za dostavu",
-            });
-            setSelectedAddressId(defaultAddress.id);
-            setUseExistingAddress(true);
-            defaultAddressId = defaultAddress.id;
-          } else {
-            defaultAddressId = userAddresses[0].id;
-            setSelectedAddressId(defaultAddressId);
-          }
+        const defaultAddress = userAddresses.find((a) => a.isDefault);
+        if (defaultAddress) {
+          setAddressForm({
+            street: defaultAddress.street,
+            city: defaultAddress.city,
+            postalCode: defaultAddress.postalCode,
+            label: defaultAddress.label || "Adresa za dostavu",
+          });
+          setSelectedAddressId(defaultAddress.id);
+          setUseExistingAddress(true);
+          defaultAddressId = defaultAddress.id;
+        } else if (userAddresses.length > 0) {
+          defaultAddressId = userAddresses[0].id;
         }
-      } catch (addrErr) {
+      } catch (err) {
+        console.error("Greška pri učitavanju adresa:", err);
         setSavedAddresses([]);
       }
 
-      if (defaultAddressId && cartData.length > 0) {
-        const orderData = {
-          AddressId: defaultAddressId,
-          CustomerNote: "",
-          Items: cartData.map((item) => ({
-            MealId: item.mealId,
-            Quantity: item.quantity,
-            SelectedAddonIds: item.selectedAddons
-              ? item.selectedAddons.map((a) => a.id)
-              : [],
-          })),
-          AllergenWarningAccepted: false,
-        };
+      const orderData = {
+        AddressId: defaultAddressId,
+        CustomerNote: "",
+        Items: cartData.map((item) => ({
+          MealId: item.mealId,
+          Quantity: item.quantity,
+          SelectedAddonIds: item.selectedAddons
+            ? item.selectedAddons.map((a) => a.id)
+            : [],
+        })),
+        AllergenWarningAccepted: false,
+      };
 
-        try {
-          const previewData = await getOrderPreview(restaurantId, orderData);
-          setPreview(previewData);
-        } catch (previewErr) {
-          setPreview(null);
-        }
-      } else {
-        setPreview(null);
-      }
+      const previewData = await getOrderPreview(restaurantId, userId, orderData);
+      setPreview(previewData);
     } catch (err) {
-      setError(err.response?.data?.error || err.message || "Greška pri učitavanju porudžbine.");
+      console.error("Greška pri učitavanju:", err);
+      setError(err.response?.data?.error || "Greška pri učitavanju porudžbine.");
     } finally {
       setLoading(false);
     }
@@ -214,9 +146,9 @@ export default function OrderSummary() {
 
       let finalAddressId = selectedAddressId;
 
-      if (!useExistingAddress || (useExistingAddress && saveAddress && !selectedAddressId)) {
+      if (!useExistingAddress || saveAddress) {
         try {
-          const newAddress = await createAddress({
+          const newAddress = await createAddress(userId, {
             street: addressForm.street,
             city: addressForm.city,
             postalCode: addressForm.postalCode,
@@ -225,14 +157,8 @@ export default function OrderSummary() {
           });
           finalAddressId = newAddress.id;
         } catch (err) {
-          setError("Greška pri kreiranju adrese. Molimo pokušajte ponovo.");
-          return;
+          console.error("Greška pri kreiranju adrese:", err);
         }
-      }
-
-      if (!finalAddressId) {
-        setError("Molimo unesite ili izaberite adresu za dostavu.");
-        return;
       }
 
       const orderData = {
@@ -248,12 +174,13 @@ export default function OrderSummary() {
         AllergenWarningAccepted: allergenAccepted,
       };
 
-      const createdOrder = await createOrder(restaurantId, orderData);
+      const createdOrder = await createOrder(restaurantId, userId, orderData);
 
       clearCart(restaurantId);
       alert(`✅ Porudžbina je uspešno kreirana! Broj porudžbine: ${createdOrder.id}`);
       navigate(`/orders/${createdOrder.id}`);
     } catch (err) {
+      console.error("Greška pri kreiranju porudžbine:", err);
       setError(err.response?.data?.error || "Greška pri kreiranju porudžbine.");
     } finally {
       setIsSubmitting(false);
@@ -261,13 +188,8 @@ export default function OrderSummary() {
   };
 
   const handleSubmitOrder = async () => {
-    if (!useExistingAddress && (!addressForm.street || !addressForm.city || !addressForm.postalCode)) {
+    if (!addressForm.street || !addressForm.city || !addressForm.postalCode) {
       alert("Molimo popunite sve podatke o adresi.");
-      return;
-    }
-
-    if (useExistingAddress && !selectedAddressId) {
-      alert("Molimo izaberite adresu za dostavu.");
       return;
     }
 
@@ -294,7 +216,7 @@ export default function OrderSummary() {
     navigate(`/restaurants/${restaurantId}/menu`);
   };
 
-  const handleAddressToggle = async (checked) => {
+  const handleAddressToggle = (checked) => {
     setUseExistingAddress(checked);
     if (checked && savedAddresses.length > 0) {
       const addr = savedAddresses[0];
@@ -305,7 +227,6 @@ export default function OrderSummary() {
         label: addr.label,
       });
       setSelectedAddressId(addr.id);
-      await updatePreview(addr.id);
     } else {
       setAddressForm({
         street: "",
@@ -314,36 +235,10 @@ export default function OrderSummary() {
         label: "Adresa za dostavu",
       });
       setSelectedAddressId(null);
-      setPreview(null);
     }
   };
 
-  const updatePreview = async (addressId) => {
-    if (!addressId || cart.length === 0) return;
-
-    try {
-      const orderData = {
-        AddressId: addressId,
-        CustomerNote: customerNote.trim() || "",
-        Items: cart.map((item) => ({
-          MealId: item.mealId,
-          Quantity: item.quantity,
-          SelectedAddonIds: item.selectedAddons
-            ? item.selectedAddons.map((a) => a.id)
-            : [],
-        })),
-        AllergenWarningAccepted: false,
-      };
-
-      const previewData = await getOrderPreview(restaurantId, orderData);
-      setPreview(previewData);
-      setError("");
-    } catch (err) {
-      setError(err.response?.data?.error || "Greška pri učitavanju cena.");
-    }
-  };
-
-  const handleSavedAddressChange = async (addressId) => {
+  const handleSavedAddressChange = (addressId) => {
     const selectedAddr = savedAddresses.find((a) => a.id === addressId);
     if (selectedAddr) {
       setAddressForm({
@@ -353,7 +248,6 @@ export default function OrderSummary() {
         label: selectedAddr.label,
       });
       setSelectedAddressId(addressId);
-      await updatePreview(addressId);
     }
   };
 
@@ -377,7 +271,7 @@ export default function OrderSummary() {
     );
   }
 
-  const isRestaurantClosed = restaurant && !isRestaurantCurrentlyOpen(restaurant);
+  const isRestaurantClosed = restaurant && !restaurant.isOpen;
 
   return (
     <div className="order-summary-page">
@@ -590,36 +484,28 @@ export default function OrderSummary() {
           />
         </div>
 
-        {preview ? (
-          <>
-            <div className="order-pricing">
-              <div className="pricing-row">
-                <span>Cena:</span>
-                <span>{preview.subtotalPrice?.toFixed(2) || "0.00"} RSD</span>
-              </div>
-              <div className="pricing-row">
-                <span>Dostava:</span>
-                <span>{preview.deliveryFee?.toFixed(2) || "0.00"} RSD</span>
-              </div>
-              <div className="pricing-row pricing-row--total">
-                <span>
-                  <strong>Ukupno:</strong>
-                </span>
-                <span>
-                  <strong>{preview.totalPrice?.toFixed(2) || "0.00"} RSD</strong>
-                </span>
-              </div>
-            </div>
+        <div className="order-pricing">
+          <div className="pricing-row">
+            <span>Međuzbir:</span>
+            <span>{preview.subtotalPrice.toFixed(2)} RSD</span>
+          </div>
+          <div className="pricing-row">
+            <span>Dostava:</span>
+            <span>{preview.deliveryFee.toFixed(2)} RSD</span>
+          </div>
+          <div className="pricing-row pricing-row--total">
+            <span>
+              <strong>Ukupno:</strong>
+            </span>
+            <span>
+              <strong>{preview.totalPrice.toFixed(2)} RSD</strong>
+            </span>
+          </div>
+        </div>
 
-            {preview.hasAllergens && !allergenWarningAccepted && (
-              <div className="allergen-notice">
-                <p>⚠️ Ova porudžbina sadrži alergene. Bićete obavešteni pre potvrde.</p>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="order-pricing-info">
-            <p>Molimo unesite adresu dostave da biste videli cenu porudžbine.</p>
+        {preview.hasAllergens && !allergenWarningAccepted && (
+          <div className="allergen-notice">
+            <p>⚠️ Ova porudžbina sadrži alergene. Bićete obavešteni pre potvrde.</p>
           </div>
         )}
 
@@ -651,3 +537,4 @@ export default function OrderSummary() {
     </div>
   );
 }
+
