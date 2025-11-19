@@ -87,3 +87,19 @@ export async function cancelOrder(orderId, userId, reason) {
   );
   return response.data;
 }
+
+export async function getActiveOrderStatus() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    throw new Error("Token not found");
+  }
+
+  const response = await AxiosConfig.get(`${RESOURCE}/user/my-active-order`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+}
