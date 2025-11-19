@@ -1,4 +1,6 @@
-import AxiosConfig from "../../config/axios.config";
+import AxiosConfig  from "../../config/axios.config";
+import { baseUrl } from "../../config/routeConfig";
+
 
 const RESOURCE = "/api/users";
 const TOKEN_KEY = "token";
@@ -139,6 +141,20 @@ export function getPasswordStrength(password) {
 
   return score; // 0–4
 }
+export async function requestPasswordReset(email) {
+  const payload = {email};
+  console.log("Payload:", payload );
+  const response = await AxiosConfig.post(`${RESOURCE}/request-password-reset`, payload);
+  return response.data;
+}
+
+export async function resetPassword(data) {
+  console.log("Resetting password with data:", data);
+  console.log("Payload being sent:", JSON.stringify(data));
+  return AxiosConfig.post(`${RESOURCE}/reset-password`, data);
+}
+
+
 
 
   

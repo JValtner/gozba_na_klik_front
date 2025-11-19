@@ -140,7 +140,6 @@ export default function RegisterUserForm() {
                                     </small>
                                 </div>
 
-                                {/* 👇 button that shows password while pressed */}
                                 <button
                                     type="button"
                                     className="show-password-btn"
