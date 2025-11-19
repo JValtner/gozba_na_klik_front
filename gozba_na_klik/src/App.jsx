@@ -26,6 +26,7 @@ import CourierOrderCard from "./components/delivery/CourierOrderCard";
 import OrderSummary from "./components/orders/OrderSummary";
 import OrderDetails from "./components/orders/OrderDetails";
 import RestaurantOrdersPage from "./components/orders/RestaurantOrdersPage";
+import CustomerOrdersPage from "./components/orders/CustomerOrderPage";
 import HomeRestaurants from "./components/restaurants/HomeRestaurants";
 import GlobalMealSearch from "./components/restaurants/GeneralMealSearch";
 import { LOGGED_IN_ROLES } from "./config/routes/roles";
@@ -62,6 +63,14 @@ export default function App() {
               element={
                 <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.User}>
                   <EditUserAlergens />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-orders"
+              element={
+                <ProtectedRoute allowedRoles={["User", "Buyer"]}>
+                  <CustomerOrdersPage />
                 </ProtectedRoute>
               }
             />

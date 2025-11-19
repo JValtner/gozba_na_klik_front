@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { getMealById } from "../../service/menuService"
+import { getRestaurantById } from "../../service/restaurantsService"
+import { useUser } from "../../users/UserContext"
 import Spinner from "../../spinner/Spinner"
 import { baseUrl } from "../../../config/routeConfig"
 import DisplayAlergens from "../alergen/displayAlergens"
@@ -8,18 +10,32 @@ import DisplayAddons from "../addOn/displayAddons"
 
 export default function MealDetails() {
   const { id: restaurantId, mealId } = useParams()
+  const navigate = useNavigate()
+  const { userId, role } = useUser()
   const [meal, setMeal] = useState(null)
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
+  const [isOwner, setIsOwner] = useState(false)
 
   useEffect(() => {
     const loadMeal = async () => {
-      const data = await getMealById(mealId)
-      setMeal(data)
-      setLoading(false)
+      try {
+        const mealData = await getMealById(mealId)
+        setMeal(mealData)
+
+        if (role === "RestaurantOwner" && userId && restaurantId) {
+          const restaurantData = await getRestaurantById(restaurantId)
+          const userIsOwner = restaurantData.ownerId && 
+                             Number(userId) === Number(restaurantData.ownerId)
+          setIsOwner(userIsOwner)
+        }
+      } catch (err) {
+        console.error("Greška pri učitavanju:", err)
+      } finally {
+        setLoading(false)
+      }
     }
     loadMeal()
-  }, [mealId])
+  }, [mealId, restaurantId, userId, role])
 
   if (loading) return <Spinner />
   if (!meal) return <p>Meal not found.</p>
@@ -59,13 +75,15 @@ export default function MealDetails() {
 
       {/* --- Buttons --- */}
       <div className="meal-details__actions">
-        <button
-          className="btn btn--secondary"
-          onClick={() => navigate(`/restaurants/${restaurantId}/menu/${mealId}/edit`)}
-        >
-          Edit
-        </button>
-        <button className="btn btn--secondary" onClick={() => navigate(-1)}>
+        {isOwner && (
+          <button
+            className="btn btn--secondary"
+            onClick={() => navigate(`/restaurants/${restaurantId}/menu/${mealId}/edit`)}
+          >
+            Edit
+          </button>
+        )}
+        <button className="btn btn--secondary" onClick={() => navigate(`/restaurants/${restaurantId}/menu`)}>
           ← Nazad
         </button>
       </div>
