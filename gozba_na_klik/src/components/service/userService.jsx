@@ -143,14 +143,11 @@ export function getPasswordStrength(password) {
 }
 export async function requestPasswordReset(email) {
   const payload = {email};
-  console.log("Payload:", payload );
   const response = await AxiosConfig.post(`${RESOURCE}/request-password-reset`, payload);
   return response.data;
 }
 
 export async function resetPassword(data) {
-  console.log("Resetting password with data:", data);
-  console.log("Payload being sent:", JSON.stringify(data));
   return AxiosConfig.post(`${RESOURCE}/reset-password`, data);
 }
 
