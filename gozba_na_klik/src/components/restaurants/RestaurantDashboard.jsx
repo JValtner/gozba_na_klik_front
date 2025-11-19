@@ -17,7 +17,7 @@ const RestaurantDashboard = () => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const data = await getMyRestaurants(user.id);
+        const data = await getMyRestaurants();
         setRestaurants(data);
       } catch (err) {
         setError("Greška pri učitavanju.");

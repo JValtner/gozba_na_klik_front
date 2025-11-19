@@ -84,6 +84,8 @@ export default function UserProvider({ children }) {
     <UserContext.Provider
       value={{
         user,
+        userId: user?.id || null,
+        username: user?.username || null,
         role: roles?.[0] || null,
         token,
         loading,

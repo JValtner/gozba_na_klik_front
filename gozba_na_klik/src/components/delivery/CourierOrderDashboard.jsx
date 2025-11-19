@@ -23,14 +23,11 @@ export default function CourierOrderDashboard() {
       setLoading(true);
       setError("");
       const orderData = await getActiveOrderByCourier(user.id);
-      setOrder(orderData);
+      setOrder(orderData); // Može biti null ako nema aktivne porudžbine
     } catch (err) {
       console.error("Greška pri učitavanju porudžbine:", err);
-      if (err.response?.status === 404) {
-        setOrder(null); // Nema aktivne porudžbine
-      } else {
-        setError("Greška pri učitavanju porudžbine.");
-      }
+      setError("Greška pri učitavanju porudžbine.");
+      setOrder(null);
     } finally {
       setLoading(false);
     }
