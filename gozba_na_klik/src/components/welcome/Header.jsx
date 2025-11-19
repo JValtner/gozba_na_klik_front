@@ -43,9 +43,19 @@ export default function Header() {
         {isAuth && (
           <nav className="navbar-links">
             <ul>
-              <li>
-                <Link to={"/search"}>Pretraga jela</Link>
-              </li>
+              {(role === "User" || role === "Buyer") && (
+                <>
+                  <li>
+                    <Link to={"/search"}>Pretraga jela</Link>
+                  </li>
+                  <li>
+                    <Link to={"/my-orders"} className="my-orders-link">
+                      📋 Moje porudžbine
+                    </Link>
+                  </li>
+                </>
+              )}
+
               {role === "Admin" && (
                 <>
                   <li>

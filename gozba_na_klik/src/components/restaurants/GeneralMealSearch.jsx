@@ -11,7 +11,7 @@ import { getCart } from "../orders/AddToCart";
 
 
 const GeneralMealSearch = () => {
-    const { role } = useUser();
+    const { role, userId } = useUser();
     const navigate = useNavigate();
     const [meals, setMeals] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -55,9 +55,16 @@ const GeneralMealSearch = () => {
         loadSortTypes();
     }, []);
 
+    useEffect(() => {
+        if (role === "RestaurantOwner") {
+            navigate("/restaurants/dashboard");
+            return;
+        }
+    }, [role, navigate]);
+
     // Load meals
     useEffect(() => {
-        if (role === "Guest") return; // Don't fetch meals for guests
+        if (role === "Guest" || role === "RestaurantOwner") return; // Don't fetch meals for guests or owners
 
         const loadData = async () => {
             try {
@@ -195,7 +202,7 @@ const GeneralMealSearch = () => {
                                     }
                                 }}
                             >
-                                <MenuItem meal={meal} />
+                                <MenuItem meal={meal} isOwner={false} />
                             </div>
                         ))
                     )}

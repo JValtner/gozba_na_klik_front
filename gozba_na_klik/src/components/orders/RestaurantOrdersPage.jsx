@@ -7,6 +7,8 @@ import {
   cancelOrder,
 } from "../service/orderService";
 import Spinner from "../spinner/Spinner";
+import InvoiceButton from "../invoices/InvoiceButton";
+import { getStatusLabel } from "../../constants/orderConstants";
 import "../../styles/_restaurant-orders.scss";
 
 const RestaurantOrdersPage = () => {
@@ -64,6 +66,7 @@ const RestaurantOrdersPage = () => {
     }
   };
 
+
   if (loading) return <Spinner />;
 
   return (
@@ -91,6 +94,11 @@ const RestaurantOrdersPage = () => {
           >
             <option value="NA_CEKANJU">Na čekanju</option>
             <option value="PRIHVAĆENA">Prihvaćene</option>
+            <option value="U_PRIPREMI">U pripremi</option>
+            <option value="SPREMNA">Spremne</option>
+            <option value="U_DOSTAVI">U dostavi</option>
+            <option value="ISPORUČENA">Isporučene</option>
+            <option value="ZAVRŠENO">Završene</option>
             <option value="OTKAZANA">Otkazane</option>
             <option value="">Sve</option>
           </select>
@@ -104,7 +112,7 @@ const RestaurantOrdersPage = () => {
 
         {orders.length === 0 ? (
           <div className="empty-state">
-            <p>Trenutno nema porudžbina sa statusom {filterStatus}.</p>
+            <p>Trenutno nema porudžbina sa statusom {getStatusLabel(filterStatus)}.</p>
           </div>
         ) : (
           <div className="orders-list">
@@ -118,25 +126,34 @@ const RestaurantOrdersPage = () => {
                         ? "status-badge--pending"
                         : order.status === "PRIHVAĆENA"
                         ? "status-badge--accepted"
+                        : order.status === "ISPORUČENA" || order.status === "ZAVRŠENO"
+                        ? "status-badge--completed"
                         : "status-badge--cancelled"
                     }`}
                   >
-                    {order.status}
+                    {getStatusLabel(order.status)}
                   </span>
                 </div>
 
-                <p>
-                  <strong>Kupac:</strong> {order.customerName || "Nepoznato"}
-                </p>
-                <p>
-                  <strong>Adresa:</strong> {order.deliveryAddress}
-                </p>
-                <p>
-                  <strong>Ukupna cena:</strong> {order.totalPrice} RSD
-                </p>
-                <p>
-                  <strong>Broj artikala:</strong> {order.itemsCount}
-                </p>
+                <div className="order-card__details">
+                  <p>
+                    <strong>Kupac:</strong> {order.customerName || "Nepoznato"}
+                  </p>
+                  <p>
+                    <strong>Adresa:</strong> {order.deliveryAddress}
+                  </p>
+                  <p>
+                    <strong>Ukupna cena:</strong> {order.totalPrice} RSD
+                  </p>
+                  <p>
+                    <strong>Broj artikala:</strong> {order.itemsCount}
+                  </p>
+                  {order.customerNote && (
+                    <p>
+                      <strong>Napomena:</strong> {order.customerNote}
+                    </p>
+                  )}
+                </div>
 
                 <div className="order-card__actions">
                   {order.status === "NA_CEKANJU" && (
@@ -155,11 +172,28 @@ const RestaurantOrdersPage = () => {
                       </button>
                     </>
                   )}
+                  
                   {order.status === "PRIHVAĆENA" && (
-                    <span>
+                    <span className="preparation-time">
                       ⏱ Priprema: {order.estimatedPreparationMinutes} min
                     </span>
                   )}
+
+                  <InvoiceButton 
+                    orderId={order.id}
+                    orderStatus={order.status}
+                    variant="secondary"
+                    size="small"
+                  >
+                    Račun
+                  </InvoiceButton>
+
+                  <button
+                    className="btn btn--secondary btn--small"
+                    onClick={() => navigate(`/orders/${order.id}`, { state: { restaurantId } })}
+                  >
+                    Detalji
+                  </button>
                 </div>
               </div>
             ))}
