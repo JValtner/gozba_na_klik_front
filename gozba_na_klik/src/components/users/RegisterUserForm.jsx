@@ -42,7 +42,7 @@ export default function RegisterUserForm() {
             });
 
 
-            setStatusMsg("Uspešno ste se registrovali!");
+            setStatusMsg("Uspešno ste se registrovali!Link za confirmaciju je poslat na vaš email.");
             // redirect after 2 seconds
             setTimeout(() => {
                 navigate("/");
