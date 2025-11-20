@@ -128,6 +128,12 @@ const RestaurantDashboard = () => {
                   >
                     Porudžbine
                   </button>
+                  <button
+                    className="btn btn--primary"
+                    onClick={() => navigate("/restaurants/complaints")}
+                  >
+                    Žalbe
+                  </button>
                 </div>
 
               </div>
