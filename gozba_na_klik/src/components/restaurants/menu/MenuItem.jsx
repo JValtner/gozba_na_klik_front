@@ -127,13 +127,13 @@ const MenuItem = ({ meal, onEdit, onDelete, isOwner }) => {
               </>
             )}
 
-            {role === "Buyer" && (
+            {(role === "User" || role === "Buyer") && (
               <button className="btn btn--primary" onClick={handleOrder}>
                 Poruči
               </button>
             )}
 
-            {role === "Guest" && (
+            {(!role || (role !== "User" && role !== "Buyer")) && (
               <p className="login-hint">Prijavite se da biste poručili</p>
             )}
           </div>

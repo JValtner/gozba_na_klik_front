@@ -9,7 +9,7 @@ import Spinner from "../spinner/Spinner";
 
 export default function UserProfile() {
   const navigate = useNavigate();
-  const { role, user, isAuth } = useUser();
+  const { role, user, isAuth, userId } = useUser();
   const [statusMsg, setStatusMsg] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");

@@ -9,31 +9,6 @@ import AllergenWarningModal from "./AllergenWarningModal";
 import Spinner from "../spinner/Spinner";
 import { baseUrl } from "../../config/routeConfig";
 
-const isRestaurantCurrentlyOpen = (restaurant) => {
-  if (!restaurant || !restaurant.workSchedules) return false;
-
-  const now = new Date();
-  const currentDay = now.getDay();
-  const currentTime = now.toTimeString().slice(0, 8);
-  const todayDate = now.toISOString().split('T')[0];
-
-  const isClosedToday = restaurant.closedDates?.some(cd => {
-    const closedDate = new Date(cd.date).toISOString().split('T')[0];
-    return closedDate === todayDate;
-  });
-
-  if (isClosedToday) return false;
-
-  const todaySchedule = restaurant.workSchedules.find(
-    ws => ws.dayOfWeek === currentDay
-  );
-
-  if (!todaySchedule) return false;
-
-  return currentTime >= todaySchedule.openTime && 
-         currentTime <= todaySchedule.closeTime;
-};
-
 export default function OrderSummary() {
   const { restaurantId } = useParams();
   const navigate = useNavigate();
@@ -296,7 +271,7 @@ export default function OrderSummary() {
     );
   }
 
-  const isRestaurantClosed = restaurant && !isRestaurantCurrentlyOpen(restaurant);
+  const isRestaurantClosed = restaurant && !restaurant.isOpen;
 
   return (
     <div className="order-summary-page">
@@ -562,3 +537,4 @@ export default function OrderSummary() {
     </div>
   );
 }
+
