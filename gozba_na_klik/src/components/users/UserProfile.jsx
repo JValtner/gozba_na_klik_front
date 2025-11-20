@@ -42,12 +42,14 @@ export default function UserProfile() {
   // Image preview
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    const validationError = validateFile(file);
-    if (validationError) {
-      setErrorMsg(validationError);
+    const validationResult = validateFile(file);
+
+    if (validationResult !== true) {
+      setErrorMsg(validationResult);
       setTimeout(() => setErrorMsg(""), 3000);
       return;
     }
+
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => setPreviewImage(reader.result);
@@ -85,15 +87,25 @@ export default function UserProfile() {
       ? `${baseUrl}${user.userImage}`
       : `${baseUrl}/assets/profileImg/default_profile.png`;
 
-  if (loading || statusMsg !== "" || errorMsg !== "") return <Spinner />
+  if (loading) return <Spinner />
   return (
 
 
     <div className="user-profile-container">
       <h2>Profil korisnika</h2>
+      {errorMsg && (
+          <div className="error-message">
+            <p className="error-message__text">{errorMsg}</p>
+          </div>
+        )}
+
+        {statusMsg && (
+          <div className="success-message">
+            <p className="success-message__text">{statusMsg}</p>
+          </div>
+        )}
 
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-        <div className="statusMsg">{statusMsg}</div>
 
         <div className="profile-image">
           <img

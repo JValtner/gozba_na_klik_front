@@ -80,6 +80,21 @@ export default function UserProvider({ children }) {
     setRoles([]);
   };
 
+  const refreshUser = async () => {
+  try {
+    const profile = await getCurrentProfile();
+    setUser(profile);   // updates context state
+    return profile;
+  } catch {
+    logoutService();
+    removeToken();
+    setTokenState(null);
+    setUser(null);
+    setRoles([]);
+    return null;
+  }
+};
+
   return (
     <UserContext.Provider
       value={{
@@ -91,6 +106,7 @@ export default function UserProvider({ children }) {
         login,
         register,
         logout,
+        refreshUser,
       }}
     >
       {children}

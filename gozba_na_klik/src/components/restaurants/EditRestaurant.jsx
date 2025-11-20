@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { getRestaurantById, updateRestaurant } from "../service/restaurantsService";
 import { useUser } from "../users/UserContext";
+import { baseUrl } from "../../config/routeConfig";
+import { validateFile } from "../service/fileService";
 
 const EditRestaurant = () => {
   const { id } = useParams();
@@ -28,7 +30,7 @@ const EditRestaurant = () => {
         setValue("description", data.description);
         setValue("phone", data.phone);
         if (data.photoUrl) {
-          setPreviewImage(`http://localhost:5065${data.photoUrl}`);
+          setPreviewImage(`${baseUrl}${data.photoUrl}`);
         }
       } catch (err) {
         console.error("Greška pri učitavanju restorana:", err);
@@ -127,7 +129,15 @@ const EditRestaurant = () => {
                   type="file"
                   className="file-input"
                   accept="image/*"
-                  {...register("photo")}
+                  {...register("photo", {
+                    validate: {
+                      fileCheck: (files) => {
+                        const file = files?.[0];
+                        const error = validateFile(file);
+                        return error || true;
+                      },
+                    },
+                  })}
                 />
                 {photoFile?.[0] && <div className="file-info">{photoFile[0].name}</div>}
               </div>
