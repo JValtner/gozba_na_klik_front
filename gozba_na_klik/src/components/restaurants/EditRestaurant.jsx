@@ -5,6 +5,7 @@ import { getRestaurantById, updateRestaurant } from "../service/restaurantsServi
 import { useUser } from "../users/UserContext";
 import { baseUrl } from "../../config/routeConfig";
 import { validateFile } from "../service/fileService";
+import Spinner from "../spinner/Spinner";
 
 const EditRestaurant = () => {
   const { id } = useParams();
@@ -66,7 +67,7 @@ const EditRestaurant = () => {
     }
   }, [photoFile]);
 
-  if (loading) return <p>⏳ Učitavanje...</p>;
+  if (loading) return <Spinner />;
 
   return (
     <div className="edit-restaurant">
