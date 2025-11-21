@@ -29,6 +29,7 @@ import RestaurantOrdersPage from "./components/orders/RestaurantOrdersPage";
 import CustomerOrdersPage from "./components/orders/CustomerOrderPage";
 import HomeRestaurants from "./components/restaurants/HomeRestaurants";
 import GlobalMealSearch from "./components/restaurants/GeneralMealSearch";
+import ResetPasswordPage from "./components/users/ResetPasswordPage";
 import { LOGGED_IN_ROLES } from "./config/routes/roles";
 import ProtectedRoute from "./config/routes/ProtectedRoute";
 
@@ -46,6 +47,8 @@ export default function App() {
             <Route path="/login" element={<WelcomePage />} />
             <Route path="/restaurants/home" element={<HomeRestaurants />} />
             <Route path="/restaurants/:id/menu" element={<Menu />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />}
+            />
 
             {/* SVI SEM GUEST */}
             <Route
@@ -56,7 +59,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-
+            
             {/* KUPAC - User */}
             <Route
               path="/profile/:id/alergens"
