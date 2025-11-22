@@ -93,7 +93,7 @@ export default function OrderSummary() {
         AllergenWarningAccepted: false,
       };
 
-      const previewData = await getOrderPreview(restaurantId, userId, orderData);
+      const previewData = await getOrderPreview(restaurantId, orderData);
       setPreview(previewData);
     } catch (err) {
       console.error("Greška pri učitavanju:", err);
@@ -148,7 +148,7 @@ export default function OrderSummary() {
 
       if (!useExistingAddress || saveAddress) {
         try {
-          const newAddress = await createAddress(userId, {
+          const newAddress = await createAddress({
             street: addressForm.street,
             city: addressForm.city,
             postalCode: addressForm.postalCode,
@@ -158,6 +158,8 @@ export default function OrderSummary() {
           finalAddressId = newAddress.id;
         } catch (err) {
           console.error("Greška pri kreiranju adrese:", err);
+          setError("Greška pri kreiranju adrese. Pokušajte ponovo.");
+          return;
         }
       }
 
@@ -174,7 +176,7 @@ export default function OrderSummary() {
         AllergenWarningAccepted: allergenAccepted,
       };
 
-      const createdOrder = await createOrder(restaurantId, userId, orderData);
+      const createdOrder = await createOrder(restaurantId, orderData);
 
       clearCart(restaurantId);
       alert(`✅ Porudžbina je uspešno kreirana! Broj porudžbine: ${createdOrder.id}`);
@@ -484,29 +486,33 @@ export default function OrderSummary() {
           />
         </div>
 
-        <div className="order-pricing">
-          <div className="pricing-row">
-            <span>Međuzbir:</span>
-            <span>{preview.subtotalPrice.toFixed(2)} RSD</span>
-          </div>
-          <div className="pricing-row">
-            <span>Dostava:</span>
-            <span>{preview.deliveryFee.toFixed(2)} RSD</span>
-          </div>
-          <div className="pricing-row pricing-row--total">
-            <span>
-              <strong>Ukupno:</strong>
-            </span>
-            <span>
-              <strong>{preview.totalPrice.toFixed(2)} RSD</strong>
-            </span>
-          </div>
-        </div>
+        {preview && (
+          <>
+            <div className="order-pricing">
+              <div className="pricing-row">
+                <span>Međuzbir:</span>
+                <span>{preview.subtotalPrice.toFixed(2)} RSD</span>
+              </div>
+              <div className="pricing-row">
+                <span>Dostava:</span>
+                <span>{preview.deliveryFee.toFixed(2)} RSD</span>
+              </div>
+              <div className="pricing-row pricing-row--total">
+                <span>
+                  <strong>Ukupno:</strong>
+                </span>
+                <span>
+                  <strong>{preview.totalPrice.toFixed(2)} RSD</strong>
+                </span>
+              </div>
+            </div>
 
-        {preview.hasAllergens && !allergenWarningAccepted && (
-          <div className="allergen-notice">
-            <p>⚠️ Ova porudžbina sadrži alergene. Bićete obavešteni pre potvrde.</p>
-          </div>
+            {preview.hasAllergens && !allergenWarningAccepted && (
+              <div className="allergen-notice">
+                <p>⚠️ Ova porudžbina sadrži alergene. Bićete obavešteni pre potvrde.</p>
+              </div>
+            )}
+          </>
         )}
 
         <div className="order-actions">
@@ -527,7 +533,7 @@ export default function OrderSummary() {
         </div>
       </div>
       
-      {showAllergenModal && (
+      {showAllergenModal && preview && (
         <AllergenWarningModal
           allergens={preview.allergens}
           onAccept={handleAllergenAccept}

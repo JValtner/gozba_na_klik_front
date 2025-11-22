@@ -64,6 +64,9 @@ export default function Header() {
                   <li>
                     <Link to={"/admin-restaurants"}>Restorani</Link>
                   </li>
+                  <li>
+                    <Link to={"/admin-complaints"}>Žalbe</Link>
+                  </li>
                 </>
               )}
             </ul>

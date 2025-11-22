@@ -47,12 +47,12 @@ const CustomerOrdersPage = () => {
         pageSize
       );
 
-      const ordersList = response.orders || [];
+      const ordersList = response.orders || response.Orders || [];
       setOrders(ordersList);
-      setTotalPages(response.totalPages || 0);
-      setTotalItems(response.totalItems || 0);
-      setHasNextPage(response.hasNextPage || false);
-      setHasPreviousPage(response.hasPreviousPage || false);
+      setTotalPages(response.totalPages || response.TotalPages || 0);
+      setTotalItems(response.totalCount || response.TotalCount || response.totalItems || 0);
+      setHasNextPage(response.hasNextPage || response.HasNextPage || false);
+      setHasPreviousPage(response.hasPreviousPage || response.HasPreviousPage || false);
 
       const completedOrders = ordersList.filter(order => 
         isOrderCompleted(order.status)
@@ -203,7 +203,7 @@ const CustomerOrdersPage = () => {
           </div>
         </div>
 
-        {totalPages > 1 && (
+        {totalItems > 0 && (
           <Pagination
             page={currentPage - 1}
             pageCount={totalPages}
@@ -391,7 +391,7 @@ const CustomerOrdersPage = () => {
           />
         )}
 
-        {totalPages > 1 && (
+        {totalItems > 0 && (
           <Pagination
             page={currentPage - 1}
             pageCount={totalPages}

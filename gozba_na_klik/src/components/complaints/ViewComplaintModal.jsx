@@ -16,7 +16,7 @@ export default function ViewComplaintModal({ complaint, onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Vaša žalba za porudžbinu #{complaint.orderId}</h2>
+          <h2>Žalba za porudžbinu #{complaint.orderId}</h2>
         </div>
 
         <div className="modal-body">
@@ -24,11 +24,21 @@ export default function ViewComplaintModal({ complaint, onClose }) {
             <div className="complaint-info-item">
               <strong>Porudžbina ID:</strong> #{complaint.orderId}
             </div>
+            {complaint.restaurantId && (
+              <div className="complaint-info-item">
+                <strong>Restoran ID:</strong> {complaint.restaurantId}
+              </div>
+            )}
+            {complaint.userId && (
+              <div className="complaint-info-item">
+                <strong>Korisnik ID:</strong> {complaint.userId}
+              </div>
+            )}
             <div className="complaint-info-item">
               <strong>Datum podnošenja:</strong> {formatDate(complaint.createdAt)}
             </div>
             <div className="complaint-message-section">
-              <h3>Vaša poruka:</h3>
+              <h3>Tekst žalbe:</h3>
               <div className="complaint-message-box">
                 <p>{complaint.message}</p>
               </div>
