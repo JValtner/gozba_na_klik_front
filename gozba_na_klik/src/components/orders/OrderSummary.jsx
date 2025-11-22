@@ -13,11 +13,9 @@ export default function OrderSummary() {
   const { restaurantId } = useParams();
   const navigate = useNavigate();
   const { userId } = useUser();
-
   const [cart, setCart] = useState([]);
   const [preview, setPreview] = useState(null);
   const [restaurant, setRestaurant] = useState(null);
-
   const [addressForm, setAddressForm] = useState({
     street: "",
     city: "",
@@ -28,13 +26,27 @@ export default function OrderSummary() {
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [useExistingAddress, setUseExistingAddress] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-
   const [customerNote, setCustomerNote] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showAllergenModal, setShowAllergenModal] = useState(false);
   const [allergenWarningAccepted, setAllergenWarningAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const buildOrderData = (addressId, cartItems, note = "", allergenAccepted = false) => {
+    return {
+      AddressId: addressId,
+      CustomerNote: note.trim() || null,
+      Items: cartItems.map((item) => ({
+        MealId: item.mealId,
+        Quantity: item.quantity,
+        SelectedAddonIds: item.selectedAddons
+          ? item.selectedAddons.map((a) => a.id)
+          : [],
+      })),
+      AllergenWarningAccepted: allergenAccepted,
+    };
+  };
 
   useEffect(() => {
     loadData();
@@ -44,7 +56,6 @@ export default function OrderSummary() {
     try {
       setLoading(true);
       const cartData = getCart(restaurantId);
-
       if (cartData.length === 0) {
         setError("Vaša korpa je prazna.");
         setLoading(false);
@@ -57,10 +68,10 @@ export default function OrderSummary() {
       setRestaurant(restaurantData);
 
       let defaultAddressId = null;
+
       try {
         const userAddresses = await getUserAddresses(userId);
         setSavedAddresses(userAddresses);
-
         const defaultAddress = userAddresses.find((a) => a.isDefault);
         if (defaultAddress) {
           setAddressForm({
@@ -80,19 +91,13 @@ export default function OrderSummary() {
         setSavedAddresses([]);
       }
 
-      const orderData = {
-        AddressId: defaultAddressId,
-        CustomerNote: "",
-        Items: cartData.map((item) => ({
-          MealId: item.mealId,
-          Quantity: item.quantity,
-          SelectedAddonIds: item.selectedAddons
-            ? item.selectedAddons.map((a) => a.id)
-            : [],
-        })),
-        AllergenWarningAccepted: false,
-      };
+      if (!defaultAddressId) {
+        setError("Morate izabrati adresu za dostavu.");
+        setLoading(false);
+        return;
+      }
 
+      const orderData = buildOrderData(defaultAddressId, cartData, "", false);
       const previewData = await getOrderPreview(restaurantId, orderData);
       setPreview(previewData);
     } catch (err) {
@@ -108,20 +113,16 @@ export default function OrderSummary() {
       handleRemoveItem(index);
       return;
     }
-
     const updatedCart = [...cart];
     updatedCart[index].quantity = newQuantity;
     setCart(updatedCart);
-
     updateCartItemQuantity(restaurantId, index, newQuantity);
     loadData();
   };
 
   const handleRemoveItem = (index) => {
     if (!window.confirm("Da li želite da uklonite ovu stavku iz korpe?")) return;
-
     removeFromCart(restaurantId, index);
-
     const updatedCart = getCart(restaurantId);
     if (updatedCart.length === 0) {
       setCart([]);
@@ -130,7 +131,6 @@ export default function OrderSummary() {
       navigate(`/restaurants/${restaurantId}/menu`);
       return;
     }
-
     loadData();
   };
 
@@ -163,21 +163,8 @@ export default function OrderSummary() {
         }
       }
 
-      const orderData = {
-        AddressId: finalAddressId,
-        CustomerNote: customerNote.trim() || null,
-        Items: cart.map((item) => ({
-          MealId: item.mealId,
-          Quantity: item.quantity,
-          SelectedAddonIds: item.selectedAddons
-            ? item.selectedAddons.map((a) => a.id)
-            : [],
-        })),
-        AllergenWarningAccepted: allergenAccepted,
-      };
-
+      const orderData = buildOrderData(finalAddressId, cart, customerNote, allergenAccepted);
       const createdOrder = await createOrder(restaurantId, orderData);
-
       clearCart(restaurantId);
       alert(`✅ Porudžbina je uspešno kreirana! Broj porudžbine: ${createdOrder.id}`);
       navigate(`/orders/${createdOrder.id}`);
@@ -316,7 +303,6 @@ export default function OrderSummary() {
                 <div className="order-item__details">
                   <h3>{item.mealName}</h3>
                   <p>Cena: {item.unitPrice.toFixed(2)} RSD</p>
-
                   <div className="order-item__quantity-control">
                     <label>Količina:</label>
                     <div className="quantity-controls">
@@ -341,7 +327,6 @@ export default function OrderSummary() {
                       </button>
                     </div>
                   </div>
-
                   {item.selectedAddons && item.selectedAddons.length > 0 && (
                     <div className="order-item__addons">
                       <strong>Dodaci:</strong>
@@ -376,7 +361,6 @@ export default function OrderSummary() {
 
         <div className="delivery-address">
           <h2>Adresa dostave</h2>
-
           {savedAddresses.length > 0 && (
             <div className="address-toggle">
               <label>
@@ -422,7 +406,6 @@ export default function OrderSummary() {
                   required
                 />
               </div>
-
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Grad</label>
@@ -438,7 +421,6 @@ export default function OrderSummary() {
                     required
                   />
                 </div>
-
                 <div className="form-group">
                   <label className="form-label">Poštanski broj</label>
                   <input
@@ -457,7 +439,6 @@ export default function OrderSummary() {
                   />
                 </div>
               </div>
-
               <div className="save-address">
                 <label>
                   <input
@@ -487,32 +468,30 @@ export default function OrderSummary() {
         </div>
 
         {preview && (
-          <>
-            <div className="order-pricing">
-              <div className="pricing-row">
-                <span>Međuzbir:</span>
-                <span>{preview.subtotalPrice.toFixed(2)} RSD</span>
-              </div>
-              <div className="pricing-row">
-                <span>Dostava:</span>
-                <span>{preview.deliveryFee.toFixed(2)} RSD</span>
-              </div>
-              <div className="pricing-row pricing-row--total">
-                <span>
-                  <strong>Ukupno:</strong>
-                </span>
-                <span>
-                  <strong>{preview.totalPrice.toFixed(2)} RSD</strong>
-                </span>
-              </div>
+          <div className="order-pricing">
+            <div className="pricing-row">
+              <span>Cena:</span>
+              <span>{preview.subtotalPrice.toFixed(2)} RSD</span>
             </div>
+            <div className="pricing-row">
+              <span>Dostava:</span>
+              <span>{preview.deliveryFee.toFixed(2)} RSD</span>
+            </div>
+            <div className="pricing-row pricing-row--total">
+              <span>
+                <strong>Ukupno:</strong>
+              </span>
+              <span>
+                <strong>{preview.totalPrice.toFixed(2)} RSD</strong>
+              </span>
+            </div>
+          </div>
+        )}
 
-            {preview.hasAllergens && !allergenWarningAccepted && (
-              <div className="allergen-notice">
-                <p>⚠️ Ova porudžbina sadrži alergene. Bićete obavešteni pre potvrde.</p>
-              </div>
-            )}
-          </>
+        {preview && preview.hasAllergens && !allergenWarningAccepted && (
+          <div className="allergen-notice">
+            <p>⚠️ Ova porudžbina sadrži alergene. Bićete obavešteni pre potvrde.</p>
+          </div>
         )}
 
         <div className="order-actions">
@@ -526,7 +505,7 @@ export default function OrderSummary() {
           <button
             className="btn btn--primary"
             onClick={handleSubmitOrder}
-            disabled={isSubmitting || isRestaurantClosed}
+            disabled={isSubmitting || isRestaurantClosed || !preview}
           >
             {isSubmitting ? "Kreiranje..." : "Potvrdi porudžbinu"}
           </button>
@@ -543,4 +522,3 @@ export default function OrderSummary() {
     </div>
   );
 }
-

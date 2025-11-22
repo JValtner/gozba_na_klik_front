@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate, useParams } from "react-router-dom"
 import { createMeal, updateMeal } from "../../service/menuService"
+import { validateFile } from "../../service/fileService"
 
 export default function MealForm({ meal = null, restaurantId: propRestaurantId }) {
   const navigate = useNavigate()
@@ -27,36 +28,36 @@ export default function MealForm({ meal = null, restaurantId: propRestaurantId }
   })
 
   const onSubmit = async (data) => {
-  try {
-    setIsSubmitting(true)
-    setError("")
+    try {
+      setIsSubmitting(true)
+      setError("")
 
-    const mealData = new FormData()
+      const mealData = new FormData()
 
-    if (data.mealImage?.[0]) {
-      mealData.append("mealImage", data.mealImage[0])
+      if (data.mealImage?.[0]) {
+        mealData.append("mealImage", data.mealImage[0])
+      }
+      mealData.append("name", data.name)
+      mealData.append("description", data.description)
+      mealData.append("price", data.price)
+      mealData.append("restaurantId", restaurantId)
+
+      if (isEdit) {
+        await updateMeal(meal.id, mealData)
+        alert("Jelo je uspešno ažurirano!")
+      } else {
+        await createMeal(mealData)
+        alert("Jelo je uspešno dodato!")
+      }
+
+      navigate(`/restaurants/${restaurantId}/menu`)
+    } catch (err) {
+      console.error("Greška pri čuvanju jela:", err)
+      setError(err.response?.data?.message || "Došlo je do greške. Pokušajte ponovo.")
+    } finally {
+      setIsSubmitting(false)
     }
-    mealData.append("name", data.name)
-    mealData.append("description", data.description)
-    mealData.append("price", data.price)
-    mealData.append("restaurantId", restaurantId)
-
-    if (isEdit) {
-      await updateMeal(meal.id, mealData)
-      alert("Jelo je uspešno ažurirano!")
-    } else {
-      await createMeal(mealData)
-      alert("Jelo je uspešno dodato!")
-    }
-
-    navigate(`/restaurants/${restaurantId}/menu`)
-  } catch (err) {
-    console.error("Greška pri čuvanju jela:", err)
-    setError(err.response?.data?.message || "Došlo je do greške. Pokušajte ponovo.")
-  } finally {
-    setIsSubmitting(false)
   }
-}
 
 
   const handleCancel = () => {
@@ -131,9 +132,17 @@ export default function MealForm({ meal = null, restaurantId: propRestaurantId }
             <input
               type="file"
               id="mealImage"
-              {...register("mealImage")}
+              {...register("mealImage", {
+                validate: {
+                  fileCheck: (files) => {
+                    const file = files?.[0];
+                    const error = validateFile(file);
+                    return error || true;
+                  },
+                },
+              })}
               className="form-input"
-              placeholder="http://example.com/slika.jpg"
+              placeholder=""
               disabled={isSubmitting}
             />
             {errors.mealImage && <p className="form-error">{errors.mealImage.message}</p>}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { updateUser } from "../service/userService";
+import { validateFile } from "../service/fileService";
 import { baseUrl } from "../../config/routeConfig";
 import { useUser } from "./UserContext";
 import Spinner from "../spinner/Spinner";
@@ -23,24 +24,32 @@ export default function UserProfile() {
   const { refreshUser } = useUser();
   // Fetch profile
   useEffect(() => {
-      try {
-        reset({
-          userimage: user.userImage || null,
-          username: user.username || "",
-          email: user.email || "",
-        });
-      } catch (err) {
-        setErrorMsg("Greška pri učitavanju profila");
-        setTimeout(() => setStatusMsg(""), 3000);
-      }
-      finally {
-        setLoading(false);
-      }
+    try {
+      reset({
+        userimage: user.userImage || null,
+        username: user.username || "",
+        email: user.email || "",
+      });
+    } catch (err) {
+      setErrorMsg("Greška pri učitavanju profila");
+      setTimeout(() => setStatusMsg(""), 3000);
+    }
+    finally {
+      setLoading(false);
+    }
   }, [isAuth, reset]);
 
   // Image preview
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    const validationResult = validateFile(file);
+
+    if (validationResult !== true) {
+      setErrorMsg(validationResult);
+      setTimeout(() => setErrorMsg(""), 3000);
+      return;
+    }
+
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => setPreviewImage(reader.result);
@@ -66,7 +75,7 @@ export default function UserProfile() {
       setErrorMsg("Greška prilikom ažuriranja profila");
       setTimeout(() => setErrorMsg(""), 3000);
     }
-    finally{
+    finally {
       setLoading(false);
       await refreshUser();
     }
@@ -75,18 +84,28 @@ export default function UserProfile() {
   const imageSrc = previewImage
     ? previewImage
     : user?.userImage
-    ? `${baseUrl}${user.userImage}`
-    : `${baseUrl}/assets/profileImg/default_profile.png`;
+      ? `${baseUrl}${user.userImage}`
+      : `${baseUrl}/assets/profileImg/default_profile.png`;
 
-    if(loading || statusMsg!=="" || errorMsg!=="") return <Spinner/>
+  if (loading) return <Spinner />
   return (
-    
+
 
     <div className="user-profile-container">
       <h2>Profil korisnika</h2>
+      {errorMsg && (
+          <div className="error-message">
+            <p className="error-message__text">{errorMsg}</p>
+          </div>
+        )}
+
+        {statusMsg && (
+          <div className="success-message">
+            <p className="success-message__text">{statusMsg}</p>
+          </div>
+        )}
 
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-        <div className="statusMsg">{statusMsg}</div>
 
         <div className="profile-image">
           <img
@@ -96,7 +115,23 @@ export default function UserProfile() {
               e.target.src = `${baseUrl}/assets/profileImg/default_profile.png`;
             }}
           />
-          <input type="file" {...register("userimage")} onChange={handleImageChange} />
+          <input
+            type="file"
+            accept="image/*"
+            {...register("userimage", {
+              validate: {
+                fileCheck: (files) => {
+                  const file = files?.[0];
+                  const error = validateFile(file);
+                  return error || true;
+                },
+              },
+            })}
+            onChange={handleImageChange}
+          />
+          {errors.userimage && (
+            <p className="error-message__text">{errors.userimage.message}</p>
+          )}
         </div>
 
         <div>
