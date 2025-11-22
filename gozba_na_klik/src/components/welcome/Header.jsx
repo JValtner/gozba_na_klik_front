@@ -53,6 +53,11 @@ export default function Header() {
                       📋 Moje porudžbine
                     </Link>
                   </li>
+                  <li>
+                    <Link to={"/my-active-order"} className="my-orders-link">
+                      Aktivna porudžbina
+                    </Link>
+                  </li>
                 </>
               )}
 
@@ -93,7 +98,11 @@ export default function Header() {
 
             <Link to={`/profile`} className="profile-btn">
               <button className="profile-btn" name="Profile">
-                <img alt="Profile" className="profile-icon" src={profileImage} /> 
+                <img
+                  alt="Profile"
+                  className="profile-icon"
+                  src={profileImage}
+                />
                 Profile
               </button>
             </Link>
