@@ -32,6 +32,7 @@ import GlobalMealSearch from "./components/restaurants/GeneralMealSearch";
 import ResetPasswordPage from "./components/users/ResetPasswordPage";
 import { LOGGED_IN_ROLES } from "./config/routes/roles";
 import ProtectedRoute from "./config/routes/ProtectedRoute";
+import OrderTrackingPage from "./components/orders/OrderTrackingPage";
 
 export default function App() {
   return (
@@ -47,8 +48,7 @@ export default function App() {
             <Route path="/login" element={<WelcomePage />} />
             <Route path="/restaurants/home" element={<HomeRestaurants />} />
             <Route path="/restaurants/:id/menu" element={<Menu />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />}
-            />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
             {/* SVI SEM GUEST */}
             <Route
@@ -59,7 +59,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-            
+
             {/* KUPAC - User */}
             <Route
               path="/profile/:id/alergens"
@@ -74,6 +74,14 @@ export default function App() {
               element={
                 <ProtectedRoute allowedRoles={["User", "Buyer"]}>
                   <CustomerOrdersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-active-order"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.User}>
+                  <OrderTrackingPage />
                 </ProtectedRoute>
               }
             />
@@ -188,7 +196,13 @@ export default function App() {
             <Route
               path="/restaurants/:restaurantId/order-summary"
               element={
-                <ProtectedRoute allowedRoles={["Buyer", LOGGED_IN_ROLES.User, LOGGED_IN_ROLES.RestaurantOwner]}>
+                <ProtectedRoute
+                  allowedRoles={[
+                    "Buyer",
+                    LOGGED_IN_ROLES.User,
+                    LOGGED_IN_ROLES.RestaurantOwner,
+                  ]}
+                >
                   <OrderSummary />
                 </ProtectedRoute>
               }
@@ -196,7 +210,13 @@ export default function App() {
             <Route
               path="/orders/:orderId"
               element={
-                <ProtectedRoute allowedRoles={["Buyer", LOGGED_IN_ROLES.User, LOGGED_IN_ROLES.RestaurantOwner]}>
+                <ProtectedRoute
+                  allowedRoles={[
+                    "Buyer",
+                    LOGGED_IN_ROLES.User,
+                    LOGGED_IN_ROLES.RestaurantOwner,
+                  ]}
+                >
                   <OrderDetails />
                 </ProtectedRoute>
               }
