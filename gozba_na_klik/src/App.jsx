@@ -26,8 +26,10 @@ import CourierOrderCard from "./components/delivery/CourierOrderCard";
 import OrderSummary from "./components/orders/OrderSummary";
 import OrderDetails from "./components/orders/OrderDetails";
 import RestaurantOrdersPage from "./components/orders/RestaurantOrdersPage";
+import CustomerOrdersPage from "./components/orders/CustomerOrderPage";
 import HomeRestaurants from "./components/restaurants/HomeRestaurants";
 import GlobalMealSearch from "./components/restaurants/GeneralMealSearch";
+import ResetPasswordPage from "./components/users/ResetPasswordPage";
 import { LOGGED_IN_ROLES } from "./config/routes/roles";
 import ProtectedRoute from "./config/routes/ProtectedRoute";
 import OrderTrackingPage from "./components/orders/OrderTrackingPage";
@@ -46,6 +48,7 @@ export default function App() {
             <Route path="/login" element={<WelcomePage />} />
             <Route path="/restaurants/home" element={<HomeRestaurants />} />
             <Route path="/restaurants/:id/menu" element={<Menu />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
             {/* SVI SEM GUEST */}
             <Route
@@ -63,6 +66,14 @@ export default function App() {
               element={
                 <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.User}>
                   <EditUserAlergens />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-orders"
+              element={
+                <ProtectedRoute allowedRoles={["User", "Buyer"]}>
+                  <CustomerOrdersPage />
                 </ProtectedRoute>
               }
             />

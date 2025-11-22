@@ -27,7 +27,7 @@ const EmployeesDashboard = () => {
     try {
       setLoading(true);
       setError("");
-      const data = await getEmployeesByRestaurant(id, userId);
+      const data = await getEmployeesByRestaurant(id);
       setEmployees(data);
     } catch (err) {
       console.error("Greška pri učitavanju zaposlenih:", err);
@@ -43,7 +43,7 @@ const EmployeesDashboard = () => {
 
   const handleRegister = async (formData) => {
     try {
-      await registerEmployee(id, userId, formData);
+      await registerEmployee(id, formData);
       alert("Zaposleni je uspešno registrovan!");
       loadEmployees();
       setShowForm(false);
@@ -56,7 +56,7 @@ const EmployeesDashboard = () => {
   const handleUpdate = async (formData) => {
     if (selectedEmployee) {
       try {
-        await updateEmployee(selectedEmployee.id, userId, formData);
+        await updateEmployee(selectedEmployee.id, formData);
         alert("Zaposleni je uspešno ažuriran!");
         setSelectedEmployee(null);
         setShowForm(false);
@@ -73,7 +73,7 @@ const EmployeesDashboard = () => {
       return;
     }
     try {
-      await suspendEmployee(id, userId);
+      await suspendEmployee(id);
       alert("Zaposleni je suspendovan!");
       loadEmployees();
     } catch (err) {
@@ -84,7 +84,7 @@ const EmployeesDashboard = () => {
 
   const handleActivate = async (id) => {
     try {
-      await activateEmployee(id, userId);
+      await activateEmployee(id);
       alert("Zaposleni je aktiviran!");
       loadEmployees();
     } catch (err) {

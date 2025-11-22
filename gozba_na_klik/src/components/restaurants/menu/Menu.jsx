@@ -12,13 +12,14 @@ import { getCartItemCount } from "../../orders/AddToCart";
 const Menu = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { userId, role} = useUser()
+  const { userId, role } = useUser()
 
   const [restaurant, setRestaurant] = useState(null)
   const [meals, setMeals] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [cartItemCount, setCartItemCount] = useState(0)
+  const [isOwner, setIsOwner] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
@@ -26,6 +27,13 @@ const Menu = () => {
         setLoading(true)
         const restaurantData = await getRestaurantById(id)
         setRestaurant(restaurantData)
+
+        // Check if current user is the owner of this restaurant
+        const userIsOwner = role === "RestaurantOwner" &&
+          userId &&
+          restaurantData.ownerId &&
+          Number(userId) === Number(restaurantData.ownerId)
+        setIsOwner(userIsOwner)
 
         const mealsData = await getMealsByRestaurantId(restaurantData.id)
         setMeals(mealsData)
@@ -38,7 +46,7 @@ const Menu = () => {
     }
 
     loadData()
-  }, [id])
+  }, [id, userId, role])
 
   useEffect(() => {
     const updateCartCount = () => {
@@ -49,24 +57,24 @@ const Menu = () => {
     };
 
     updateCartCount();
-    
+
     const interval = setInterval(updateCartCount, 2000);
     return () => clearInterval(interval);
   }, [restaurant]);
 
   const handleGoToCart = () => {
-  if (!restaurant) {
-    console.error("Restaurant nije još učitan!");
-    return;
-  }
+    if (!restaurant) {
+      console.error("Restaurant nije još učitan!");
+      return;
+    }
 
-  if (cartItemCount === 0) {
-    alert("Korpa je prazna.");
-    return;
-  }
+    if (cartItemCount === 0) {
+      alert("Korpa je prazna.");
+      return;
+    }
 
-  navigate(`/restaurants/${restaurant.id}/order-summary`);
-};
+    navigate(`/restaurants/${restaurant.id}/order-summary`);
+  };
 
   const onEdit = (meal) => navigate(`/restaurants/${id}/menu/${meal.id}/edit`)
 
@@ -77,9 +85,9 @@ const Menu = () => {
     }
   }
   const handleNewMeal = () => {
-  if (!restaurant) return
-  navigate(`/restaurants/${restaurant.id}/menu/new`)
-}
+    if (!restaurant) return
+    navigate(`/restaurants/${restaurant.id}/menu/new`)
+  }
 
   if (loading) return <Spinner />
   if (error) return <p style={{ color: "red" }}>{error}</p>
@@ -100,17 +108,17 @@ const Menu = () => {
         </div>
       </div>
       {/* --- New meal btn --- */}
-      {role==="RestaurantOwner" && (
-      <div className="restaurant-meal-new">
-        <button className="new-meal-btn" onClick={handleNewMeal}>Add meal</button>
-      </div>
+      {isOwner && (
+        <div className="restaurant-meal-new">
+          <button className="btn btn--primary" onClick={handleNewMeal}>Add meal</button>
+        </div>
       )}
-      
-      {/* --- Cart Button for Buyers --- */}
-      {role === "Buyer" && (
+
+      {/* --- Cart Button for Users --- */}
+      {(role === "User" || role === "Buyer") && (
         <div className="restaurant-cart-button">
-          <button 
-            className="cart-btn" 
+          <button
+            className="cart-btn"
             onClick={handleGoToCart}
             disabled={cartItemCount === 0}
           >
@@ -118,7 +126,7 @@ const Menu = () => {
           </button>
         </div>
       )}
-      
+
       {/* --- Meals Section --- */}
       <div className="meals-section">
         <h2>Jelovnik</h2>
@@ -127,11 +135,17 @@ const Menu = () => {
         ) : (
           <div className="meals-grid">
             {meals.map((meal) => (
-              <MenuItem key={meal.id} meal={meal} onEdit={onEdit} onDelete={onDelete} />
+              <MenuItem key={meal.id} meal={meal} onEdit={onEdit} onDelete={onDelete} isOwner={isOwner} />
             ))}
           </div>
         )}
       </div>
+      <div>
+        <button type="button" className="btn btn--secondary" onClick={() => navigate(-1)}>
+          ← Nazad
+        </button>
+      </div>
+
     </div>
   )
 }

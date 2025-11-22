@@ -9,31 +9,6 @@ import AllergenWarningModal from "./AllergenWarningModal";
 import Spinner from "../spinner/Spinner";
 import { baseUrl } from "../../config/routeConfig";
 
-const isRestaurantCurrentlyOpen = (restaurant) => {
-  if (!restaurant || !restaurant.workSchedules) return false;
-
-  const now = new Date();
-  const currentDay = now.getDay();
-  const currentTime = now.toTimeString().slice(0, 8);
-  const todayDate = now.toISOString().split('T')[0];
-
-  const isClosedToday = restaurant.closedDates?.some(cd => {
-    const closedDate = new Date(cd.date).toISOString().split('T')[0];
-    return closedDate === todayDate;
-  });
-
-  if (isClosedToday) return false;
-
-  const todaySchedule = restaurant.workSchedules.find(
-    ws => ws.dayOfWeek === currentDay
-  );
-
-  if (!todaySchedule) return false;
-
-  return currentTime >= todaySchedule.openTime && 
-         currentTime <= todaySchedule.closeTime;
-};
-
 export default function OrderSummary() {
   const { restaurantId } = useParams();
   const navigate = useNavigate();
@@ -60,6 +35,21 @@ export default function OrderSummary() {
   const [showAllergenModal, setShowAllergenModal] = useState(false);
   const [allergenWarningAccepted, setAllergenWarningAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const buildOrderData = (addressId, cartItems, note = "", allergenAccepted = false) => {
+    return {
+      AddressId: addressId,
+      CustomerNote: note.trim() || null,
+      Items: cartItems.map((item) => ({
+        MealId: item.mealId,
+        Quantity: item.quantity,
+        SelectedAddonIds: item.selectedAddons
+          ? item.selectedAddons.map((a) => a.id)
+          : [],
+      })),
+      AllergenWarningAccepted: allergenAccepted,
+    };
+  };
 
   useEffect(() => {
     loadData();
@@ -105,20 +95,14 @@ export default function OrderSummary() {
         setSavedAddresses([]);
       }
 
-      const orderData = {
-        AddressId: defaultAddressId,
-        CustomerNote: "",
-        Items: cartData.map((item) => ({
-          MealId: item.mealId,
-          Quantity: item.quantity,
-          SelectedAddonIds: item.selectedAddons
-            ? item.selectedAddons.map((a) => a.id)
-            : [],
-        })),
-        AllergenWarningAccepted: false,
-      };
+      if (!defaultAddressId) {
+        setError("Morate izabrati adresu za dostavu.");
+        setLoading(false);
+        return;
+      }
 
-      const previewData = await getOrderPreview(restaurantId, userId, orderData);
+      const orderData = buildOrderData(defaultAddressId, cartData, "", false);
+      const previewData = await getOrderPreview(restaurantId, orderData);
       setPreview(previewData);
     } catch (err) {
       console.error("Greška pri učitavanju:", err);
@@ -186,20 +170,8 @@ export default function OrderSummary() {
         }
       }
 
-      const orderData = {
-        AddressId: finalAddressId,
-        CustomerNote: customerNote.trim() || null,
-        Items: cart.map((item) => ({
-          MealId: item.mealId,
-          Quantity: item.quantity,
-          SelectedAddonIds: item.selectedAddons
-            ? item.selectedAddons.map((a) => a.id)
-            : [],
-        })),
-        AllergenWarningAccepted: allergenAccepted,
-      };
-
-      const createdOrder = await createOrder(restaurantId, userId, orderData);
+      const orderData = buildOrderData(finalAddressId, cart, customerNote, allergenAccepted);
+      const createdOrder = await createOrder(restaurantId, orderData);
 
       clearCart(restaurantId);
       alert(`✅ Porudžbina je uspešno kreirana! Broj porudžbine: ${createdOrder.id}`);
@@ -296,7 +268,7 @@ export default function OrderSummary() {
     );
   }
 
-  const isRestaurantClosed = restaurant && !isRestaurantCurrentlyOpen(restaurant);
+  const isRestaurantClosed = restaurant && !restaurant.isOpen;
 
   return (
     <div className="order-summary-page">
@@ -509,26 +481,28 @@ export default function OrderSummary() {
           />
         </div>
 
-        <div className="order-pricing">
-          <div className="pricing-row">
-            <span>Međuzbir:</span>
-            <span>{preview.subtotalPrice.toFixed(2)} RSD</span>
+        {preview && (
+          <div className="order-pricing">
+            <div className="pricing-row">
+              <span>Cena:</span>
+              <span>{preview.subtotalPrice.toFixed(2)} RSD</span>
+            </div>
+            <div className="pricing-row">
+              <span>Dostava:</span>
+              <span>{preview.deliveryFee.toFixed(2)} RSD</span>
+            </div>
+            <div className="pricing-row pricing-row--total">
+              <span>
+                <strong>Ukupno:</strong>
+              </span>
+              <span>
+                <strong>{preview.totalPrice.toFixed(2)} RSD</strong>
+              </span>
+            </div>
           </div>
-          <div className="pricing-row">
-            <span>Dostava:</span>
-            <span>{preview.deliveryFee.toFixed(2)} RSD</span>
-          </div>
-          <div className="pricing-row pricing-row--total">
-            <span>
-              <strong>Ukupno:</strong>
-            </span>
-            <span>
-              <strong>{preview.totalPrice.toFixed(2)} RSD</strong>
-            </span>
-          </div>
-        </div>
+        )}
 
-        {preview.hasAllergens && !allergenWarningAccepted && (
+        {preview && preview.hasAllergens && !allergenWarningAccepted && (
           <div className="allergen-notice">
             <p>⚠️ Ova porudžbina sadrži alergene. Bićete obavešteni pre potvrde.</p>
           </div>
@@ -545,14 +519,14 @@ export default function OrderSummary() {
           <button
             className="btn btn--primary"
             onClick={handleSubmitOrder}
-            disabled={isSubmitting || isRestaurantClosed}
+            disabled={isSubmitting || isRestaurantClosed || !preview}
           >
             {isSubmitting ? "Kreiranje..." : "Potvrdi porudžbinu"}
           </button>
         </div>
       </div>
       
-      {showAllergenModal && (
+      {showAllergenModal && preview && (
         <AllergenWarningModal
           allergens={preview.allergens}
           onAccept={handleAllergenAccept}
@@ -562,3 +536,4 @@ export default function OrderSummary() {
     </div>
   );
 }
+

@@ -2,7 +2,12 @@ import AxiosConfig from "../../config/axios.config";
 
 // GET restoran po ID-u
 export async function getRestaurantById(id) {
-  const response = await AxiosConfig.get(`/api/restaurants/${id}`);
+  // Dodaj cache-busting parametar da se podaci uvek osveže
+  const response = await AxiosConfig.get(`/api/restaurants/${id}`, {
+    params: {
+      _t: Date.now() // Dodaj timestamp da spreči keširanje
+    }
+  });
   return response.data;
 }
 
@@ -71,8 +76,8 @@ export const getSortTypes = async () => {
 };
 
 // GET moji restorani
-export async function getMyRestaurants(userId) {
-  const response = await AxiosConfig.get(`/api/restaurants/${userId}/my`);
+export async function getMyRestaurants() {
+  const response = await AxiosConfig.get(`/api/restaurants/my`);
   return response.data;
 }
 
