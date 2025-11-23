@@ -62,7 +62,7 @@ export default function App() {
 
             {/* KUPAC - User */}
             <Route
-              path="/profile/:id/alergens"
+              path="/profile/alergens"
               element={
                 <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.User}>
                   <EditUserAlergens />
