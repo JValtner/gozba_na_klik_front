@@ -13,11 +13,9 @@ export default function OrderSummary() {
   const { restaurantId } = useParams();
   const navigate = useNavigate();
   const { userId } = useUser();
-
   const [cart, setCart] = useState([]);
   const [preview, setPreview] = useState(null);
   const [restaurant, setRestaurant] = useState(null);
-
   const [addressForm, setAddressForm] = useState({
     street: "",
     city: "",
@@ -28,7 +26,6 @@ export default function OrderSummary() {
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [useExistingAddress, setUseExistingAddress] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-
   const [customerNote, setCustomerNote] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -59,7 +56,6 @@ export default function OrderSummary() {
     try {
       setLoading(true);
       const cartData = getCart(restaurantId);
-
       if (cartData.length === 0) {
         setError("Vaša korpa je prazna.");
         setLoading(false);
@@ -72,10 +68,10 @@ export default function OrderSummary() {
       setRestaurant(restaurantData);
 
       let defaultAddressId = null;
+
       try {
         const userAddresses = await getUserAddresses(userId);
         setSavedAddresses(userAddresses);
-
         const defaultAddress = userAddresses.find((a) => a.isDefault);
         if (defaultAddress) {
           setAddressForm({
@@ -117,20 +113,16 @@ export default function OrderSummary() {
       handleRemoveItem(index);
       return;
     }
-
     const updatedCart = [...cart];
     updatedCart[index].quantity = newQuantity;
     setCart(updatedCart);
-
     updateCartItemQuantity(restaurantId, index, newQuantity);
     loadData();
   };
 
   const handleRemoveItem = (index) => {
     if (!window.confirm("Da li želite da uklonite ovu stavku iz korpe?")) return;
-
     removeFromCart(restaurantId, index);
-
     const updatedCart = getCart(restaurantId);
     if (updatedCart.length === 0) {
       setCart([]);
@@ -139,7 +131,6 @@ export default function OrderSummary() {
       navigate(`/restaurants/${restaurantId}/menu`);
       return;
     }
-
     loadData();
   };
 
@@ -157,7 +148,7 @@ export default function OrderSummary() {
 
       if (!useExistingAddress || saveAddress) {
         try {
-          const newAddress = await createAddress(userId, {
+          const newAddress = await createAddress({
             street: addressForm.street,
             city: addressForm.city,
             postalCode: addressForm.postalCode,
@@ -167,12 +158,13 @@ export default function OrderSummary() {
           finalAddressId = newAddress.id;
         } catch (err) {
           console.error("Greška pri kreiranju adrese:", err);
+          setError("Greška pri kreiranju adrese. Pokušajte ponovo.");
+          return;
         }
       }
 
       const orderData = buildOrderData(finalAddressId, cart, customerNote, allergenAccepted);
       const createdOrder = await createOrder(restaurantId, orderData);
-
       clearCart(restaurantId);
       alert(`✅ Porudžbina je uspešno kreirana! Broj porudžbine: ${createdOrder.id}`);
       navigate(`/orders/${createdOrder.id}`);
@@ -311,7 +303,6 @@ export default function OrderSummary() {
                 <div className="order-item__details">
                   <h3>{item.mealName}</h3>
                   <p>Cena: {item.unitPrice.toFixed(2)} RSD</p>
-
                   <div className="order-item__quantity-control">
                     <label>Količina:</label>
                     <div className="quantity-controls">
@@ -336,7 +327,6 @@ export default function OrderSummary() {
                       </button>
                     </div>
                   </div>
-
                   {item.selectedAddons && item.selectedAddons.length > 0 && (
                     <div className="order-item__addons">
                       <strong>Dodaci:</strong>
@@ -371,7 +361,6 @@ export default function OrderSummary() {
 
         <div className="delivery-address">
           <h2>Adresa dostave</h2>
-
           {savedAddresses.length > 0 && (
             <div className="address-toggle">
               <label>
@@ -417,7 +406,6 @@ export default function OrderSummary() {
                   required
                 />
               </div>
-
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Grad</label>
@@ -433,7 +421,6 @@ export default function OrderSummary() {
                     required
                   />
                 </div>
-
                 <div className="form-group">
                   <label className="form-label">Poštanski broj</label>
                   <input
@@ -452,7 +439,6 @@ export default function OrderSummary() {
                   />
                 </div>
               </div>
-
               <div className="save-address">
                 <label>
                   <input
@@ -484,7 +470,7 @@ export default function OrderSummary() {
         {preview && (
           <div className="order-pricing">
             <div className="pricing-row">
-              <span>Cena:</span>
+              <span>Međuzbir:</span>
               <span>{preview.subtotalPrice.toFixed(2)} RSD</span>
             </div>
             <div className="pricing-row">
@@ -536,4 +522,3 @@ export default function OrderSummary() {
     </div>
   );
 }
-
