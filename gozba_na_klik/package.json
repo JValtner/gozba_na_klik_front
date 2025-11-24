@@ -9,6 +9,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@microsoft/signalr": "^10.0.0",
     "axios": "^1.12.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
