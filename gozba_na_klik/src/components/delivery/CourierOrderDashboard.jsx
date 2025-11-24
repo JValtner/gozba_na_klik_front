@@ -47,6 +47,20 @@ export default function CourierOrderDashboard() {
       }
 
       if (response) {
+        if (newStatus === "ZAVRŠENO") {
+          setStatusMsg(
+            "✅ Porudžbina je uspešno završena! Hvala vam na dostavi."
+          );
+
+          setTimeout(() => {
+            setOrder(null);
+            setStatusMsg("");
+          }, 4000);
+
+          setIsUpdating(false);
+          return;
+        }
+
         setStatusMsg(`Porudžbina je uspešno ažurirana na status: ${newStatus}`);
         await loadOrder(); // ponovo učitava order
         setTimeout(() => setStatusMsg(""), 3000);
