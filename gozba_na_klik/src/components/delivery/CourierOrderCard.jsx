@@ -147,7 +147,7 @@ const CourierOrderCard = ({ order, onStatusUpdate, isUpdating }) => {
             onClick={() => onStatusUpdate("DOSTAVA U TOKU")}
             disabled={isUpdating}
           >
-            {isUpdating ? "⏳ Ažuriranje..." : "📦 Potvrdi preuzimanje"}
+            {isUpdating ? "⏳ Ažuriranje..." : "📦 Preuzeo sam dostavu"}
           </button>
         )}
 
@@ -157,7 +157,7 @@ const CourierOrderCard = ({ order, onStatusUpdate, isUpdating }) => {
             onClick={() => onStatusUpdate("ZAVRŠENO")}
             disabled={isUpdating}
           >
-            {isUpdating ? "⏳ Ažuriranje..." : "✅ Potvrdi dostavu"}
+            {isUpdating ? "⏳ Ažuriranje..." : "✅ Predao sam dostavu"}
           </button>
         )}
 

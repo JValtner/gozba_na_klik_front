@@ -10,7 +10,7 @@ const OrderTrackingPage = () => {
   const [order, setOrder] = useState(null);
 
   const DELIVERY_STATUSES = [
-    { key: "NA ČEKANJU", label: "Na čekanju", icon: "⏳" },
+    { key: "NA_CEKANJU", label: "Na čekanju", icon: "⏳" },
     { key: "PRIHVAĆENA", label: "Prihvaćena", icon: "✅" },
     { key: "PREUZIMANJE U TOKU", label: "Preuzimanje u toku", icon: "📦" },
     { key: "DOSTAVA U TOKU", label: "Dostava u toku", icon: "🚚" },
@@ -152,159 +152,165 @@ const OrderTrackingPage = () => {
           </div>
         </div>
 
-        <div className="order-tracking-page__content">
-          {/* Left Column - Order Details */}
-          <div className="order-tracking-page__details">
-            {/* Restaurant Info */}
-            {order.restaurant && (
-              <div className="info-card">
-                <h2 className="info-card__title">Restoran</h2>
-                <div className="info-card__content">
-                  <p className="info-card__name">{order.restaurant.name}</p>
-                  {order.restaurant.address && (
+        {order.status?.toUpperCase() !== "NA_CEKANJU" ? (
+          <div className="order-tracking-page__content">
+            {/* Left Column - Order Details */}
+            <div className="order-tracking-page__details">
+              {/* Restaurant Info */}
+              {order.restaurant && (
+                <div className="info-card">
+                  <h2 className="info-card__title">Restoran</h2>
+                  <div className="info-card__content">
+                    <p className="info-card__name">{order.restaurant.name}</p>
+                    {order.restaurant.address && (
+                      <p className="info-card__text">
+                        📍 {order.restaurant.address}
+                      </p>
+                    )}
+                    {order.restaurant.phone && (
+                      <p className="info-card__text">
+                        📞 {order.restaurant.phone}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Delivery Address */}
+              {order.customerAddress && (
+                <div className="info-card">
+                  <h2 className="info-card__title">Adresa dostave</h2>
+                  <div className="info-card__content">
                     <p className="info-card__text">
-                      📍 {order.restaurant.address}
+                      {formatAddress(order.customerAddress)}
                     </p>
-                  )}
-                  {order.restaurant.phone && (
-                    <p className="info-card__text">
-                      📞 {order.restaurant.phone}
+                    {order.customerAddress.notes && (
+                      <p className="info-card__text info-card__text--notes">
+                        📝 {order.customerAddress.notes}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Delivery Person */}
+              {order.deliveryPerson && (
+                <div className="info-card">
+                  <h2 className="info-card__title">Kurir</h2>
+                  <div className="info-card__content">
+                    <p className="info-card__name">
+                      🚴 {order.deliveryPerson.username}
                     </p>
-                  )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Delivery Address */}
-            {order.customerAddress && (
-              <div className="info-card">
-                <h2 className="info-card__title">Adresa dostave</h2>
-                <div className="info-card__content">
-                  <p className="info-card__text">
-                    {formatAddress(order.customerAddress)}
-                  </p>
-                  {order.customerAddress.notes && (
-                    <p className="info-card__text info-card__text--notes">
-                      📝 {order.customerAddress.notes}
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Delivery Person */}
-            {order.deliveryPerson && (
-              <div className="info-card">
-                <h2 className="info-card__title">Kurir</h2>
-                <div className="info-card__content">
-                  <p className="info-card__name">
-                    🚴 {order.deliveryPerson.username}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Order Items */}
-            {order.orderItems && order.orderItems.length > 0 && (
-              <div className="info-card">
-                <h2 className="info-card__title">Stavke porudžbine</h2>
-                <div className="info-card__content">
-                  <div className="order-items-list">
-                    {order.orderItems.map((item, index) => (
-                      <div key={index} className="order-item-tracking">
-                        <div className="order-item-tracking__info">
-                          <span className="order-item-tracking__quantity">
-                            {item.quantity}x
-                          </span>
-                          <span className="order-item-tracking__name">
-                            {item.name}
-                          </span>
-                        </div>
-                        {item.selectedAddons && (
-                          <p className="order-item-tracking__addons">
-                            {item.selectedAddons}
+              {/* Order Items */}
+              {order.orderItems && order.orderItems.length > 0 && (
+                <div className="info-card">
+                  <h2 className="info-card__title">Stavke porudžbine</h2>
+                  <div className="info-card__content">
+                    <div className="order-items-list">
+                      {order.orderItems.map((item, index) => (
+                        <div key={index} className="order-item-tracking">
+                          <div className="order-item-tracking__info">
+                            <span className="order-item-tracking__quantity">
+                              {item.quantity}x
+                            </span>
+                            <span className="order-item-tracking__name">
+                              {item.name}
+                            </span>
+                          </div>
+                          {item.selectedAddons && (
+                            <p className="order-item-tracking__addons">
+                              {item.selectedAddons}
+                            </p>
+                          )}
+                          <p className="order-item-tracking__price">
+                            {item.totalPrice.toFixed(2)} RSD
                           </p>
-                        )}
-                        <p className="order-item-tracking__price">
-                          {item.totalPrice.toFixed(2)} RSD
-                        </p>
-                      </div>
-                    ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Pricing */}
+              <div className="info-card">
+                <h2 className="info-card__title">Cena</h2>
+                <div className="info-card__content">
+                  <div className="pricing-row">
+                    <span>Međuzbir:</span>
+                    <span>{order.subtotalPrice.toFixed(2)} RSD</span>
+                  </div>
+                  <div className="pricing-row">
+                    <span>Dostava:</span>
+                    <span>{order.deliveryFee.toFixed(2)} RSD</span>
+                  </div>
+                  <div className="pricing-row pricing-row--total">
+                    <span>Ukupno:</span>
+                    <span>{order.totalPrice.toFixed(2)} RSD</span>
                   </div>
                 </div>
               </div>
-            )}
 
-            {/* Pricing */}
-            <div className="info-card">
-              <h2 className="info-card__title">Cena</h2>
-              <div className="info-card__content">
-                <div className="pricing-row">
-                  <span>Međuzbir:</span>
-                  <span>{order.subtotalPrice.toFixed(2)} RSD</span>
+              {/* Customer Note */}
+              {order.customerNote && (
+                <div className="info-card">
+                  <h2 className="info-card__title">Napomena</h2>
+                  <div className="info-card__content">
+                    <p className="info-card__text">{order.customerNote}</p>
+                  </div>
                 </div>
-                <div className="pricing-row">
-                  <span>Dostava:</span>
-                  <span>{order.deliveryFee.toFixed(2)} RSD</span>
-                </div>
-                <div className="pricing-row pricing-row--total">
-                  <span>Ukupno:</span>
-                  <span>{order.totalPrice.toFixed(2)} RSD</span>
-                </div>
-              </div>
-            </div>
+              )}
 
-            {/* Customer Note */}
-            {order.customerNote && (
+              {/* Order Dates */}
               <div className="info-card">
-                <h2 className="info-card__title">Napomena</h2>
+                <h2 className="info-card__title">Informacije</h2>
                 <div className="info-card__content">
-                  <p className="info-card__text">{order.customerNote}</p>
+                  <p className="info-card__text">
+                    <strong>Datum porudžbine:</strong>{" "}
+                    {formatDate(order.orderDate)}
+                  </p>
+                  {order.estimatedDeliveryTime && (
+                    <p className="info-card__text">
+                      <strong>Procenjeno vreme dostave:</strong>{" "}
+                      {formatDate(order.estimatedDeliveryTime)}
+                    </p>
+                  )}
+                  {order.lastUpdated && (
+                    <p className="info-card__text">
+                      <strong>Poslednje ažuriranje:</strong>{" "}
+                      {formatDate(order.lastUpdated)}
+                    </p>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
 
-            {/* Order Dates */}
-            <div className="info-card">
-              <h2 className="info-card__title">Informacije</h2>
-              <div className="info-card__content">
-                <p className="info-card__text">
-                  <strong>Datum porudžbine:</strong>{" "}
-                  {formatDate(order.orderDate)}
+            {/* Right Column - Map Placeholder */}
+            <div className="order-tracking-page__map">
+              <div className="map-placeholder">
+                <div className="map-placeholder__icon">🗺️</div>
+                <p className="map-placeholder__text">
+                  Mapa će biti prikazana ovde
                 </p>
-                {order.estimatedDeliveryTime && (
-                  <p className="info-card__text">
-                    <strong>Procenjeno vreme dostave:</strong>{" "}
-                    {formatDate(order.estimatedDeliveryTime)}
-                  </p>
-                )}
-                {order.lastUpdated && (
-                  <p className="info-card__text">
-                    <strong>Poslednje ažuriranje:</strong>{" "}
-                    {formatDate(order.lastUpdated)}
-                  </p>
-                )}
+                {order.customerAddress?.latitude &&
+                  order.customerAddress?.longitude && (
+                    <p className="map-placeholder__coordinates">
+                      Koordinate: {order.customerAddress.latitude.toFixed(6)},{" "}
+                      {order.customerAddress.longitude.toFixed(6)}
+                    </p>
+                  )}
               </div>
             </div>
           </div>
-
-          {/* Right Column - Map Placeholder */}
-          <div className="order-tracking-page__map">
-            <div className="map-placeholder">
-              <div className="map-placeholder__icon">🗺️</div>
-              <p className="map-placeholder__text">
-                Mapa će biti prikazana ovde
-              </p>
-              {order.customerAddress?.latitude &&
-                order.customerAddress?.longitude && (
-                  <p className="map-placeholder__coordinates">
-                    Koordinate: {order.customerAddress.latitude.toFixed(6)},{" "}
-                    {order.customerAddress.longitude.toFixed(6)}
-                  </p>
-                )}
-            </div>
+        ) : (
+          <div className="waiting-message">
+            <h2>Sačekajte da restoran prihvati vašu porudžbinu...</h2>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
