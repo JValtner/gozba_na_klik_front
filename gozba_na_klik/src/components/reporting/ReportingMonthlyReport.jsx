@@ -39,7 +39,33 @@ const ReportingMonthlyReport = ({ restaurantId }) => {
           </div>
 
           <div className="chart-box">
-            
+            <DailyChart
+              title="Top 5 Revenue Orders"
+              labels={report.top5RevenueOrders.items.map(o => `Order #${o.id}`)}
+              data={report.top5RevenueOrders.items.map(o => o.totalPrice)}
+              label="Revenue"
+              chartType={chartType}
+            />
+          </div>
+
+          <div className="chart-box">
+            <DailyChart
+              title="Top 5 Popular Meals"
+              labels={report.top5PopularMeals.items.map(i => i.meal?.name ?? "Unknown")}
+              data={report.top5PopularMeals.items.map(i => i.quantity)}
+              label="Units Sold"
+              chartType={chartType}
+            />
+          </div>
+
+          <div className="chart-box">
+            <DailyChart
+              title="Bottom 5 Popular Meals"
+              labels={report.bottom5PopularMeals.items.map(i => i.meal?.name ?? "Unknown")}
+              data={report.bottom5PopularMeals.items.map(i => i.quantity)}
+              label="Units Sold"
+              chartType={chartType}
+            />
           </div>
         </div>
       )}

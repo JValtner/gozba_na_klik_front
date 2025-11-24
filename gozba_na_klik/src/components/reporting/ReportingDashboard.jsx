@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { baseUrl } from "../../config/routeConfig";
 import { getAllRestaurants, getRestaurantById } from "../service/restaurantsService";
 import { getMealsByRestaurantId } from "../service/menuService";
 
@@ -61,7 +61,7 @@ const ReportingDashboard = () => {
         {/* restaurant info */}
         {restaurantInfo && (
           <div className="restaurant-card">
-            <img src={restaurantInfo.imageUrl} alt="" />
+           <img src={`${baseUrl}${restaurantInfo.photoUrl}`} alt={restaurantInfo?.name} />
             <div>
               <h3>{restaurantInfo.name}</h3>
               <p>{restaurantInfo.description}</p>

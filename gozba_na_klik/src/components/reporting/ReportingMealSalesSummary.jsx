@@ -81,7 +81,7 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
           <div className="chart-box">
             <DailyChart
               title="Daily Units Sold"
-              labels={report.dailyReports.map(r => r.date)}
+              labels={report.dailyReports.map(r => new Date(r.date).toLocaleDateString())}
               data={report.dailyReports.map(r => r.totalDailyUnitsSold)}
               label="Units Sold"
               chartType={chartType}
