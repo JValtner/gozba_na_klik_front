@@ -35,11 +35,11 @@ export default function AdminComplaintsPage() {
       setLoading(true);
       setError("");
       const data = await getAllComplaintsLast30Days(currentPage + 1, pageSize);
-      setComplaints(data.complaints || []);
-      setTotalCount(data.totalCount || 0);
-      setTotalPages(data.totalPages || 1);
-      setHasPreviousPage(data.hasPreviousPage || false);
-      setHasNextPage(data.hasNextPage || false);
+      setComplaints(data.items || data.Items || []);
+      setTotalCount(data.count || data.Count || 0);
+      setTotalPages(data.totalPages || data.TotalPages || 1);
+      setHasPreviousPage(data.hasPreviousPage || data.HasPreviousPage || false);
+      setHasNextPage(data.hasNextPage || data.HasNextPage || false);
     } catch (err) {
       console.error("Error loading complaints:", err);
       setError("Greška pri učitavanju žalbi. Pokušajte ponovo.");

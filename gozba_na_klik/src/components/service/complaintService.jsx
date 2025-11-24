@@ -10,16 +10,6 @@ export async function createComplaint(orderId, message) {
   return response.data;
 }
 
-export async function checkComplaintExists(orderId) {
-  try {
-    const response = await AxiosConfig.get(`${RESOURCE}/order/${orderId}/exists`);
-    return response.data.exists;
-  } catch (error) {
-    console.error("Error checking complaint existence:", error);
-    return false;
-  }
-}
-
 export async function getComplaintByOrderId(orderId) {
   try {
     const response = await AxiosConfig.get(`${RESOURCE}/order/${orderId}`);
