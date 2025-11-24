@@ -10,7 +10,7 @@ const OrderTrackingPage = () => {
   const [order, setOrder] = useState(null);
 
   const DELIVERY_STATUSES = [
-    { key: "NA ČEKANJU", label: "Na čekanju", icon: "⏳" },
+    { key: "NA_CEKANJU", label: "Na čekanju", icon: "⏳" },
     { key: "PRIHVAĆENA", label: "Prihvaćena", icon: "✅" },
     { key: "PREUZIMANJE U TOKU", label: "Preuzimanje u toku", icon: "📦" },
     { key: "DOSTAVA U TOKU", label: "Dostava u toku", icon: "🚚" },
@@ -26,6 +26,7 @@ const OrderTrackingPage = () => {
       console.log("Greška pri učitavanju porudžbine:", err);
       if (err.response?.status === 404) {
         setError("Nemate aktivnu porudžbinu.");
+        setOrder(null);
       } else {
         setError("Greška pri učitavanju porudžbine.");
       }
@@ -102,7 +103,6 @@ const OrderTrackingPage = () => {
       <div className="order-tracking-page__container">
         <div className="order-tracking-page__header">
           <h1>Praćenje dostave</h1>
-          <p className="order-number">Porudžbina #{order.orderId}</p>
         </div>
 
         {/* Progress Bar */}
