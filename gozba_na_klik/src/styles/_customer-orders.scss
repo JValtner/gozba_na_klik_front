@@ -425,3 +425,42 @@
     margin-bottom: 1rem;
   }
 }
+
+.complaint-details {
+  .complaint-info-item {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: #f9fafb;
+    border-radius: 6px;
+
+    strong {
+      color: #374151;
+      margin-right: 0.5rem;
+    }
+  }
+
+  .complaint-message-section {
+    margin-top: 1.5rem;
+
+    h3 {
+      color: #1f2937;
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .complaint-message-box {
+      background-color: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-left: 4px solid #f59e0b;
+      border-radius: 6px;
+      padding: 1rem;
+      
+      p {
+        margin: 0;
+        color: #9a3412;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+    }
+  }
+}

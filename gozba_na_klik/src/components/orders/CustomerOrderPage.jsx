@@ -4,8 +4,11 @@ import { useUser } from "../users/UserContext";
 import { getUserOrderHistory } from "../service/orderService";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "../../constants/orderConstants";
 import InvoiceButton from "../invoices/InvoiceButton";
+import ComplaintModal from "../complaints/ComplaintModal";
+import ViewComplaintModal from "../complaints/ViewComplaintModal";
 import Spinner from "../spinner/Spinner";
 import Pagination from "../utils/Pagination";
+import { getComplaintByOrderId } from "../service/complaintService";
 
 const CustomerOrdersPage = () => {
   const navigate = useNavigate();
@@ -21,6 +24,11 @@ const CustomerOrdersPage = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
+  const [showComplaintModal, setShowComplaintModal] = useState(false);
+  const [showViewComplaintModal, setShowViewComplaintModal] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [ordersWithComplaints, setOrdersWithComplaints] = useState(new Set());
+  const [complaintsData, setComplaintsData] = useState(new Map());
 
   useEffect(() => {
     if (!userId) return;
@@ -39,11 +47,41 @@ const CustomerOrdersPage = () => {
         pageSize
       );
 
-      setOrders(response.orders || []);
-      setTotalPages(response.totalPages || 0);
-      setTotalItems(response.totalItems || 0);
-      setHasNextPage(response.hasNextPage || false);
-      setHasPreviousPage(response.hasPreviousPage || false);
+      const ordersList = response.orders || response.Orders || [];
+      setOrders(ordersList);
+      setTotalPages(response.totalPages || response.TotalPages || 0);
+      setTotalItems(response.totalCount || response.TotalCount || response.totalItems || 0);
+      setHasNextPage(response.hasNextPage || response.HasNextPage || false);
+      setHasPreviousPage(response.hasPreviousPage || response.HasPreviousPage || false);
+
+      const completedOrders = ordersList.filter(order => 
+        isOrderCompleted(order.status)
+      );
+      
+      if (completedOrders.length > 0) {
+        const complaintChecks = await Promise.all(
+          completedOrders.map(async (order) => {
+            const complaint = await getComplaintByOrderId(order.id);
+            if (complaint) {
+              return { orderId: order.id, complaint };
+            }
+            return null;
+          })
+        );
+        
+        const ordersWithComplaintsSet = new Set();
+        const complaintsMap = new Map();
+        
+        complaintChecks.forEach(result => {
+          if (result) {
+            ordersWithComplaintsSet.add(result.orderId);
+            complaintsMap.set(result.orderId, result.complaint);
+          }
+        });
+        
+        setOrdersWithComplaints(ordersWithComplaintsSet);
+        setComplaintsData(complaintsMap);
+      }
 
     } catch (err) {
       console.error("Greška pri učitavanju porudžbina:", err);
@@ -64,7 +102,40 @@ const CustomerOrdersPage = () => {
 
   const handlePageSizeChange = (newPageSize) => {
     setPageSize(newPageSize);
+  };
+
+  const isOrderCompleted = (status) => {
+    return status === 'ZAVRŠENO';
+  };
+
+  const handleOpenComplaintModal = (orderId) => {
+    setSelectedOrderId(orderId);
+    setShowComplaintModal(true);
+  };
+
+  const handleComplaintSuccess = async (orderId) => {
+    // Dodaj porudžbinu u set porudžbina sa žalbama i učitaj žalbu
+    const complaint = await getComplaintByOrderId(orderId);
+    if (complaint) {
+      setOrdersWithComplaints(prev => new Set([...prev, orderId]));
+      setComplaintsData(prev => new Map(prev).set(orderId, complaint));
+    }
+    loadOrders();
     setCurrentPage(1);
+  };
+
+  const handleViewComplaint = async (orderId) => {
+    let complaint = complaintsData.get(orderId);
+    if (!complaint) {
+      complaint = await getComplaintByOrderId(orderId);
+      if (complaint) {
+        setComplaintsData(prev => new Map(prev).set(orderId, complaint));
+      }
+    }
+    if (complaint) {
+      setSelectedOrderId(orderId);
+      setShowViewComplaintModal(true);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -130,7 +201,7 @@ const CustomerOrdersPage = () => {
           </div>
         </div>
 
-        {totalPages > 1 && (
+        {totalItems > 0 && (
           <Pagination
             page={currentPage - 1}
             pageCount={totalPages}
@@ -265,13 +336,60 @@ const CustomerOrdersPage = () => {
                   >
                     Naruči ponovo
                   </button>
+
+                  {isOrderCompleted(order.status) && (
+                    <>
+                      {ordersWithComplaints.has(order.id) ? (
+                        <button
+                          className="btn btn--secondary btn--small"
+                          onClick={() => handleViewComplaint(order.id)}
+                          title="Vidi žalbu"
+                          style={{ 
+                            backgroundColor: '#10b981',
+                            color: 'white'
+                          }}
+                        >
+                          ✓ Vidi žalbu
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn--secondary btn--small"
+                          onClick={() => handleOpenComplaintModal(order.id)}
+                          title="Uloži žalbu"
+                        >
+                          Uloži žalbu
+                        </button>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {totalPages > 1 && (
+        {showComplaintModal && (
+          <ComplaintModal
+            orderId={selectedOrderId}
+            onClose={() => {
+              setShowComplaintModal(false);
+              setSelectedOrderId(null);
+            }}
+            onSuccess={() => handleComplaintSuccess(selectedOrderId)}
+          />
+        )}
+
+        {showViewComplaintModal && complaintsData.get(selectedOrderId) && (
+          <ViewComplaintModal
+            complaint={complaintsData.get(selectedOrderId)}
+            onClose={() => {
+              setShowViewComplaintModal(false);
+              setSelectedOrderId(null);
+            }}
+          />
+        )}
+
+        {totalItems > 0 && (
           <Pagination
             page={currentPage - 1}
             pageCount={totalPages}

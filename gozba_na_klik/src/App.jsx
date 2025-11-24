@@ -29,6 +29,7 @@ import RestaurantOrdersPage from "./components/orders/RestaurantOrdersPage";
 import CustomerOrdersPage from "./components/orders/CustomerOrderPage";
 import HomeRestaurants from "./components/restaurants/HomeRestaurants";
 import GlobalMealSearch from "./components/restaurants/GeneralMealSearch";
+import AdminComplaintsPage from "./components/complaints/AdminComplaintsPage";
 import ResetPasswordPage from "./components/users/ResetPasswordPage";
 import ReportingDashboard from "./components/reporting/ReportingDashboard";
 import { LOGGED_IN_ROLES } from "./config/routes/roles";
@@ -113,6 +114,14 @@ export default function App() {
               element={
                 <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
                   <AdminRestaurantForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-complaints"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
+                  <AdminComplaintsPage />
                 </ProtectedRoute>
               }
             />

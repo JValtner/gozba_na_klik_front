@@ -70,6 +70,9 @@ export default function Header() {
                     <Link to={"/admin-restaurants"}>Restorani</Link>
                   </li>
                   <li>
+                    <Link to={"/admin-complaints"}>Žalbe</Link>
+                  </li>
+                  <li>
                     <Link to={"/reporting/dashboard"}>Izveštaji</Link>
                   </li>
                 </>
