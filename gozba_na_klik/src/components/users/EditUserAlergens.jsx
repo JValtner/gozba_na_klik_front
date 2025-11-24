@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   getUserAlergensById,
   UpdateUserAlergens,
 } from "../service/userService";
 import { getAllBasicAlergens } from "../service/alergenService";
 import Spinner from "../spinner/Spinner";
+import { useUser } from "./UserContext";
 
 export default function EditUserAlergens() {
-  const { id } = useParams();
-  const userId = Number(id);
+  const { userId } = useUser();
   const navigate = useNavigate();
 
   const [assignedAlergens, setAssignedAlergens] = useState([]);
@@ -54,9 +54,8 @@ export default function EditUserAlergens() {
   };
 
   useEffect(() => {
-    if (!id) return;
     loadData();
-  }, [id, userId]);
+  }, [userId]);
 
   const handleAdd = (alergenId) => {
     const alergen = availableAlergens.find((a) => a.id === alergenId);
