@@ -9,12 +9,15 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@microsoft/signalr": "^10.0.0",
     "axios": "^1.12.2",
     "chart.js": "^4.5.1",
+    "leaflet": "^1.9.4",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.63.0",
+    "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.9.1",
     "sass": "^1.93.0"
   },
