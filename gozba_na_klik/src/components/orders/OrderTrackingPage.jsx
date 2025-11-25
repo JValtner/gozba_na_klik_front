@@ -3,11 +3,20 @@ import { useEffect, useState } from "react";
 import { getActiveOrderStatus } from "../service/orderService";
 import Spinner from "../spinner/Spinner";
 import "../../styles/_order-tracking.scss";
+import CourierMap from "../map/CourierMap";
+import {
+  startConnection,
+  joinOrderGroup,
+  onLocationUpdate,
+  stopConnection,
+  onOrderCompleted,
+} from "../service/courierLocationService";
 
 const OrderTrackingPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null);
+  const [courierLocation, setCourierLocation] = useState(null);
 
   const DELIVERY_STATUSES = [
     { key: "NA_CEKANJU", label: "Na čekanju", icon: "⏳" },
@@ -16,24 +25,66 @@ const OrderTrackingPage = () => {
     { key: "DOSTAVA U TOKU", label: "Dostava u toku", icon: "🚚" },
   ];
 
-  async function loadOrder() {
+  const loadOrder = async () => {
     try {
       setLoading(true);
       setError("");
       const data = await getActiveOrderStatus();
       setOrder(data);
-    } catch (err) {
-      console.log("Greška pri učitavanju porudžbine:", err);
-      if (err.response?.status === 404) {
-        setError("Nemate aktivnu porudžbinu.");
-        setOrder(null);
-      } else {
-        setError("Greška pri učitavanju porudžbine.");
+
+      // Ako nema aktivne porudžbine, obriši lokaciju i zaustavi SignalR
+      if (!data) {
+        setCourierLocation(null);
+        stopConnection().catch(console.error);
+      } else if (data.status === "DOSTAVA U TOKU" && data.deliveryPerson) {
+        setCourierLocation({
+          lat: data.deliveryPerson.latitude,
+          lng: data.deliveryPerson.longitude,
+        });
       }
+    } catch (err) {
+      console.error(err);
+      setCourierLocation(null);
+      setOrder(null);
+      setError("Nemate aktivnih porudzbina.");
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  useEffect(() => {
+    if (!order?.activeOrderId || order.status !== "DOSTAVA U TOKU") return;
+
+    let isMounted = true;
+
+    const initSignalR = async () => {
+      try {
+        await startConnection();
+        await joinOrderGroup(order.activeOrderId);
+
+        onLocationUpdate((lat, lng) => {
+          if (isMounted) setCourierLocation({ lat, lng });
+        });
+
+        onOrderCompleted(() => {
+          if (isMounted) {
+            setCourierLocation(null);
+            loadOrder(); // Ako više nema aktivne porudžbine, order će biti null
+          }
+          stopConnection().catch(console.error);
+        });
+      } catch (err) {
+        console.error("SignalR connection error:", err);
+      }
+    };
+
+    initSignalR();
+
+    return () => {
+      isMounted = false;
+      stopConnection().catch(console.error);
+    };
+  }, [order?.activeOrderId, order?.status]);
 
   useEffect(() => {
     loadOrder();
@@ -289,21 +340,15 @@ const OrderTrackingPage = () => {
           </div>
 
           {/* Right Column - Map Placeholder */}
-          <div className="order-tracking-page__map">
-            <div className="map-placeholder">
-              <div className="map-placeholder__icon">🗺️</div>
-              <p className="map-placeholder__text">
-                Mapa će biti prikazana ovde
-              </p>
-              {order.customerAddress?.latitude &&
-                order.customerAddress?.longitude && (
-                  <p className="map-placeholder__coordinates">
-                    Koordinate: {order.customerAddress.latitude.toFixed(6)},{" "}
-                    {order.customerAddress.longitude.toFixed(6)}
-                  </p>
-                )}
+          {courierLocation && (
+            <div className="order-tracking-page__map">
+              <CourierMap
+                lat={courierLocation.lat}
+                lng={courierLocation.lng}
+                height="400px"
+              />
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
