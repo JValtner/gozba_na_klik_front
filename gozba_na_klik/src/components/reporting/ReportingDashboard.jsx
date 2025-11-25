@@ -59,16 +59,19 @@ const ReportingDashboard = () => {
         </div>
 
         {/* restaurant info */}
+        <div className="row">
         {restaurantInfo && (
           <div className="restaurant-card">
            <img src={`${baseUrl}${restaurantInfo.photoUrl}`} alt={restaurantInfo?.name} />
             <div>
               <h3>{restaurantInfo.name}</h3>
               <p>{restaurantInfo.description}</p>
-              <p><strong>Address:</strong> {restaurantInfo.address}</p>
+              <p><strong>Adresa:</strong> {restaurantInfo.address}</p>
+              <p><strong>Telefon:</strong> {restaurantInfo.phone}</p>
             </div>
           </div>
         )}
+        </div>
       </div>
 
           <ReportingProfitSummary

@@ -21,3 +21,10 @@ export const getMonthlyReport = async (restaurantId) => {
   const response = await AxiosConfig.get(`${RESOURCE}/full-monthly-report`, { params: { restaurantId } });
   return response.data;
 };
+export const setPeriod = (days, setStartDate, setEndDate) => {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(end.getDate() - days);
+  setStartDate(start.toISOString());
+  setEndDate(end.toISOString());
+};

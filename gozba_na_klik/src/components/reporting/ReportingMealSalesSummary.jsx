@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getMealSalesReport } from "../service/reportingService";
+import { getMealSalesReport, setPeriod } from "../service/reportingService";
 import DailyChart from "../utils/DailyChart";
 import { getMealsByRestaurantId } from "../service/menuService";
 
@@ -7,7 +7,7 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [mealId, setMealId] = useState("");
-  const [chartType, setChartType] = useState("line");
+  const [chartType, setChartType] = useState("bar");
 
   const [meals, setMeals] = useState([]);
   const [report, setReport] = useState(null);
@@ -27,14 +27,14 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
 
   return (
     <div className="report-section">
-      <h2>Meal Sales Summary</h2>
+      <h2>Statistika zarade jela</h2>
 
       {/* FILTERS */}
       <div className="section-filters">
         <div className="filter-group">
-          <label>Meal</label>
+          <label>Jelo</label>
           <select value={mealId} onChange={e => setMealId(e.target.value)}>
-            <option value="">Select meal...</option>
+            <option value="">Izaberi jelo...</option>
             {meals.map(m => (
               <option key={m.id} value={m.id}>{m.name}</option>
             ))}
@@ -42,48 +42,58 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
         </div>
 
         <div className="filter-group">
-          <label>Start Date</label>
+          <label>Period:</label>
+          <select onChange={e => setPeriod(Number(e.target.value), setStartDate, setEndDate)}>
+            <option value="">Izaberi period...</option>
+            <option value="1">1 dan</option>
+            <option value="3">3 dana</option>
+            <option value="7">7 dana</option>
+            <option value="30">30 dana</option>
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label>Od:</label>
           <input type="date" onChange={e => setStartDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>End Date</label>
+          <label>Do:</label>
           <input type="date" onChange={e => setEndDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>Chart Type</label>
+          <label>Tip grafika</label>
           <select value={chartType} onChange={e => setChartType(e.target.value)}>
-            <option value="line">Line</option>
-            <option value="bar">Bar</option>
-            <option value="pie">Pie</option>
+            <option value="line">Linija</option>
+            <option value="bar">Stub</option>
           </select>
         </div>
       </div>
 
       {/* FALLBACKS */}
-      {!restaurantId && <p className="no-data">Select a restaurant first.</p>}
-      {restaurantId && meals.length === 0 && <p className="no-data">This restaurant has no meals.</p>}
-      {restaurantId && !mealId && <p className="no-data">Select a meal.</p>}
-      {restaurantId && mealId && !startDate && <p className="no-data">Select start date.</p>}
-      {restaurantId && mealId && !endDate && <p className="no-data">Select end date.</p>}
-      {valid && !report && <p className="no-data">No data for this period.</p>}
+      {!restaurantId && <p className="no-data">Izaberi restoran.</p>}
+      {restaurantId && meals.length === 0 && <p className="no-data">Ovaj restoran ne sadrzi jela.</p>}
+      {restaurantId && !mealId && <p className="no-data">Izaberi jelo.</p>}
+      {restaurantId && mealId && !startDate && <p className="no-data">Izaberi pocetni datum.</p>}
+      {restaurantId && mealId && !endDate && <p className="no-data">Izaberi krajnji datum.</p>}
+      {valid && !report && <p className="no-data">Nema podataka za zadati period.</p>}
 
       {/* CONTENT */}
       {valid && report && (
         <div className="section-content">
           <div className="summary-box">
-            <p><strong>Total Units Sold:</strong> {report.totalUnitsSold}</p>
-            <p><strong>Total Revenue:</strong> {report.totalRevenue}</p>
-            <p><strong>Avg Daily Units:</strong> {report.averageDailyUnitsSold}</p>
+            <p><strong>Ukupan broj prodatih jedinica:</strong> {report.totalUnitsSold.toLocaleString()} komada</p>
+            <p><strong>Ukupan prihod:</strong> {report.totalRevenue.toLocaleString()} RSD</p>
+            <p><strong>Prosecna dnavna prodaja:</strong> {report.averageDailyUnitsSold.toLocaleString()} komada</p>
           </div>
 
           <div className="chart-box">
             <DailyChart
-              title="Daily Units Sold"
+              title="Dnevna prodaja jela"
               labels={report.dailyReports.map(r => new Date(r.date).toLocaleDateString())}
               data={report.dailyReports.map(r => r.totalDailyUnitsSold)}
-              label="Units Sold"
+              label="Prodatih jedinica"
               chartType={chartType}
             />
           </div>

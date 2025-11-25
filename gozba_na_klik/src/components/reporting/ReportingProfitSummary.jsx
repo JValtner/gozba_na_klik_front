@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { getProfitSummaryReport } from "../service/reportingService";
+import { getProfitSummaryReport, setPeriod } from "../service/reportingService";
 import DailyChart from "../utils/DailyChart";
+import Spinner from "../spinner/Spinner";
 
 const ReportingProfitSummary = ({ restaurantId }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [chartType, setChartType] = useState("line");
+  const [chartType, setChartType] = useState("bar");
 
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -23,52 +24,63 @@ const ReportingProfitSummary = ({ restaurantId }) => {
 
   return (
     <div className="report-section">
-      <h2>Profit Summary</h2>
+      <h2>Statistika zarade restorana</h2>
 
       {/* FILTERS */}
       <div className="section-filters">
+
         <div className="filter-group">
-          <label>Start Date</label>
+          <label>Period:</label>
+          <select onChange={e => setPeriod(Number(e.target.value), setStartDate, setEndDate)}>
+            <option value="">Izaberi period...</option>
+            <option value="1">1 dan</option>
+            <option value="3">3 dana</option>
+            <option value="7">7 dana</option>
+            <option value="30">30 dana</option>
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label>Od:</label>
           <input type="date" onChange={e => setStartDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>End Date</label>
+          <label>Do:</label>
           <input type="date" onChange={e => setEndDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>Chart Type</label>
+          <label>Tip grafika</label>
           <select value={chartType} onChange={e => setChartType(e.target.value)}>
-            <option value="line">Line</option>
-            <option value="bar">Bar</option>
-            <option value="pie">Pie</option>
+            <option value="line">Linija</option>
+            <option value="pie">Pita</option>
+            <option value="bar">Stub</option>
           </select>
         </div>
-      </div>
+        </div>
 
       {/* FALLBACKS */}
-      {!restaurantId && <p className="no-data">Select a restaurant.</p>}
-      {restaurantId && !startDate && <p className="no-data">Select start date.</p>}
-      {restaurantId && !endDate && <p className="no-data">Select end date.</p>}
-      {valid && loading && <p>Loading...</p>}
-      {valid && !loading && !report && <p className="no-data">No report data.</p>}
+      {!restaurantId && <p className="no-data">Izaberi restoran.</p>}
+      {restaurantId && !startDate && <p className="no-data">Izaberi pocetni datum.</p>}
+      {restaurantId && !endDate && <p className="no-data">Izaberi krajnji datum.</p>}
+      {valid && !report && <p className="no-data">Nema podataka.</p>}
 
       {/* CONTENT */}
       {valid && report && (
         <div className="section-content">
           <div className="summary-box">
-            <p><strong>Total Orders:</strong> {report.totalPeriodOrders}</p>
-            <p><strong>Total Revenue:</strong> {report.totalRevenue}</p>
-            <p><strong>Average Daily Profit:</strong> {report.averageDailyProfit}</p>
+            <p><strong>Ukupan broj porudzbina:</strong> {report.totalPeriodOrders.toLocaleString()} komada</p>
+            <p><strong>Ukupan prihod</strong> {report.totalRevenue.toLocaleString()} RSD</p>
+            <p><strong>Prosecan dnevni prihod:</strong> {report.averageDailyProfit.toLocaleString()} RSD</p>
           </div>
 
           <div className="chart-box">
             <DailyChart
-              title="Daily Revenue"
+              title="Dnevni prihod"
               labels={report.dailyReports.map(r => new Date(r.date).toLocaleDateString())}
               data={report.dailyReports.map(r => r.dailyRevenue)}
-              label="Revenue"
+              label="Prihod"
               chartType={chartType}
             />
 

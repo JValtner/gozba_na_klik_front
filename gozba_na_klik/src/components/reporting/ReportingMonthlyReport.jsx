@@ -13,7 +13,7 @@ const ReportingMonthlyReport = ({ restaurantId }) => {
 
   return (
     <div className="report-section">
-      <h2>Monthly Report</h2>
+      <h2>Mesecni izvestaj</h2>
 
       {/* Only chart type */}
       <div className="section-filters">
@@ -27,43 +27,43 @@ const ReportingMonthlyReport = ({ restaurantId }) => {
         </div>
       </div>
 
-      {!restaurantId && <p className="no-data">Select restaurant.</p>}
-      {restaurantId && !report && <p>No data.</p>}
+      {!restaurantId && <p className="no-data">Izaberi restoran</p>}
+      {restaurantId && !report && <p>Nema podataka.</p>}
 
       {report && (
         <div className="section-content">
           <div className="summary-box">
-            <p><strong>Total Orders:</strong> {report.totalOrders}</p>
-            <p><strong>Total Revenue:</strong> {report.totalRevenue}</p>
-            <p><strong>Average Order Value:</strong> {report.averageOrderValue}</p>
+            <p><strong>Ukupan broj porudzbina:</strong> {report.totalOrders.toLocaleString()}  komada</p>
+            <p><strong>Ukupan prihod:</strong> {report.totalRevenue.toLocaleString()} RSD</p>
+            <p><strong>Prosecna vrednost porudzbine:</strong> {report.averageOrderValue.toLocaleString()}  RSD</p>
           </div>
 
           <div className="chart-box">
             <DailyChart
-              title="Top 5 Revenue Orders"
+              title="Top 5 porudzbina za najvecim prihodom"
               labels={report.top5RevenueOrders.items.map(o => `Order #${o.id}`)}
               data={report.top5RevenueOrders.items.map(o => o.totalPrice)}
-              label="Revenue"
+              label="Prihod"
               chartType={chartType}
             />
           </div>
 
           <div className="chart-box">
             <DailyChart
-              title="Top 5 Popular Meals"
-              labels={report.top5PopularMeals.items.map(i => i.meal?.name ?? "Unknown")}
-              data={report.top5PopularMeals.items.map(i => i.quantity)}
-              label="Units Sold"
+              title="Top 5 Najpopularnijih jela"
+              labels={report.top5PopularMeals.items.map(i => i.mealName)}
+              data={report.top5PopularMeals.items.map(i => i.unitsSold)}
+              label="Prodatih jedinica"
               chartType={chartType}
             />
           </div>
 
           <div className="chart-box">
             <DailyChart
-              title="Bottom 5 Popular Meals"
-              labels={report.bottom5PopularMeals.items.map(i => i.meal?.name ?? "Unknown")}
-              data={report.bottom5PopularMeals.items.map(i => i.quantity)}
-              label="Units Sold"
+              title="5 Najmanje popularnih jela"
+              labels={report.bottom5PopularMeals.items.map(i => i.mealName)}
+              data={report.bottom5PopularMeals.items.map(i => i.unitsSold)}
+              label="Prodatih jedinica"
               chartType={chartType}
             />
           </div>
