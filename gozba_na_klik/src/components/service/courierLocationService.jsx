@@ -6,7 +6,7 @@ export async function startConnection() {
   if (connection) return;
 
   connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://localhost:5001/locationHub", {
+    .withUrl("http://localhost:5065/CourierLocationHub", {
       accessTokenFactory: () => localStorage.getItem("token") || "",
     })
     .withAutomaticReconnect()
@@ -14,7 +14,6 @@ export async function startConnection() {
 
   connection.onclose(() => {
     console.log("Connection closed. Reconnecting...");
-    startConnection();
   });
 
   await connection.start();
@@ -23,14 +22,19 @@ export async function startConnection() {
 
 export async function joinOrderGroup(orderId) {
   if (!connection) throw new Error("Connection not started");
-  await connection.invoke("JoinGroup", `order-${orderId}`);
+  await connection.invoke("JoinOrderGroup", `order-${orderId}`);
 }
 
 export function onLocationUpdate(callback) {
   if (!connection) throw new Error("Connection not started");
-  connection.on("ReceiveLocation", (data) => {
-    callback(data.latitude, data.longitude);
+  connection.on("ReceiveLocation", (lat, lng) => {
+    callback(lat, lng);
   });
+}
+
+export function onOrderCompleted(callback) {
+  if (!connection) throw new Error("Connection not started");
+  connection.on("OrderCompleted", callback);
 }
 
 export async function stopConnection() {
