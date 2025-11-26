@@ -61,6 +61,11 @@ const ReportingMonthlyReport = ({ restaurantId }) => {
       {report && (
         <div className="section-content">
           <MonthlySummary report={report} />
+          <div className="pdf-actions">
+            <button className="btn btn--secondary" onClick={handleDownloadOnDemand}>Preuzmi trenutni izveštaj (PDF)</button>
+            <h3>Pregledaj postojece mesecne izvestaje: </h3>
+            <SnapshotList snapshots={snapshots} onDownload={handleDownloadStored} />
+          </div>
 
           <div className="chart-box">
             <DailyChart
@@ -90,12 +95,6 @@ const ReportingMonthlyReport = ({ restaurantId }) => {
               label="Prodatih jedinica"
               chartType={chartType}
             />
-          </div>
-
-          <div className="pdf-actions">
-            <button onClick={handleDownloadOnDemand}>Preuzmi trenutni izveštaj (PDF)</button>
-            <h2>Pregledaj postojece mesecne izvestaje: </h2>
-            <SnapshotList snapshots={snapshots} onDownload={handleDownloadStored} />
           </div>
         </div>
       )}
