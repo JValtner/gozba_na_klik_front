@@ -1,6 +1,7 @@
 import AxiosConfig from "../../config/axios.config";
 
 const RESOURCE = "/api/Reporting"; 
+const PDF_RESOURCE = "/api/PdfReport";
 
 export const getProfitSummaryReport = async (searchData) => {
   const response = await AxiosConfig.get(`${RESOURCE}/profit-report`, { params: searchData });
@@ -28,3 +29,4 @@ export const setPeriod = (days, setStartDate, setEndDate) => {
   setStartDate(start.toISOString());
   setEndDate(end.toISOString());
 };
+

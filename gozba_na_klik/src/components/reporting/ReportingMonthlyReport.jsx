@@ -1,21 +1,49 @@
 import React, { useEffect, useState } from "react";
 import { getMonthlyReport } from "../service/reportingService";
+import { listMonthlySnapshots, downloadSnapshotPdf, downloadOnDemandMonthlyReport, openBlobPdf } from "../service/pdfReportService";
 import DailyChart from "../utils/DailyChart";
+import MonthlySummary from "./MonthlySummary";
+import SnapshotList from "./SnapshotList";
 
 const ReportingMonthlyReport = ({ restaurantId }) => {
   const [chartType, setChartType] = useState("line");
   const [report, setReport] = useState(null);
+  const [snapshots, setSnapshots] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!restaurantId) return;
-    getMonthlyReport(restaurantId).then(data => setReport(data));
+
+    getMonthlyReport(restaurantId).then(setReport).catch(e => setError(e.message));
+
+    listMonthlySnapshots(restaurantId)
+      .then(setSnapshots)
+      .catch(e => setError(e.message));
   }, [restaurantId]);
+
+  const handleDownloadStored = async (id) => {
+    try {
+      const blob = await downloadSnapshotPdf(id);
+      openBlobPdf(blob, `mesecni-izvestaj-${id}.pdf`);
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  const handleDownloadOnDemand = async () => {
+    try {
+      // use the current report DTO from state
+      const blob = await downloadOnDemandMonthlyReport(report);
+      openBlobPdf(blob, `mesecni-izvestaj-on-demand-${restaurantId}.pdf`);
+    } catch (e) {
+      setError(e.message);
+    }
+  };
 
   return (
     <div className="report-section">
       <h2>Mesecni izvestaj</h2>
 
-      {/* Only chart type */}
       <div className="section-filters">
         <div className="filter-group">
           <label>Chart Type</label>
@@ -32,15 +60,11 @@ const ReportingMonthlyReport = ({ restaurantId }) => {
 
       {report && (
         <div className="section-content">
-          <div className="summary-box">
-            <p><strong>Ukupan broj porudzbina:</strong> {report.totalOrders.toLocaleString()}  komada</p>
-            <p><strong>Ukupan prihod:</strong> {report.totalRevenue.toLocaleString()} RSD</p>
-            <p><strong>Prosecna vrednost porudzbine:</strong> {report.averageOrderValue.toLocaleString()}  RSD</p>
-          </div>
+          <MonthlySummary report={report} />
 
           <div className="chart-box">
             <DailyChart
-              title="Top 5 porudzbina za najvecim prihodom"
+              title="Top 5 porudzbina sa najvecim prihodom"
               labels={report.top5RevenueOrders.items.map(o => `Order #${o.id}`)}
               data={report.top5RevenueOrders.items.map(o => o.totalPrice)}
               label="Prihod"
@@ -67,8 +91,16 @@ const ReportingMonthlyReport = ({ restaurantId }) => {
               chartType={chartType}
             />
           </div>
+
+          <div className="pdf-actions">
+            <button onClick={handleDownloadOnDemand}>Preuzmi trenutni izveštaj (PDF)</button>
+            <h2>Pregledaj postojece mesecne izvestaje: </h2>
+            <SnapshotList snapshots={snapshots} onDownload={handleDownloadStored} />
+          </div>
         </div>
       )}
+
+      {error && <p className="error">{error}</p>}
     </div>
   );
 };

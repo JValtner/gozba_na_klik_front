@@ -3,7 +3,7 @@ import { baseUrl } from "../../config/routeConfig";
 import { getAllRestaurants, getRestaurantById } from "../service/restaurantsService";
 import { getMealsByRestaurantId } from "../service/menuService";
 
-import ReportingProfitSummary from "./ReportingProfitSummary"
+import ReportingProfitSummary from "./ReportingProfitSummary";
 import ReportingMealSalesSummary from "./ReportingMealSalesSummary";
 import ReportingOrdersSummary from "./ReportingOrdersSummary";
 import ReportingMonthlyReport from "./ReportingMonthlyReport";
@@ -38,9 +38,6 @@ const ReportingDashboard = () => {
     <div className="reporting-dashboard">
       <h1 className="title">Reporting Dashboard</h1>
 
-      {/* ------------------------------------------
-            RESTAURANT SELECTOR
-      ------------------------------------------- */}
       <div className="section">
         <h2>Restaurant</h2>
 
@@ -58,7 +55,6 @@ const ReportingDashboard = () => {
           </select>
         </div>
 
-        {/* restaurant info */}
         <div className="row">
         {restaurantInfo && (
           <div className="restaurant-card">
@@ -74,33 +70,29 @@ const ReportingDashboard = () => {
         </div>
       </div>
 
-          <ReportingProfitSummary
-            restaurantId={restaurantId}
-            startDate={startDate}
-            endDate={endDate}
-            chartType={chartType}
-          />
-     
-      
-          <ReportingMealSalesSummary
-            restaurantId={restaurantId}
-            mealId={mealId}
-            startDate={startDate}
-            endDate={endDate}
-            chartType={chartType}
-          />
-       
-     
-          <ReportingOrdersSummary
-            restaurantId={restaurantId}
-            startDate={startDate}
-            endDate={endDate}
-            chartType={chartType}
-          />
-      
+      <ReportingProfitSummary
+        restaurantId={restaurantId}
+        startDate={startDate}
+        endDate={endDate}
+        chartType={chartType}
+      />
 
-          <ReportingMonthlyReport restaurantId={restaurantId} />
-        
+      <ReportingMealSalesSummary
+        restaurantId={restaurantId}
+        mealId={mealId}
+        startDate={startDate}
+        endDate={endDate}
+        chartType={chartType}
+      />
+
+      <ReportingOrdersSummary
+        restaurantId={restaurantId}
+        startDate={startDate}
+        endDate={endDate}
+        chartType={chartType}
+      />
+
+      <ReportingMonthlyReport restaurantId={restaurantId} />
     </div>
   );
 };
