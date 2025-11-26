@@ -26,6 +26,9 @@ ChartJS.register(
   Legend
 );
 
+const cssVar = (name) =>
+  getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
 const DailyChart = ({ title, labels, data, label, chartType }) => {
   const chartData = {
     labels,
@@ -33,18 +36,18 @@ const DailyChart = ({ title, labels, data, label, chartType }) => {
       {
         label,
         data,
-        borderColor: "rgba(75,192,192,1)",
+        borderColor: cssVar("--chart-border"),
         backgroundColor:
           chartType === "pie"
             ? [
-                "rgba(75, 192, 192, 0.6)",
-                "rgba(153, 102, 255, 0.6)",
-                "rgba(255, 159, 64, 0.6)",
-                "rgba(255, 99, 132, 0.6)",
-                "rgba(54, 162, 235, 0.6)",
-                "rgba(255, 206, 86, 0.6)",
+                cssVar("--chart-green"),
+                cssVar("--chart-purple"),
+                cssVar("--chart-orange"),
+                cssVar("--chart-red"),
+                cssVar("--chart-blue"),
+                cssVar("--chart-yellow"),
               ]
-            : "rgba(75,192,192,0.2)",
+            : cssVar("--chart-fill"),
         tension: 0.3,
       },
     ],
@@ -53,36 +56,35 @@ const DailyChart = ({ title, labels, data, label, chartType }) => {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: {
-      duration: 900,
-      easing: "easeOutQuart",
-    },
     plugins: {
       legend: {
         display: true,
+        labels: { color: cssVar("--chart-text") },
       },
-      title: {
-        display: false,
+      title: { display: false },
+    },
+    scales: {
+      x: {
+        ticks: { color: cssVar("--chart-text") },
+        grid: { color: cssVar("--chart-grid") },
+      },
+      y: {
+        ticks: { color: cssVar("--chart-text") },
+        grid: { color: cssVar("--chart-grid") },
       },
     },
   };
 
   const renderChart = () => {
-    switch (chartType) {
-      case "bar":
-        return <Bar data={chartData} options={chartOptions} />;
-      case "pie":
-        return <Pie data={chartData} options={chartOptions} />;
-      default:
-      case "line":
-        return <Line data={chartData} options={chartOptions} />;
-    }
+    if (chartType === "bar") return <Bar data={chartData} options={chartOptions} />;
+    if (chartType === "pie") return <Pie data={chartData} options={chartOptions} />;
+    return <Line data={chartData} options={chartOptions} />;
   };
 
   return (
-    <div style={{ marginBottom: "2rem", height: "280px" }}>
-      <h3 style={{ marginBottom: "1rem" }}>{title}</h3>
-      {renderChart()}
+    <div className="daily-chart">
+      <h3>{title}</h3>
+      <div className="chart-container">{renderChart()}</div>
     </div>
   );
 };

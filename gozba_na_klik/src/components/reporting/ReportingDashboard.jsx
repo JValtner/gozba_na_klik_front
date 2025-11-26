@@ -57,7 +57,7 @@ const ReportingDashboard = () => {
 
         <div className="row">
           {restaurantInfo && (
-            <div className="restaurant-card">
+            <div className="restaurant-card-report">
               <img src={`${baseUrl}${restaurantInfo.photoUrl}`} alt={restaurantInfo?.name} />
               <div>
                 <h3>{restaurantInfo.name}</h3>

@@ -70,7 +70,7 @@ const ReportingMonthlyReport = ({ restaurantId }) => {
           <div className="chart-box">
             <DailyChart
               title="Top 5 porudzbina sa najvecim prihodom"
-              labels={report.top5RevenueOrders.items.map(o => `Order #${o.id}`)}
+              labels={report.top5RevenueOrders.items.map(o => `Order #${o.orderId}`)}
               data={report.top5RevenueOrders.items.map(o => o.totalPrice)}
               label="Prihod"
               chartType={chartType}
