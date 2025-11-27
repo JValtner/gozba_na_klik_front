@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getUserOrderHistory } from "../service/orderService";
 import Spinner from "../spinner/Spinner";
-import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "../../constants/orderConstants";
+import { ORDER_STATUS_LABELS } from "../../constants/orderConstants";
 
 const OrderHistoryPage = () => {
   const { id: userId } = useParams();
@@ -56,14 +56,15 @@ const OrderHistoryPage = () => {
   };
 
   const getStatusText = (status) => {
+    // Use the status labels from constants, which match the database
     return ORDER_STATUS_LABELS[status] || status;
   };
 
   const getStatusClass = (status) => {
-    // Map status to CSS class based on the status value
+    // Map status to CSS class based on the status values from database
     const statusClassMap = {
       "NA ČEKANJU": "status-pending",
-      "NA_CEKANJU": "status-pending",
+      "NA_CEKANJU": "status-pending", // Alias for backwards compatibility
       "PRIHVAĆENA": "status-confirmed",
       "PREUZIMANJE U TOKU": "status-pickup",
       "DOSTAVA U TOKU": "status-delivery",
