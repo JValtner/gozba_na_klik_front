@@ -41,11 +41,11 @@ export default function Header() {
         <div className="logo" onClick={() => navigate("/")}>
           🍴 Gozba na klik
         </div>
-        <select value={currency} onChange={e => setCurrency(e.target.value)}>
-          <option value="EUR">EUR</option>
-          <option value="USD">USD</option>
-          <option value="GBP">GBP</option>
-        </select>
+        <select className="currency-select" value={currency} onChange={e => setCurrency(e.target.value)}>
+ <option value="EUR">€ EUR</option>
+  <option value="USD">$ USD</option>
+  <option value="GBP">£ GBP</option>
+</select>
 
         {isAuth && (
           <nav className="navbar-links">
