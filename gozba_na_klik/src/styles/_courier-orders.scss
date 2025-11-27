@@ -1,0 +1,341 @@
+// ============================================
+// COURIER ORDER DASHBOARD
+// ============================================
+
+.courier-dashboard {
+  min-height: none;
+  background-color: #f9fafb;
+  padding: 2rem;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__header {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 0 0 0.5rem 0;
+    }
+
+    p {
+      color: #6b7280;
+      margin: 0;
+    }
+
+    .refresh-info {
+      .refresh-indicator {
+        background-color: #f3f4f6;
+        color: #6b7280;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  &__empty {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 4rem 2rem;
+    text-align: center;
+
+    .empty-state {
+      &__icon {
+        font-size: 4rem;
+        display: block;
+        margin-bottom: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1rem;
+      }
+
+      p {
+        color: #6b7280;
+        margin: 0;
+      }
+    }
+  }
+}
+
+// ============================================
+// COURIER ORDER CARD
+// ============================================
+
+.courier-order-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  &__header {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .order-number {
+      color: #6b7280;
+      font-size: 1rem;
+      margin: 0;
+    }
+  }
+
+  // Progress bar styling (uses classes from _order-tracking.scss)
+  .delivery-progress {
+    margin-bottom: 2rem;
+    padding: 0 2rem;
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 0 2rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__map {
+    position: sticky;
+    top: 2rem;
+    height: fit-content;
+
+    @media (max-width: 1024px) {
+      position: relative;
+      top: 0;
+    }
+  }
+
+  &__actions {
+    background-color: #f9fafb;
+    padding: 2rem;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    margin-top: 2rem;
+
+    .btn {
+      padding: 1rem 2rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 200px;
+
+      &--primary {
+        background-color: #ea580c;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: #c2410c;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+        }
+      }
+
+      &--success {
+        background-color: #10b981;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: #059669;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+      }
+
+      &--large {
+        padding: 1.25rem 2.5rem;
+        font-size: 1.25rem;
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        transform: none;
+      }
+    }
+
+    .no-actions {
+      p {
+        color: #6b7280;
+        font-style: italic;
+        margin: 0;
+      }
+    }
+  }
+}
+
+// ============================================
+// STATUS BADGES
+// ============================================
+
+.status-badge {
+  &--accepted {
+    background-color: #dbeafe;
+    color: #1e40af;
+  }
+
+  &--in-delivery {
+    background-color: #fef3c7;
+    color: #d97706;
+  }
+
+  &--completed {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+
+  &--unknown {
+    background-color: #f3f4f6;
+    color: #6b7280;
+  }
+}
+
+// ============================================
+// MESSAGES
+// ============================================
+
+.status-message {
+  background-color: #d1fae5;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  &__text {
+    margin: 0;
+    color: #065f46;
+    font-weight: 500;
+  }
+}
+
+.error-message {
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  &__text {
+    margin: 0;
+    color: #991b1b;
+    font-weight: 500;
+  }
+}
+
+// ============================================
+// RESPONSIVE DESIGN
+// ============================================
+
+@media (max-width: 768px) {
+  .courier-dashboard {
+    padding: 1rem;
+
+    &__header {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+
+      .refresh-info {
+        .refresh-indicator {
+          font-size: 0.75rem;
+          padding: 0.375rem 0.75rem;
+        }
+      }
+    }
+  }
+
+  .courier-order-card {
+    &__header {
+      padding: 1.5rem;
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+    &__content {
+      gap: 1.5rem;
+      padding: 0 1.5rem;
+    }
+
+    &__actions {
+      padding: 1.5rem;
+
+      .btn {
+        width: 100%;
+        min-width: auto;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .courier-dashboard {
+    padding: 0.5rem;
+
+    &__header {
+      padding: 1.5rem;
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  .courier-order-card {
+    &__header {
+      padding: 1.5rem;
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+    &__content {
+      padding: 0 1rem;
+    }
+
+    &__actions {
+      padding: 1rem;
+    }
+  }
+}

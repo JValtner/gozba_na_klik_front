@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../users/UserContext";
 import { getMyRestaurants, deleteRestaurant } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
+import { baseUrl } from "../../config/routeConfig";
 
 
 const RestaurantDashboard = () => {
   const navigate = useNavigate();
-  const { userId } = useUser();
+  const { user } = useUser();
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -47,7 +48,7 @@ const RestaurantDashboard = () => {
     }
   };
 
-  const handleMenu =(restaurant) => {
+  const handleMenu = (restaurant) => {
     navigate(`/restaurants/${restaurant.id}/menu`);
   };
 
@@ -86,7 +87,7 @@ const RestaurantDashboard = () => {
               <div key={restaurant.id} className="dashboard__card">
                 {restaurant.photoUrl && (
                   <img
-                    src={`http://localhost:5065${restaurant.photoUrl}`}
+                    src={`${baseUrl}${restaurant.photoUrl}`}
                     alt={restaurant.name}
                     className="restaurant-image"
                   />
@@ -103,23 +104,29 @@ const RestaurantDashboard = () => {
                   </button>
 
                   <button
-                    className="btn btn--secondary"
+                    className="btn btn--danger"
                     onClick={() => handleDelete(restaurant.id, restaurant.name)}
                   >
                     Obriši
                   </button>
                   <button
-                    className="btn btn--info"
+                    className="btn btn--primary"
                     onClick={() => navigate(`/restaurants/${restaurant.id}/employees`)}
                   >
                     Zaposleni
                   </button>
                   <button
-                    className="btn btn--secondary btn--small"
+                    className="btn btn--primary"
                     onClick={() => handleMenu(restaurant)}
                     title="Jelovnik"
                   >
                     Menu
+                  </button>
+                  <button
+                    className="btn btn--primary"
+                    onClick={() => navigate(`/restaurants/${restaurant.id}/orders`)}
+                  >
+                    Porudžbine
                   </button>
                 </div>
 

@@ -15,8 +15,22 @@
 @import "meal-details";
 @import "alergens";
 @import "addons";
+@import "filter";
+@import "pagination";
+@import "sort-form";
 @import "user-alergen-form";
 @import "order-history";
+@import "courier-orders";
+@import "orders";
+@import "./restaurant-orders";
+@import "./restaurant-complaints";
+@import "restaurant-buy-card";
+@import "meal-order-modal";
+@import "invoice-button";
+@import "customer-orders";
+@import "reporting";
+@import "order-tracking";
+@import "currency";
 
 * {
   margin: 0;

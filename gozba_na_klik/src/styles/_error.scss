@@ -44,3 +44,32 @@
     transform: translateY(0);
   }
 }
+// Error message
+.error-message {
+  padding: 0.75rem 1rem;
+  background-color: #fef2f2;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.5rem;
+
+  &__text {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #dc2626;
+    font-weight: 500;
+  }
+}
+// Success message
+.success-message {
+  padding: 0.75rem 1rem;
+  background-color: #ecfdf5; // light green background
+  border: 1px solid rgba(16, 185, 129, 0.3); // green border
+  border-radius: 0.5rem;
+
+  &__text {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #059669; // green text
+    font-weight: 500;
+  }
+}
+

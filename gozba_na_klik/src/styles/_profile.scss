@@ -15,6 +15,69 @@
   }
 }
 
+.show-password-btn {
+  position: "absolute";
+  right: "10px";
+  top: "50%";
+  transform: "translateY(-50%)";
+  background: "none";
+  border: "none";
+  cursor: "pointer";
+}
+
+// password-strength
+
+.password-strength {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+
+  &__bar {
+    height: 6px;
+    width: 100%;
+    background: #ddd;
+    border-radius: 3px;
+    overflow: hidden;
+
+    &-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    &-fill--weak {
+      background: red;
+    }
+
+    &-fill--medium {
+      background: orange;
+    }
+
+    &-fill--strong {
+      background: green;
+    }
+  }
+
+  &__label {
+    margin-top: 4px;
+    font-size: 0.85rem;
+    text-align: center;
+
+    &--weak {
+      color: red;
+    }
+
+    &--medium {
+      color: orange;
+    }
+
+    &--strong {
+      color: green;
+    }
+  }
+}
+
 /* Profil korisnika */
 .user-profile-container {
   max-width: 400px;

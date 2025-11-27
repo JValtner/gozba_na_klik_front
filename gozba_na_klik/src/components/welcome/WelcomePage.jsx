@@ -1,43 +1,60 @@
 import React, { useState, useEffect } from "react";
+import { baseUrl } from "../../config/routeConfig";
 import { useNavigate } from "react-router-dom";
-import AxiosConfig from "../../config/axios.config";
 import { useUser } from "../users/UserContext";
+import Spinner from "../spinner/Spinner";
+import { requestPasswordReset } from "../service/userService";
 
 const WelcomePage = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: "", password: "" });
+  const { role, isAuth, login } = useUser();
+
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    email: ""
+  });
+
   const [error, setError] = useState("");
+  const [msg, setMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { setUsername, setUserId, setRole, isAuth, role, userId } = useUser();
+  const [forgotMode, setForgotMode] = useState(false);
 
+  // Redirect if already logged in
   useEffect(() => {
-    if (isAuth && role && userId) {
-      redirectToDashboard(role, userId);
+    if (isAuth && role) {
+      switch (role) {
+        case "Admin":
+          navigate("/admin-users");
+          break;
+        case "RestaurantOwner":
+          navigate("/restaurants/dashboard");
+          break;
+        case "RestaurantEmployee":
+          navigate("/employee/dashboard");
+          break;
+        case "DeliveryPerson":
+          navigate("/delivery/dashboard");
+          break;
+        case "Buyer":
+        default:
+          navigate("/restaurants/home");
+          break;
+      }
     }
-  }, [isAuth, role, userId]);
+  }, [isAuth, role]);
 
-  const redirectToDashboard = (userRole, id) => {
-    if (userRole === "Admin") {
-      navigate("/admin-users", { replace: true });
-    } else if (userRole === "RestaurantOwner") {
-      navigate("/restaurants/dashboard", { replace: true });
-    } else if (userRole === "RestaurantEmployee") {
-      navigate("/employee/dashboard", { replace: true });
-    } else if (userRole === "DeliveryPerson") {
-      navigate("/delivery/dashboard", { replace: true });
-    } else {
-      navigate(`/profile/${id}`, { replace: true });
-    }
-  };
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) setError("");
+    setError("");
+    setMsg("");
   };
 
+  // LOGIN SUBMIT
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
+    if (forgotMode) return; // ignore login submit in forgot mode
 
     if (!formData.username.trim() || !formData.password.trim()) {
       setError("Molimo unesite korisničko ime i lozinku");
@@ -45,164 +62,183 @@ const WelcomePage = () => {
     }
 
     setIsLoading(true);
-    setError("");
-
     try {
-      const response = await AxiosConfig.post("/api/users/login", {
+      const token = await login({
         username: formData.username,
         password: formData.password,
       });
 
-      const { id, username, role, token } = response.data;
-
-      if (!id || !username) {
-        throw new Error("Server nije vratio potrebne podatke (id ili username)");
+      if (!token) {
+        setError("Neuspešna prijava. Proverite korisničko ime i lozinku.");
       }
-
-      setUsername(username);
-      setUserId(Number(id));
-      setRole(role);
-
-      localStorage.setItem("username", username);
-      localStorage.setItem("userId", String(id));
-      localStorage.setItem("role", role);
-      if (token) {
-        localStorage.setItem("token", token);
-      }
-
-      alert(`Uspešna prijava! Dobrodošli ${username}`);
-      redirectToDashboard(role, id);
-
-    } catch (error) {
-      const message =
-        error.response?.data?.message ||
-        error.message ||
-        "Greška prilikom prijave";
-      setError(message);
+    } catch (err) {
+      const msg = err.response?.data?.message || "Greška prilikom prijave";
+      setError(msg);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoToRegister = () => {
-    navigate("/register");
+  // FORGOT PASSWORD SUBMIT
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.email.trim()) {
+      setError("Molimo unesite email adresu.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    setMsg("");
+
+    try {
+      await requestPasswordReset(formData.email);
+      setMsg("Link za reset lozinke je uspesno poslat");
+    } catch (err) {
+      const msg = err.response?.data?.message || "Greška prilikom slanja emaila.";
+      setError(msg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  if (isAuth) {
-    return (
-      <div className="welcome-page">
-        <div className="welcome-page__content">
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            height: '100vh',
-            fontSize: '1.5rem',
-            color: '#4b5563'
-          }}>
-            Redirektovanje...
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleGoToRegister = () => navigate("/register");
 
   return (
     <div className="welcome-page">
       <div className="welcome-page__content">
-        <div className="welcome-page__left">
-          <div className="welcome-content">
-            <h1 className="welcome-content__title">Gozba na klik</h1>
-            <p className="welcome-content__subtitle">
-              Dobrodošli u najbolju aplikaciju za naručivanje hrane!
-            </p>
-            <p className="welcome-content__description">
-              Otkrijte ukusna jela iz vaših omiljenih restorana i naručite ih
-              brzo i lako.
-            </p>
-            <div className="welcome-content__feature">
-              <div className="feature-dot"></div>
-              <p className="feature-text">Brza dostava</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="welcome-page__right">
-          <div className="login-form-container">
-            <div className="login-form__header">
-              <h2 className="login-form__title">Prijava</h2>
-              <p className="login-form__subtitle">Prijavite se na vaš nalog</p>
+        {isAuth ? (
+          <Spinner />
+        ) : (
+          <>
+            <div className="welcome-page__left">
+              <div className="welcome-content">
+                <h1 className="welcome-content__title">Gozba na klik</h1>
+                <p className="welcome-content__subtitle">
+                  Dobrodošli u najbolju aplikaciju za naručivanje hrane!
+                </p>
+              </div>
             </div>
 
-            <form className="login-form" onSubmit={handleLoginSubmit}>
-              <div className="form-group">
-                <label htmlFor="username" className="form-label">
-                  Korisničko ime
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  placeholder="Unesite korisničko ime"
-                  disabled={isLoading}
-                  autoComplete="username"
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="password" className="form-label">
-                  Lozinka
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  placeholder="Unesite lozinku"
-                  disabled={isLoading}
-                  autoComplete="current-password"
-                />
-              </div>
-
-              {error && (
-                <div className="error-message">
-                  <p className="error-message__text">{error}</p>
+            <div className="welcome-page__right">
+              <div className="login-form-container">
+                <div className="login-form__header">
+                  <h2 className="login-form__title">
+                    {forgotMode ? "Reset lozinke" : "Prijava"}
+                  </h2>
                 </div>
-              )}
 
-              <button
-                type="submit"
-                className="btn btn--primary btn--full-width"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <span className="loading-spinner loading-spinner--small"></span>
-                    Prijavljivanje...
-                  </>
-                ) : (
-                  "Prijavi se"
+                <form
+                  className="login-form"
+                  onSubmit={forgotMode ? handleForgotPasswordSubmit : handleLoginSubmit}
+                >
+                  {!forgotMode && (
+                    <>
+                      <div className="form-group">
+                        <label htmlFor="username" className="form-label">
+                          Korisničko ime
+                        </label>
+                        <input
+                          type="text"
+                          id="username"
+                          name="username"
+                          value={formData.username}
+                          onChange={handleInputChange}
+                          className="form-input"
+                          disabled={isLoading}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="password" className="form-label">
+                          Lozinka
+                        </label>
+                        <input
+                          type="password"
+                          id="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          className="form-input"
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {forgotMode && (
+                    <div className="form-group">
+                      <label htmlFor="email" className="form-label">
+                        Unesite email za reset lozinke
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="form-input"
+                        disabled={isLoading}
+                      />
+                    </div>
+                  )}
+
+                  {error && (
+                    <div className="error-message">
+                      <p className="error-message__text">{error}</p>
+                    </div>
+                  )}
+
+                  {msg && (
+                    <div className="success-message">
+                      <p className="success-message__text">{msg}</p>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="btn btn--primary btn--full-width"
+                    disabled={isLoading}
+                  >
+                    {isLoading
+                      ? "Molimo sačekajte..."
+                      : forgotMode
+                      ? "Pošalji link"
+                      : "Prijavi se"}
+                  </button>
+                </form>
+                  
+                <div className="forgot-password">
+                  <button
+                    type="button"
+                    className="btn btn--secondary btn--full-width"
+                    onClick={() => {
+                      setForgotMode(!forgotMode);
+                      setError("");
+                      setMsg("");
+                    }}
+                  >
+                    {forgotMode ? "← Nazad na prijavu" : "Zaboravljena lozinka?"}
+                  </button>
+                </div>
+
+                {!forgotMode && (
+                  <div className="login-form__footer">
+                    <p className="footer-text">Nemate nalog?</p>
+                    <button
+                      type="button"
+                      onClick={handleGoToRegister}
+                      className="btn btn--secondary btn--full-width"
+                    >
+                      Registruj se
+                    </button>
+                  </div>
                 )}
-              </button>
-            </form>
-
-            <div className="login-form__footer">
-              <p className="footer-text">Nemate nalog?</p>
-              <button
-                type="button"
-                onClick={handleGoToRegister}
-                className="btn btn--secondary btn--full-width"
-              >
-                Registruj se
-              </button>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );

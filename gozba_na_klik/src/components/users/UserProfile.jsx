@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { getUserById, updateUser } from "../service/userService";
+import { updateUser } from "../service/userService";
+import { validateFile } from "../service/fileService";
 import { baseUrl } from "../../config/routeConfig";
 import { useUser } from "./UserContext";
+import Spinner from "../spinner/Spinner";
 
 export default function UserProfile() {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { isAuth, role } = useUser();
-  const [user, setUser] = useState(null);
+  const { role, user, isAuth, userId } = useUser();
   const [statusMsg, setStatusMsg] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
-
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -20,33 +21,35 @@ export default function UserProfile() {
     formState: { errors },
   } = useForm();
 
+  const { refreshUser } = useUser();
+  // Fetch profile
   useEffect(() => {
-    const fetchUser = async () => {
-      if (id) {
-        try {
-          const existingUser = await getUserById(Number(id));
-          if (!existingUser) return;
-          setUser(existingUser);
+    try {
+      reset({
+        userimage: user.userImage || null,
+        username: user.username || "",
+        email: user.email || "",
+      });
+    } catch (err) {
+      setErrorMsg("Greška pri učitavanju profila");
+      setTimeout(() => setStatusMsg(""), 3000);
+    }
+    finally {
+      setLoading(false);
+    }
+  }, [isAuth, reset]);
 
-          // prefill form (except password)
-          reset({
-            userimage: null,
-            username: existingUser.username || "",
-            email: existingUser.email || "",
-            password: "",
-          });
-        } catch (err) {
-          setStatusMsg("Greška pri učitavanju korisnika");
-          setTimeout(() => setStatusMsg(""), 3000);
-        }
-      }
-    };
-
-    fetchUser();
-  }, [id, reset]);
-
+  // Image preview
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    const validationResult = validateFile(file);
+
+    if (validationResult !== true) {
+      setErrorMsg(validationResult);
+      setTimeout(() => setErrorMsg(""), 3000);
+      return;
+    }
+
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => setPreviewImage(reader.result);
@@ -56,6 +59,7 @@ export default function UserProfile() {
 
   const onSubmit = async (data) => {
     try {
+      setLoading(true);
       const formData = new FormData();
 
       if (data.userimage?.[0]) {
@@ -64,99 +68,105 @@ export default function UserProfile() {
       formData.append("username", data.username);
       formData.append("email", data.email);
 
-      if (data.password) {
-        formData.append("password", data.password);
-      }
-
-      await updateUser(Number(id), formData);
-
-      alert("Profil je uspešno ažuriran!");
-      navigate("/");
-    } catch (err) {
-      setStatusMsg("Greška prilikom ažuriranja profila");
+      await updateUser(user?.id, formData);
+      setStatusMsg("Profil je uspešno ažuriran");
       setTimeout(() => setStatusMsg(""), 3000);
+    } catch (err) {
+      setErrorMsg("Greška prilikom ažuriranja profila");
+      setTimeout(() => setErrorMsg(""), 3000);
+    }
+    finally {
+      setLoading(false);
+      await refreshUser();
     }
   };
 
-  // ✅ Determine which image to show: preview (if selected) or current profile image
   const imageSrc = previewImage
     ? previewImage
     : user?.userImage
-    ? `${baseUrl}${user.userImage}`
-    : `${baseUrl}/assets/profileImg/default_profile.png`;
+      ? `${baseUrl}${user.userImage}`
+      : `${baseUrl}/assets/profileImg/default_profile.png`;
 
+  if (loading) return <Spinner />
   return (
-    <>
-      {" "}
-      <div className="user-profile-container">
-        <h2>Profil korisnika</h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-          <div className="statusMsg">{statusMsg}</div>
 
-          <div className="profile-image">
-            <img
-              src={imageSrc}
-              alt="Profile Preview"
-              onError={(e) => {
-                e.target.src = `${baseUrl}/assets/profileImg/default_profile.png`;
-              }}
-            />
-            <input
-              type="file"
-              {...register("userimage")}
-              onChange={handleImageChange}
-            />
+    <div className="user-profile-container">
+      <h2>Profil korisnika</h2>
+      {errorMsg && (
+          <div className="error-message">
+            <p className="error-message__text">{errorMsg}</p>
           </div>
+        )}
 
-          <div>
-            <label>Korisničko ime</label>
-            <input
-              type="text"
-              disabled
-              {...register("username", {
-                required: "Korisničko ime je obavezno",
-              })}
-            />
-            {errors.username && <p>{errors.username.message}</p>}
+        {statusMsg && (
+          <div className="success-message">
+            <p className="success-message__text">{statusMsg}</p>
           </div>
+        )}
 
-          <div>
-            <label>Lozinka (ostavite prazno ako ne menjate)</label>
-            <input type="password" {...register("password")} />
-          </div>
+      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
 
-          <div>
-            <label>Email</label>
-            <input
-              type="email"
-              {...register("email", {
-                required: "Email je obavezan",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Unesite validan email",
+        <div className="profile-image">
+          <img
+            src={imageSrc}
+            alt="Profile Preview"
+            onError={(e) => {
+              e.target.src = `${baseUrl}/assets/profileImg/default_profile.png`;
+            }}
+          />
+          <input
+            type="file"
+            accept="image/*"
+            {...register("userimage", {
+              validate: {
+                fileCheck: (files) => {
+                  const file = files?.[0];
+                  const error = validateFile(file);
+                  return error || true;
                 },
-              })}
-            />
-            {errors.email && <p>{errors.email.message}</p>}
-          </div>
+              },
+            })}
+            onChange={handleImageChange}
+          />
+          {errors.userimage && (
+            <p className="error-message__text">{errors.userimage.message}</p>
+          )}
+        </div>
 
-          <button type="submit">Sačuvaj izmene</button>
-        </form>
-      </div>
-      {isAuth && role === "User" && (
         <div>
-          {/* Moji alergeni */}
-          <div className="alergens-section-container">
-            <div className="alergens-title-container">
-              <h2>Moji alergeni 🥜</h2>
-              <button
-                className="btn btn--primary"
-                onClick={() => navigate(`/profile/${id}/alergens`)}
-              >
-                Izmeni
-              </button>
-            </div>
+          <label>Korisničko ime</label>
+          <input type="text" disabled {...register("username")} />
+        </div>
+
+        <div>
+          <label>Email</label>
+          <input
+            type="email"
+            {...register("email", {
+              required: "Email je obavezan",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Unesite validan email",
+              },
+            })}
+          />
+          {errors.email && <p>{errors.email.message}</p>}
+        </div>
+
+        <button type="submit">Sačuvaj izmene</button>
+      </form>
+
+      {isAuth && role === "User" && (
+        <div className="alergens-section-container">
+          <div className="alergens-title-container">
+            <h2>Moji alergeni 🥜</h2>
+            <button
+              className="btn btn--primary"
+              onClick={() => navigate("/profile/alergens")}
+            >
+              Izmeni
+            </button>
           </div>
 
           {/* Istorija porudžbina */}
@@ -173,6 +183,6 @@ export default function UserProfile() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

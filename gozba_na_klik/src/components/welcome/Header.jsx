@@ -1,78 +1,124 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../users/UserContext";
-import { getUserById } from "../service/userService";
+import { useCurrency } from "../utils/currencyContext";
+import { getCurrentProfile } from "../service/userService";
 import { baseUrl } from "../../config/routeConfig";
 
 export default function Header() {
   const { username, userId, isAuth, logout, role } = useUser();
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const [profileImage, setProfileImage] = useState(
+    `${baseUrl}/assets/profileImg/default_profile.png`
+  );
+  const { currency, setCurrency } = useCurrency();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      if (userId) {
+    const fetchProfile = async () => {
+      if (isAuth) {
         try {
-          const existingUser = await getUserById(Number(userId));
-          if (existingUser) {
-            setUser(existingUser);
+          const userProfile = await getCurrentProfile();
+          if (userProfile?.userImage) {
+            setProfileImage(`${baseUrl}${userProfile.userImage}`);
           }
         } catch (err) {
-          console.error("Failed to fetch user", err);
+          console.error("Failed to fetch user profile image", err);
         }
       }
     };
-    fetchUser();
-  }, [userId]);
+
+    fetchProfile();
+  }, [isAuth]);
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
 
-  const profileImageSrc = user?.userImage
-    ? `${baseUrl}${user.userImage}`
-    : `${baseUrl}/assets/profileImg/default_profile.png`;
-
   return (
     <header className="app-header">
-      <div className="logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-        🍴 Gozba na klik
-      </div>
-        {isAuth && role === "Admin" && (
-          <div className="navbar-links">
-            <ul>
-              <li>
-                <Link to={"admin-users"}>Korisnici</Link>
-              </li>
-              <li>
-                <Link to={"admin-restaurants"}>Restorani</Link>
-              </li>
-            </ul>
-          </div>
-        )}
-      <div className="user-info">
+      <div className="logo-and-links">
+        <div className="logo" onClick={() => navigate("/")}>
+          🍴 Gozba na klik
+        </div>
+        <select className="currency-select" value={currency} onChange={e => setCurrency(e.target.value)}>
+ <option value="EUR">€ EUR</option>
+  <option value="USD">$ USD</option>
+  <option value="GBP">£ GBP</option>
+</select>
+
         {isAuth && (
+          <nav className="navbar-links">
+            <ul>
+              {(role === "User" || role === "Buyer") && (
+                <>
+                  <li>
+                    <Link to={"/search"}>Pretraga jela</Link>
+                  </li>
+                  <li>
+                    <Link to={"/my-orders"} className="my-orders-link">
+                      📋 Moje porudžbine
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={"/my-active-order"} className="my-orders-link">
+                      Aktivna porudžbina
+                    </Link>
+                  </li>
+                </>
+              )}
+
+              {role === "Admin" && (
+                <>
+                  <li>
+                    <Link to={"/admin-users"}>Korisnici</Link>
+                  </li>
+                  <li>
+                    <Link to={"/admin-restaurants"}>Restorani</Link>
+                  </li>
+                  <li>
+                    <Link to={"/admin-complaints"}>Žalbe</Link>
+                  </li>
+                  <li>
+                    <Link to={"/reporting/dashboard"}>Izveštaji</Link>
+                  </li>
+                </>
+              )}
+            </ul>
+          </nav>
+        )}
+      </div>
+
+      <div className="user-info">
+        {!isAuth ? (
+          <button className="login-btn" onClick={() => navigate("/login")}>
+            Prijava
+          </button>
+        ) : (
           <>
-            <span>Dobrodošli, <strong>{username}</strong></span>
-            
-            {user?.role === "RestaurantOwner" && (
-              <button className="dashboard-btn" onClick={() => navigate("/restaurants/dashboard")}>
+            <span>
+              Dobrodošli, <strong>{username}</strong>
+            </span>
+
+            {role === "RestaurantOwner" && (
+              <button
+                className="dashboard-btn"
+                onClick={() => navigate("/restaurants/dashboard")}
+              >
                 🏠 Moji restorani
               </button>
             )}
-            
-            <button className="profile-btn">
-              <Link to={`/profile/${userId}`} className="profile-btn">
+
+            <Link to={`/profile`} className="profile-btn">
+              <button className="profile-btn" name="Profile">
                 <img
                   alt="Profile"
                   className="profile-icon"
-                  src={profileImageSrc}
+                  src={profileImage}
                 />
-                Profil
-              </Link>
-            </button>
-
+                Profile
+              </button>
+            </Link>
 
             <button className="logout-btn" onClick={handleLogout}>
               Odjava

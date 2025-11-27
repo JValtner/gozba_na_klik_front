@@ -117,6 +117,13 @@
 .form-group {
   display: flex;
   flex-direction: column;
+
+  .error-message__text {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #dc2626;
+    font-weight: 500;
+  }
 }
 
 .form-label {
@@ -211,6 +218,7 @@
   }
 
   &--secondary {
+    margin-top: 10px;
     background-color: transparent;
     color: #ea580c;
     border: 2px solid #ea580c;
@@ -218,6 +226,20 @@
     &:hover:not(:disabled) {
       background-color: #ea580c;
       color: white;
+    }
+  }
+
+  &--danger {
+    background-color: #ef4444;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: #dc2626;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
     }
   }
 

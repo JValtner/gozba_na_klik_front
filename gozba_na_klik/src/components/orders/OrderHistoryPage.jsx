@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getUserOrders } from "../service/orderService";
+import { getUserOrderHistory } from "../service/orderService";
 import Spinner from "../spinner/Spinner";
 
 const OrderHistoryPage = () => {
@@ -24,11 +24,11 @@ const OrderHistoryPage = () => {
       setError("");
 
       // Fetch active orders (not COMPLETED or CANCELLED)
-      const activeResponse = await getUserOrders(userId, "active", 1, 100);
+      const activeResponse = await getUserOrderHistory(userId, "active", 1, 100);
       setActiveOrders(activeResponse.orders || []);
 
       // Fetch archived orders (COMPLETED or CANCELLED) with pagination
-      const archivedResponse = await getUserOrders(userId, "archived", currentPage, pageSize);
+      const archivedResponse = await getUserOrderHistory(userId, "archived", currentPage, pageSize);
       setArchivedOrders(archivedResponse.orders || []);
       setTotalPages(Math.ceil((archivedResponse.totalCount || 0) / pageSize));
       setTotalCount(archivedResponse.totalCount || 0);

@@ -2,7 +2,12 @@ import AxiosConfig from "../../config/axios.config";
 
 // GET restoran po ID-u
 export async function getRestaurantById(id) {
-  const response = await AxiosConfig.get(`/api/restaurants/${id}`);
+  // Dodaj cache-busting parametar da se podaci uvek osveže
+  const response = await AxiosConfig.get(`/api/restaurants/${id}`, {
+    params: {
+      _t: Date.now() // Dodaj timestamp da spreči keširanje
+    }
+  });
   return response.data;
 }
 
@@ -37,10 +42,42 @@ export async function getAllRestaurants() {
   const response = await AxiosConfig.get("/api/restaurants");
   return response.data;
 }
+// GET  withrestaurants sorting, filtering, and paging
+export const getSortedFilteredPagedRestaurants = async (filter, page = 1, pageSize = 5, sortType = "") => {
+  try {
+    const params = {
+      page,
+      pageSize,
+      sortType,
+      ...filter 
+    };
+
+    // Remove null or undefined filter fields
+    Object.keys(params).forEach(
+      (key) => (params[key] == null || params[key] === "") && delete params[key]
+    );
+
+    const response = await AxiosConfig.get(`/api/restaurants/filterSortPage`, { params });
+    return response.data; // { items, count, hasNextPage, hasPreviousPage, totalPages }
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to fetch restaurants");
+  }
+};
+
+// GET sort types
+export const getSortTypes = async () => {
+  try {
+    const response = await AxiosConfig.get(`/api/restaurants/sortTypes`);
+    return response.data; // return the array directly
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch sort types");
+  }
+};
 
 // GET moji restorani
 export async function getMyRestaurants() {
-  const response = await AxiosConfig.get("/api/restaurants/my");
+  const response = await AxiosConfig.get(`/api/restaurants/my`);
   return response.data;
 }
 
