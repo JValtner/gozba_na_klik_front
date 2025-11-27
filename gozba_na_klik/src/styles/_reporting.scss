@@ -1,0 +1,405 @@
+/* ----------------------------- */
+/* GLOBAL REUSABLE STYLES       */
+/* ----------------------------- */
+
+$radius: 16px;
+$shadow-soft: 0 6px 20px rgba(0, 0, 0, 0.08);
+$shadow-strong: 0 10px 35px rgba(0, 0, 0, 0.12);
+$primary: #3b82f6;
+$bg-light: #f3f4f7;
+
+.report-section,
+.reporting-dashboard {
+  font-family: "Inter", sans-serif;
+  color: #2d2d2d;
+}
+
+/* ----------------------------- */
+/* MAIN DASHBOARD LAYOUT         */
+/* ----------------------------- */
+
+.reporting-dashboard {
+  padding: 2rem 3rem;
+  background: linear-gradient(180deg, #fafbff, #eef1f6);
+  min-height: 100vh;
+
+  .title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: #1e293b;
+  }
+
+  .section {
+    background: white;
+    padding: 2rem;
+    border-radius: $radius;
+    box-shadow: $shadow-soft;
+    margin-bottom: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+}
+
+.reporting-dashboard {
+  padding: 2.5rem 3rem;
+  background: #f4f6f9;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+
+  .title {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    color: #222;
+  }
+
+  /* MAIN SECTION CARD */
+  .section {
+    background: white;
+    border-radius: 14px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 2.5rem;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 0.4rem;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      select {
+        padding: 0.75rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 1rem;
+        background: #fafafa;
+        transition: border 0.2s ease;
+
+        &:hover {
+          border-color: #999;
+        }
+        &:focus {
+          border-color: #4c7ff0;
+          outline: none;
+          background: white;
+        }
+      }
+    }
+  }
+
+  /* RESTAURANT CARD PREVIEW */
+  .restaurant-card-report {
+    display: flex;
+    gap: 1.5rem;
+    background: #fff;
+    padding: 1.4rem;
+    border-radius: 14px;
+    border: 1px solid #e4e4e4;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+    }
+
+    img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 650;
+    }
+
+    p {
+      margin: 0.3rem 0;
+      line-height: 1.45;
+      font-size: 0.95rem;
+      color: #444;
+
+      strong {
+        color: #222;
+      }
+    }
+  }
+}
+
+
+/* ----------------------------- */
+/* RESTAURANT CARD               */
+/* ----------------------------- */
+
+.restaurant-card-report {
+  display: flex;
+  gap: 2rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: $radius;
+  box-shadow: $shadow-soft;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-strong;
+  }
+
+  img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: $radius;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+}
+
+/* ----------------------------- */
+/* FILTERS SECTION               */
+/* ----------------------------- */
+
+.filters,
+.section-filters {
+  display: flex;
+  gap: 2rem;
+  background: #ffffff;
+  padding: 1.3rem 1.6rem;
+  border-radius: $radius;
+  box-shadow: $shadow-soft;
+  margin-bottom: 2rem;
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+
+    select,
+    input[type="date"] {
+      padding: 0.6rem 0.9rem;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      transition: border 0.2s ease, background 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $primary;
+        background: white;
+      }
+    }
+  }
+}
+
+/* ----------------------------- */
+/* REPORT SECTION                */
+/* ----------------------------- */
+
+.report-section {
+  background: white;
+  padding: 2rem;
+  border-radius: $radius;
+  box-shadow: $shadow-soft;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 3rem;
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #1e293b;
+  }
+
+  .no-data {
+    font-style: italic;
+    color: #6b7280;
+  }
+
+  /* Summary + charts */
+  .section-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    margin-top: 1rem;
+
+    .summary-box {
+      background: linear-gradient(180deg, #eaf1ff, #dbe6ff);
+      padding: 1.5rem;
+      border-radius: $radius;
+      box-shadow: $shadow-soft;
+      font-size: 1rem;
+      border: 1px solid rgba(59, 130, 246, 0.15);
+
+      p {
+        margin: 0.4rem 0;
+        strong {
+          color: #1e40af;
+        }
+      }
+    }
+
+    .chart-box {
+      background: white;
+      padding: 1.5rem;
+      border-radius: $radius;
+      box-shadow: $shadow-soft;
+    }
+  }
+
+  .pdf-actions {
+    margin: 1rem 0;
+
+    button {
+      margin-bottom: 1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      background: $primary;
+      color: white;
+      border: none;
+      box-shadow: $shadow-soft;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      font-weight: 500;
+
+      &:hover {
+        background: darken($primary, 10%);
+        box-shadow: $shadow-strong;
+        transform: translateY(-2px);
+      }
+    }
+
+    h3 {
+      margin-top: 1.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+  }
+}
+
+/* ----------------------------- */
+/* SNAPSHOT LIST                 */
+/* ----------------------------- */
+
+.snapshot-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.2rem;
+  padding: 0.5rem;
+
+  .snapshot-item {
+    background: linear-gradient(180deg, #ffffff, #f3f4f7);
+    border-radius: $radius;
+    box-shadow: $shadow-soft;
+    padding: 1.2rem 1.6rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #1f2937;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: $shadow-strong;
+      background: white;
+    }
+
+    span {
+      font-size: 1.05rem;
+      text-align: center;
+    }
+  }
+}
+
+
+/* ----------------------------- */
+/* CHART                         */
+/* ----------------------------- */
+.daily-chart {
+  margin-bottom: 2rem;
+
+  h3 {
+    margin-bottom: 1rem;
+    color: #222;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .chart-container {
+    height: 280px;
+    padding: 1rem 1rem 0 0;
+  }
+}
+
+
+:root {
+  --chart-green: #2ecc71;
+  --chart-yellow: #f1c40f;
+  --chart-red: #e74c3c;
+  --chart-blue: #3498db;
+  --chart-purple: #9b59b6;
+  --chart-orange: #e67e22;
+
+  --chart-border: #2ecc71;
+  --chart-fill: rgba(46, 204, 113, 0.25);
+
+  --chart-text: #333;
+  --chart-grid: rgba(0, 0, 0, 0.1);
+}
+
+/* Improve tooltip */
+.chartjs-tooltip {
+  font-size: 14px !important;
+}
+
+/* Smooth edges on bars */
+.canvas {
+  border-radius: 10px;
+}
+
+
+/* ----------------------------- */
+/* RESPONSIVE                    */
+/* ----------------------------- */
+
+@media (max-width: 900px) {
+  .section-content {
+    grid-template-columns: 1fr !important;
+  }
+
+  .filters,
+  .section-filters {
+    flex-direction: column;
+  }
+}

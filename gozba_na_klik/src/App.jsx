@@ -31,11 +31,16 @@ import HomeRestaurants from "./components/restaurants/HomeRestaurants";
 import GlobalMealSearch from "./components/restaurants/GeneralMealSearch";
 import AdminComplaintsPage from "./components/complaints/AdminComplaintsPage";
 import ResetPasswordPage from "./components/users/ResetPasswordPage";
+import ReportingDashboard from "./components/reporting/ReportingDashboard";
 import { LOGGED_IN_ROLES } from "./config/routes/roles";
 import ProtectedRoute from "./config/routes/ProtectedRoute";
 import OrderTrackingPage from "./components/orders/OrderTrackingPage";
 import IrresponsibleRestaurantsPage from "./components/restaurants/IrresponsibleRestaurantsPage";
 import SuspensionAppealsPage from "./components/restaurants/suspensions/SuspensionAppealsPage";
+import ReportingProfitSummary from "./components/reporting/ReportingProfitSummary";
+import ReportingMealSalesSummary from "./components/reporting/ReportingMealSalesSummary";
+import ReportingOrdersSummary from "./components/reporting/ReportingOrdersSummary";
+import ReportingMonthlyReport from "./components/reporting/ReportingMonthlyReport";
 
 export default function App() {
   return (
@@ -146,7 +151,46 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-
+            <Route
+              path="/reporting/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
+                  <ReportingDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reporting/profit-summary"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
+                  <ReportingProfitSummary/>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reporting/meal-sales-summary"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
+                  <ReportingMealSalesSummary />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reporting/orders-summary"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
+                  <ReportingOrdersSummary />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reporting/monthly-report"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
+                  <ReportingMonthlyReport />
+                </ProtectedRoute>
+              }
+            />
             {/* VLASNIK - RestaurantOwner*/}
             <Route
               path="/restaurants/dashboard"
