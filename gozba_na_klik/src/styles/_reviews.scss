@@ -108,33 +108,13 @@
 }
 
 // ============================================
-// FILE UPLOAD
+// IMAGE PREVIEW (uses existing patterns)
 // ============================================
 
-.file-upload {
-  &__input-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  &__input {
-    display: none;
-  }
-}
-
-.file-preview {
+.image-preview {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-
-  &__image {
-    max-width: 100%;
-    max-height: 300px;
-    object-fit: contain;
-    border-radius: 8px;
-    border: 2px solid #e5e7eb;
-  }
 }
 
 // ============================================
@@ -233,7 +213,16 @@
   }
 }
 
-.review-section {
+// Review items in the review card (different from modal review-section)
+.review-item {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
   &__header {
     display: flex;
     justify-content: space-between;

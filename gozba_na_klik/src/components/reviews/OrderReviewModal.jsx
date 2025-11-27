@@ -165,45 +165,51 @@ export default function OrderReviewModal({ orderId, onClose, onSuccess }) {
 
               <div className="form-group">
                 <label className="form-label">Fotografija (opciono)</label>
-                <div className="file-upload">
-                  {restaurantPhotoPreview ? (
-                    <div className="file-preview">
-                      <img
-                        src={restaurantPhotoPreview}
-                        alt="Preview"
-                        className="file-preview__image"
-                      />
-                      <button
-                        type="button"
-                        className="btn btn--secondary btn--small"
-                        onClick={handleRemovePhoto}
-                        disabled={isSubmitting}
-                      >
-                        Ukloni fotografiju
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="file-upload__input-wrapper">
-                      <input
-                        type="file"
-                        id="restaurantPhoto"
-                        accept="image/jpeg,image/png,image/webp"
-                        onChange={handlePhotoChange}
-                        disabled={isSubmitting}
-                        className="file-upload__input"
-                      />
-                      <label
-                        htmlFor="restaurantPhoto"
-                        className="btn btn--secondary btn--small"
-                      >
-                        Izaberi fotografiju
-                      </label>
-                      <small className="form-hint">
-                        Dozvoljeni formati: JPEG, PNG, WebP (max 5MB)
-                      </small>
-                    </div>
-                  )}
-                </div>
+                {restaurantPhotoPreview ? (
+                  <div className="image-preview">
+                    <img
+                      src={restaurantPhotoPreview}
+                      alt="Preview"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "300px",
+                        objectFit: "contain",
+                        borderRadius: "8px",
+                        border: "2px solid #e5e7eb",
+                        marginBottom: "0.75rem"
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--small"
+                      onClick={handleRemovePhoto}
+                      disabled={isSubmitting}
+                    >
+                      Ukloni fotografiju
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <input
+                      type="file"
+                      id="restaurantPhoto"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handlePhotoChange}
+                      disabled={isSubmitting}
+                      style={{ display: "none" }}
+                    />
+                    <label
+                      htmlFor="restaurantPhoto"
+                      className="btn btn--secondary btn--small"
+                      style={{ display: "inline-block", cursor: isSubmitting ? "not-allowed" : "pointer" }}
+                    >
+                      Izaberi fotografiju
+                    </label>
+                    <small className="form-hint" style={{ display: "block", marginTop: "0.5rem" }}>
+                      Dozvoljeni formati: JPEG, PNG, WebP (max 5MB)
+                    </small>
+                  </div>
+                )}
               </div>
             </div>
           </div>

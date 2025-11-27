@@ -214,18 +214,18 @@ export default function RestaurantReviews({ restaurantId }) {
 
                 <div className="review-card__content">
                   {/* Restaurant Review */}
-                  <div className="review-section">
-                    <div className="review-section__header">
-                      <h4 className="review-section__title">Restoran</h4>
+                  <div className="review-item">
+                    <div className="review-item__header">
+                      <h4 className="review-item__title">Restoran</h4>
                       {renderRating(restaurantRating)}
                     </div>
                     {restaurantComment && (
-                      <p className="review-section__comment">
+                      <p className="review-item__comment">
                         {restaurantComment}
                       </p>
                     )}
                     {restaurantPhotoUrl && (
-                      <div className="review-section__photo">
+                      <div className="review-item__photo">
                         <img
                           src={getPhotoUrl(restaurantPhotoUrl)}
                           alt="Review photo"
@@ -236,13 +236,13 @@ export default function RestaurantReviews({ restaurantId }) {
                   </div>
 
                   {/* Courier Review */}
-                  <div className="review-section">
-                    <div className="review-section__header">
-                      <h4 className="review-section__title">Kurir</h4>
+                  <div className="review-item">
+                    <div className="review-item__header">
+                      <h4 className="review-item__title">Kurir</h4>
                       {renderRating(courierRating)}
                     </div>
                     {courierComment && (
-                      <p className="review-section__comment">
+                      <p className="review-item__comment">
                         {courierComment}
                       </p>
                     )}
