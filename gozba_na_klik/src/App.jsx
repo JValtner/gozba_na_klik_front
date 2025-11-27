@@ -24,6 +24,7 @@ import MealDetails from "./components/restaurants/meal/MealDetail";
 import EditUserAlergens from "./components/users/EditUserAlergens";
 import CourierOrderDashboard from "./components/delivery/CourierOrderDashboard";
 import CourierOrderCard from "./components/delivery/CourierOrderCard";
+import CourierHistoryPage from "./components/delivery/CourierHistoryPage";
 import OrderSummary from "./components/orders/OrderSummary";
 import OrderDetails from "./components/orders/OrderDetails";
 import RestaurantOrdersPage from "./components/orders/RestaurantOrdersPage";
@@ -307,6 +308,14 @@ export default function App() {
                 element={
                   <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.DeliveryPerson}>
                     <DeliverySchedule />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/delivery/history"
+                element={
+                  <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.DeliveryPerson}>
+                    <CourierHistoryPage />
                   </ProtectedRoute>
                 }
               />

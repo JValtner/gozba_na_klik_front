@@ -151,3 +151,45 @@ export async function getUserOrderById(orderId) {
     }
   }
 }
+
+export async function getCourierDeliveryHistory(
+  courierId,
+  fromDate = null,
+  toDate = null,
+  page = 1,
+  pageSize = 10
+) {
+  try {
+    const params = {
+      page,
+      pageSize,
+    };
+
+    if (fromDate) {
+      params.fromDate = fromDate;
+    }
+
+    if (toDate) {
+      params.toDate = toDate;
+    }
+
+    const response = await AxiosConfig.get(
+      `${RESOURCE}/courier/${courierId}`,
+      { params }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching courier delivery history:", error);
+
+    if (error.response?.status === 401) {
+      throw new Error("Nemate dozvolu da vidite ove isporuke");
+    } else if (error.response?.status === 403) {
+      throw new Error("Možete videti samo svoje dostave");
+    } else if (error.response?.status === 404) {
+      throw new Error("Kurir nije pronađen");
+    } else {
+      throw new Error("Greška pri učitavanju istorije isporuka");
+    }
+  }
+}
