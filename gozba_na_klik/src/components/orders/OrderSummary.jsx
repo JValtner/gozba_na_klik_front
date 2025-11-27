@@ -52,6 +52,32 @@ export default function OrderSummary() {
     loadData();
   }, [restaurantId, userId]);
 
+  useEffect(() => {
+    const updatePreview = async () => {
+      if (!restaurantId || !cart.length || loading || !preview) return;
+      
+      if (useExistingAddress && selectedAddressId) {
+        try {
+          const cartData = getCart(restaurantId);
+          const orderData = buildOrderData(selectedAddressId, cartData, customerNote, allergenWarningAccepted);
+          const previewData = await getOrderPreview(restaurantId, orderData);
+          setPreview(previewData);
+          setError("");
+        } catch (err) {
+          console.error("Greška pri ažuriranju preview-a:", err);
+          const errorMessage = err.response?.data?.message || err.message || "";
+          if (errorMessage.includes("suspendovan") || err.response?.status === 400) {
+            setError("Restoran suspendovan. Ne možete kreirati porudžbinu iz suspendovanog restorana.");
+          }
+        }
+      }
+    };
+
+    if (useExistingAddress && selectedAddressId) {
+      updatePreview();
+    }
+  }, [selectedAddressId, customerNote, allergenWarningAccepted]);
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -102,7 +128,13 @@ export default function OrderSummary() {
       setPreview(previewData);
     } catch (err) {
       console.error("Greška pri učitavanju:", err);
-      setError(err.response?.data?.error || "Greška pri učitavanju porudžbine.");
+      const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Greška pri učitavanju porudžbine.";
+      
+      if (errorMessage.includes("suspendovan") || err.response?.status === 400) {
+        setError("Restoran suspendovan. Ne možete kreirati porudžbinu iz suspendovanog restorana.");
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -144,33 +176,71 @@ export default function OrderSummary() {
       setIsSubmitting(true);
       setError("");
 
-      let finalAddressId = selectedAddressId;
+      let finalAddressId = null;
 
-      if (!useExistingAddress || saveAddress) {
+      if (useExistingAddress && selectedAddressId) {
+        const selectedAddr = savedAddresses.find((a) => a.id === selectedAddressId);
+        if (selectedAddr && 
+            selectedAddr.street.trim() === addressForm.street.trim() &&
+            selectedAddr.city.trim() === addressForm.city.trim() &&
+            selectedAddr.postalCode.trim() === addressForm.postalCode.trim()) {
+          finalAddressId = selectedAddressId;
+        } else {
+          try {
+            const newAddress = await createAddress({
+              street: addressForm.street.trim(),
+              city: addressForm.city.trim(),
+              postalCode: addressForm.postalCode.trim(),
+              label: addressForm.label || "Adresa za dostavu",
+              isDefault: saveAddress && savedAddresses.length === 0,
+            });
+            finalAddressId = newAddress.id;
+          } catch (err) {
+            console.error("Greška pri kreiranju adrese:", err);
+            setError("Greška pri kreiranju adrese. Pokušajte ponovo.");
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      } else {
         try {
           const newAddress = await createAddress({
-            street: addressForm.street,
-            city: addressForm.city,
-            postalCode: addressForm.postalCode,
+            street: addressForm.street.trim(),
+            city: addressForm.city.trim(),
+            postalCode: addressForm.postalCode.trim(),
             label: addressForm.label || "Adresa za dostavu",
-            isDefault: savedAddresses.length === 0,
+            isDefault: saveAddress && savedAddresses.length === 0,
           });
           finalAddressId = newAddress.id;
         } catch (err) {
           console.error("Greška pri kreiranju adrese:", err);
           setError("Greška pri kreiranju adrese. Pokušajte ponovo.");
+          setIsSubmitting(false);
           return;
         }
       }
 
-      const orderData = buildOrderData(finalAddressId, cart, customerNote, allergenAccepted);
+      if (!finalAddressId) {
+        setError("Greška pri određivanju adrese. Pokušajte ponovo.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const currentCart = getCart(restaurantId);
+      const orderData = buildOrderData(finalAddressId, currentCart, customerNote, allergenAccepted);
       const createdOrder = await createOrder(restaurantId, orderData);
       clearCart(restaurantId);
       alert(`✅ Porudžbina je uspešno kreirana! Broj porudžbine: ${createdOrder.id}`);
       navigate(`/orders/${createdOrder.id}`);
     } catch (err) {
       console.error("Greška pri kreiranju porudžbine:", err);
-      setError(err.response?.data?.error || "Greška pri kreiranju porudžbine.");
+      const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Greška pri kreiranju porudžbine.";
+      
+      if (errorMessage.includes("suspendovan") || err.response?.status === 400) {
+        setError("Restoran suspendovan. Ne možete kreirati porudžbinu iz suspendovanog restorana.");
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setIsSubmitting(false);
     }

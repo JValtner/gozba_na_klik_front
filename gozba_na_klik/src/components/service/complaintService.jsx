@@ -23,6 +23,16 @@ export async function getComplaintByOrderId(orderId) {
   }
 }
 
+export async function checkComplaintExists(orderId) {
+  try {
+    const response = await AxiosConfig.get(`${RESOURCE}/order/${orderId}/exists`);
+    return response.data.exists;
+  } catch (error) {
+    console.error("Error checking if complaint exists:", error);
+    return false;
+  }
+}
+
 // Admin functions
 export async function getAllComplaintsLast30Days(page = 1, pageSize = 10) {
   try {

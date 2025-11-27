@@ -112,3 +112,49 @@ export async function removeClosedDate(restaurantId, dateId) {
   );
   return response.data;
 }
+
+// GET nesavesni restorani (5+ otkazanih porudžbina u poslednjih 7 dana)
+export async function getIrresponsibleRestaurants() {
+  const response = await AxiosConfig.get("/api/restaurants/irresponsible");
+  return response.data;
+}
+
+// POST suspenduj restoran
+export async function suspendRestaurant(restaurantId, reason) {
+  const response = await AxiosConfig.post(
+    `/api/restaurants/${restaurantId}/suspend`,
+    { reason }
+  );
+  return response.data;
+}
+
+export async function getRestaurantSuspension(restaurantId) {
+  try {
+    const response = await AxiosConfig.get(`/api/restaurants/${restaurantId}/suspension`);
+    return response.data || null;
+  } catch (error) {
+    console.error(`Greška pri učitavanju suspenzije za restoran ${restaurantId}:`, error);
+    return null;
+  }
+}
+
+export async function appealSuspension(restaurantId, appealText) {
+  const response = await AxiosConfig.post(
+    `/api/restaurants/${restaurantId}/suspension/appeal`,
+    { appealText }
+  );
+  return response.data;
+}
+
+export async function getAppealedSuspensions() {
+  const response = await AxiosConfig.get("/api/restaurants/suspension-appeals");
+  return response.data;
+}
+
+export async function processAppealDecision(restaurantId, accept) {
+  const response = await AxiosConfig.patch(
+    `/api/restaurants/${restaurantId}/suspension/decision`,
+    { accept }
+  );
+  return response.data;
+}

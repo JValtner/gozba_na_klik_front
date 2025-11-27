@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { baseUrl } from "../../config/routeConfig";
 import Spinner from "../spinner/Spinner";
 import AxiosConfig from "../../config/axios.config";
 import InvoiceButton from "../invoices/InvoiceButton";
 import { getStatusLabel, getStatusColor } from "../../constants/orderConstants";
+import { useUser } from "../users/UserContext";
 
 export default function OrderDetails() {
   const { orderId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, role } = useUser();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  
+  const restaurantIdFromState = location.state?.restaurantId;
+  const isRestaurantOwner = role === "RestaurantOwner";
 
   useEffect(() => {
     const loadOrder = async () => {
@@ -46,17 +52,27 @@ export default function OrderDetails() {
   }
 
   if (error || !order) {
+    const handleBack = () => {
+      if (isRestaurantOwner && restaurantIdFromState) {
+        navigate(`/restaurants/${restaurantIdFromState}/orders`);
+      } else {
+        navigate("/");
+      }
+    };
+
     return (
       <div className="order-error">
         <div className="error-message">
           <p className="error-message__text">{error || "Porudžbina nije pronađena."}</p>
-          <button className="btn btn--primary" onClick={() => navigate("/")}>
-            Nazad na početnu
+          <button className="btn btn--primary" onClick={handleBack}>
+            {isRestaurantOwner && restaurantIdFromState ? "Nazad na porudžbine" : "Nazad na početnu"}
           </button>
         </div>
       </div>
     );
   }
+
+  const restaurantId = restaurantIdFromState || order.restaurantId;
 
   return (
     <div className="order-details-page">
@@ -86,15 +102,24 @@ export default function OrderDetails() {
         </div>
 
         <div className="order-details-grid">
-          <div className="details-card">
-            <h2>Restoran</h2>
-            <p className="restaurant-name">{order.restaurantName}</p>
-          </div>
+          {!isRestaurantOwner && (
+            <div className="details-card">
+              <h2>Restoran</h2>
+              <p className="restaurant-name">{order.restaurantName}</p>
+            </div>
+          )}
 
           <div className="details-card">
             <h2>Adresa dostave</h2>
             <p>{order.deliveryAddress}</p>
           </div>
+          
+          {isRestaurantOwner && order.customerName && (
+            <div className="details-card">
+              <h2>Kupac</h2>
+              <p>{order.customerName}</p>
+            </div>
+          )}
 
           {order.customerNote && (
             <div className="details-card">
@@ -171,9 +196,15 @@ export default function OrderDetails() {
         <div className="order-details-actions">
           <button
             className="btn btn--secondary"
-            onClick={() => navigate("/")}
+            onClick={() => {
+              if (isRestaurantOwner && restaurantId) {
+                navigate(`/restaurants/${restaurantId}/orders`);
+              } else {
+                navigate("/");
+              }
+            }}
           >
-            Nazad na početnu
+            {isRestaurantOwner && restaurantId ? "Nazad na porudžbine" : "Nazad na početnu"}
           </button>
           
           <InvoiceButton 
@@ -185,12 +216,14 @@ export default function OrderDetails() {
              Račun
           </InvoiceButton>
           
-          <button
-            className="btn btn--primary"
-            onClick={() => navigate(`/restaurants/${order.restaurantId}/menu`)}
-          >
-            Pogledaj meni ponovo
-          </button>
+          {!isRestaurantOwner && (
+            <button
+              className="btn btn--primary"
+              onClick={() => navigate(`/restaurants/${order.restaurantId}/menu`)}
+            >
+              Pogledaj meni ponovo
+            </button>
+          )}
         </div>
       </div>
     </div>

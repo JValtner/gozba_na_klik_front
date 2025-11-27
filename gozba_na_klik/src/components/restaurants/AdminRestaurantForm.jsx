@@ -6,6 +6,7 @@ import {
   createRestaurant,
   getRestaurantById,
   updateRestaurantByAdmin,
+  getRestaurantSuspension,
 } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
 
@@ -15,6 +16,7 @@ const AdminRestaurantForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [owners, setOwners] = useState([]);
+  const [suspension, setSuspension] = useState(null);
 
   const {
     register,
@@ -60,6 +62,15 @@ const AdminRestaurantForm = () => {
           name: restaurant.name,
           ownerId: restaurant.ownerId,
         });
+
+        try {
+          const suspensionData = await getRestaurantSuspension(id);
+          setSuspension(suspensionData);
+        } catch (err) {
+          if (err.response?.status !== 404) {
+            console.error("Greška pri učitavanju suspenzije:", err);
+          }
+        }
       } catch {
         setError("Greška pri učitavanju restorana. Pokušajte ponovo..");
       } finally {
@@ -95,6 +106,45 @@ const AdminRestaurantForm = () => {
         </div>
 
         {error && <p className="error-span show">{error}</p>}
+
+        {suspension && (
+          <div className="suspension-alert">
+            <h3>⚠️ Restoran je suspendovan</h3>
+            <div className="suspension-alert__item">
+              <p className="suspension-alert__item__label">Razlog suspenzije:</p>
+              <p className="suspension-alert__item__reason">{suspension.suspensionReason}</p>
+              <p className="suspension-alert__item__date">
+                Datum suspenzije: {new Date(suspension.suspendedAt).toLocaleDateString("sr-RS")}
+              </p>
+              {suspension.status === "APPEALED" && (
+                <p className="suspension-alert__item__status">
+                  Status: Žalba podneta
+                </p>
+              )}
+              {suspension.status === "REJECTED" && (
+                <p className="suspension-alert__item__status" style={{ color: "#dc2626", fontWeight: "600" }}>
+                  Status: Žalba odbijena
+                </p>
+              )}
+              {suspension.appealText && (
+                <div className="suspension-alert__item__appeal">
+                  <p className="suspension-alert__item__label">Žalba na suspenziju:</p>
+                  <p className="suspension-alert__item__appeal-text">{suspension.appealText}</p>
+                  {suspension.appealDate && (
+                    <p className="suspension-alert__item__date">
+                      Žalba podneta: {new Date(suspension.appealDate).toLocaleDateString("sr-RS")}
+                    </p>
+                  )}
+                  {suspension.status === "REJECTED" && suspension.decisionDate && (
+                    <p className="suspension-alert__item__date" style={{ color: "#dc2626" }}>
+                      Žalba odbijena: {new Date(suspension.decisionDate).toLocaleDateString("sr-RS")}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {owners.length === 0 ? (
           <p>

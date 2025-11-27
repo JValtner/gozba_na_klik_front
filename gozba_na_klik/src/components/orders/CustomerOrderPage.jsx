@@ -8,7 +8,7 @@ import ComplaintModal from "../complaints/ComplaintModal";
 import ViewComplaintModal from "../complaints/ViewComplaintModal";
 import Spinner from "../spinner/Spinner";
 import Pagination from "../utils/Pagination";
-import { getComplaintByOrderId } from "../service/complaintService";
+import { getComplaintByOrderId, checkComplaintExists } from "../service/complaintService";
 
 const CustomerOrdersPage = () => {
   const navigate = useNavigate();
@@ -61,9 +61,12 @@ const CustomerOrdersPage = () => {
       if (completedOrders.length > 0) {
         const complaintChecks = await Promise.all(
           completedOrders.map(async (order) => {
-            const complaint = await getComplaintByOrderId(order.id);
-            if (complaint) {
-              return { orderId: order.id, complaint };
+            const exists = await checkComplaintExists(order.id);
+            if (exists) {
+              const complaint = await getComplaintByOrderId(order.id);
+              if (complaint) {
+                return { orderId: order.id, complaint };
+              }
             }
             return null;
           })

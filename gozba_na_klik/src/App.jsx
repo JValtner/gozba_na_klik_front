@@ -34,6 +34,8 @@ import ResetPasswordPage from "./components/users/ResetPasswordPage";
 import { LOGGED_IN_ROLES } from "./config/routes/roles";
 import ProtectedRoute from "./config/routes/ProtectedRoute";
 import OrderTrackingPage from "./components/orders/OrderTrackingPage";
+import IrresponsibleRestaurantsPage from "./components/restaurants/IrresponsibleRestaurantsPage";
+import SuspensionAppealsPage from "./components/restaurants/suspensions/SuspensionAppealsPage";
 
 export default function App() {
   return (
@@ -101,6 +103,22 @@ export default function App() {
               element={
                 <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
                   <RestaurantTable />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-restaurants/irresponsible"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
+                  <IrresponsibleRestaurantsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-restaurants/suspension-appeals"
+              element={
+                <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
+                  <SuspensionAppealsPage />
                 </ProtectedRoute>
               }
             />
