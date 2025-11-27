@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getUserOrderHistory } from "../service/orderService";
 import Spinner from "../spinner/Spinner";
+import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "../../constants/orderConstants";
 
 const OrderHistoryPage = () => {
   const { id: userId } = useParams();
@@ -23,11 +24,11 @@ const OrderHistoryPage = () => {
       setLoading(true);
       setError("");
 
-      // Fetch active orders (not COMPLETED or CANCELLED)
+      // Fetch active orders (not ZAVRŠENO or OTKAZANA)
       const activeResponse = await getUserOrderHistory(userId, "active", 1, 100);
       setActiveOrders(activeResponse.orders || []);
 
-      // Fetch archived orders (COMPLETED or CANCELLED) with pagination
+      // Fetch archived orders (ZAVRŠENO or OTKAZANA) with pagination
       const archivedResponse = await getUserOrderHistory(userId, "archived", currentPage, pageSize);
       setArchivedOrders(archivedResponse.orders || []);
       setTotalPages(Math.ceil((archivedResponse.totalCount || 0) / pageSize));
@@ -55,31 +56,21 @@ const OrderHistoryPage = () => {
   };
 
   const getStatusText = (status) => {
-    const statusMap = {
-      PENDING: "Na čekanju",
-      CONFIRMED: "Potvrđena", 
-      IN_PREPARATION: "U pripremi",
-      READY_FOR_DELIVERY: "Spremna za dostavu",
-      OUT_FOR_DELIVERY: "Na dostavi",
-      DELIVERED: "Dostavljena",
-      COMPLETED: "Završena",
-      CANCELLED: "Otkazana",
-    };
-    return statusMap[status] || status;
+    return ORDER_STATUS_LABELS[status] || status;
   };
 
   const getStatusClass = (status) => {
-    const statusClasses = {
-      PENDING: "status-pending",
-      CONFIRMED: "status-confirmed",
-      IN_PREPARATION: "status-preparation", 
-      READY_FOR_DELIVERY: "status-ready",
-      OUT_FOR_DELIVERY: "status-delivery",
-      DELIVERED: "status-delivered",
-      COMPLETED: "status-completed",
-      CANCELLED: "status-cancelled",
+    // Map status to CSS class based on the status value
+    const statusClassMap = {
+      "NA ČEKANJU": "status-pending",
+      "NA_CEKANJU": "status-pending",
+      "PRIHVAĆENA": "status-confirmed",
+      "PREUZIMANJE U TOKU": "status-pickup",
+      "DOSTAVA U TOKU": "status-delivery",
+      "ZAVRŠENO": "status-completed",
+      "OTKAZANA": "status-cancelled",
     };
-    return statusClasses[status] || "status-default";
+    return statusClassMap[status] || "status-default";
   };
 
   const renderOrderCard = (order, isArchived = false) => (
