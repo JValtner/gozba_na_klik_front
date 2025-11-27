@@ -233,7 +233,7 @@ export default function SuspensionAppealsPage() {
                       onClick={() => handleDecision(appeal.restaurantId, true)}
                       disabled={processingId === appeal.restaurantId}
                     >
-                      {processingId === appeal.restaurantId ? "Obrađuje se..." : "✓ Prihvati žalbu"}
+                      {processingId === appeal.restaurantId ? "Obrađuje se..." : "Prihvati žalbu"}
                     </button>
                   )}
                 </div>
