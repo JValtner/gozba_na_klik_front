@@ -1,6 +1,6 @@
 import React from "react";
-import { CurrencyProvider } from "./components/utils/currencyContext";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { CurrencyProvider } from "./components/utils/currencyContext";
 import Header from "./components/welcome/Header";
 import WelcomePage from "./components/welcome/WelcomePage";
 import RegisterUserForm from "./components/users/RegisterUserForm";
@@ -36,6 +36,8 @@ import ReportingDashboard from "./components/reporting/ReportingDashboard";
 import { LOGGED_IN_ROLES } from "./config/routes/roles";
 import ProtectedRoute from "./config/routes/ProtectedRoute";
 import OrderTrackingPage from "./components/orders/OrderTrackingPage";
+import IrresponsibleRestaurantsPage from "./components/restaurants/IrresponsibleRestaurantsPage";
+import SuspensionAppealsPage from "./components/restaurants/suspensions/SuspensionAppealsPage";
 import ReportingProfitSummary from "./components/reporting/ReportingProfitSummary";
 import ReportingMealSalesSummary from "./components/reporting/ReportingMealSalesSummary";
 import ReportingOrdersSummary from "./components/reporting/ReportingOrdersSummary";
@@ -112,6 +114,22 @@ export default function App() {
                 }
               />
               <Route
+                path="/admin-restaurants/irresponsible"
+                element={
+                  <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
+                    <IrresponsibleRestaurantsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin-restaurants/suspension-appeals"
+                element={
+                  <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
+                    <SuspensionAppealsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/admin-restaurant-form"
                 element={
                   <ProtectedRoute allowedRoles={LOGGED_IN_ROLES.Admin}>
@@ -175,6 +193,7 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
+
               {/* VLASNIK - RestaurantOwner*/}
               <Route
                 path="/restaurants/dashboard"

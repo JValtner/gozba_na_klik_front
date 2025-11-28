@@ -67,12 +67,20 @@ const RestaurantTable = () => {
             <h1>Restorani</h1>
             <p>Pregledajte i upravljajte restoranima</p>
           </div>
-          <button
-            className="btn btn--secondary"
-            onClick={() => navigate("/admin-restaurant-form")}
-          >
-            + Dodaj restoran
-          </button>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
+              className="btn btn--secondary"
+              onClick={() => navigate("/admin-restaurants/irresponsible")}
+            >
+              Nesavesni restorani
+            </button>
+            <button
+              className="btn btn--secondary"
+              onClick={() => navigate("/admin-restaurant-form")}
+            >
+              + Dodaj restoran
+            </button>
+          </div>
         </div>
         {!restaurants.length > 0 ? (
           <p>Nema evidentiranih restorana.</p>

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../users/UserContext";
-import { getMyRestaurants, deleteRestaurant } from "../service/restaurantsService";
+import { getMyRestaurants, deleteRestaurant, getRestaurantSuspension } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
 import { baseUrl } from "../../config/routeConfig";
+import AppealSuspensionModal from "./suspensions/AppealSuspensionModal";
 
 
 const RestaurantDashboard = () => {
@@ -12,6 +13,9 @@ const RestaurantDashboard = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [suspensions, setSuspensions] = useState({});
+  const [showAppealModal, setShowAppealModal] = useState(false);
+  const [selectedRestaurantForAppeal, setSelectedRestaurantForAppeal] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -19,6 +23,21 @@ const RestaurantDashboard = () => {
         setLoading(true);
         const data = await getMyRestaurants();
         setRestaurants(data);
+
+        const suspensionsMap = {};
+        for (const restaurant of data) {
+          try {
+            const suspension = await getRestaurantSuspension(restaurant.id);
+            if (suspension) {
+              suspensionsMap[restaurant.id] = suspension;
+            }
+          } catch (err) {
+            if (err.response?.status !== 404) {
+              console.error(`Greška pri učitavanju suspenzije za restoran ${restaurant.id}:`, err);
+            }
+          }
+        }
+        setSuspensions(suspensionsMap);
       } catch (err) {
         setError("Greška pri učitavanju.");
       } finally {
@@ -56,6 +75,28 @@ const RestaurantDashboard = () => {
     return new Date(dateString).toLocaleDateString("sr-RS");
   };
 
+  const handleAppealSuccess = async () => {
+    const suspensionsMap = {};
+    for (const restaurant of restaurants) {
+      try {
+        const suspension = await getRestaurantSuspension(restaurant.id);
+        if (suspension) {
+          suspensionsMap[restaurant.id] = suspension;
+        }
+      } catch (err) {
+        if (err.response?.status !== 404) {
+          console.error(`Greška pri učitavanju suspenzije za restoran ${restaurant.id}:`, err);
+        }
+      }
+    }
+    setSuspensions(suspensionsMap);
+  };
+
+  const handleOpenAppealModal = (restaurantId, restaurantName) => {
+    setSelectedRestaurantForAppeal({ id: restaurantId, name: restaurantName });
+    setShowAppealModal(true);
+  };
+
   if (loading) {
     return <Spinner />;
   }
@@ -76,6 +117,76 @@ const RestaurantDashboard = () => {
           </div>
         )}
 
+        {Object.keys(suspensions).length > 0 && (
+          <div className="suspension-alert">
+            <h3>⚠️ Vaš restoran je suspendovan</h3>
+            {Object.entries(suspensions).map(([restaurantId, suspension]) => {
+              const restaurant = restaurants.find(r => r.id === parseInt(restaurantId));
+              return (
+                <div key={restaurantId} className="suspension-alert__item">
+                  {restaurant && (
+                    <p className="suspension-alert__item__restaurant-name">
+                      {restaurant.name}
+                    </p>
+                  )}
+                  <p className="suspension-alert__item__label">Razlog suspenzije:</p>
+                  <p className="suspension-alert__item__reason">{suspension.suspensionReason}</p>
+                  <p className="suspension-alert__item__date">
+                    Datum suspenzije: {new Date(suspension.suspendedAt).toLocaleDateString("sr-RS")}
+                  </p>
+                  {suspension.status === "APPEALED" && (
+                    <p className="suspension-alert__item__status">
+                      Status: Žalba podneta
+                    </p>
+                  )}
+                  {suspension.status === "REJECTED" && (
+                    <p className="suspension-alert__item__status" style={{ color: "#dc2626", fontWeight: "600" }}>
+                      Status: Žalba odbijena
+                    </p>
+                  )}
+                  {suspension.appealText && (
+                    <div className="suspension-alert__item__appeal">
+                      <p className="suspension-alert__item__label">Žalba na suspenziju:</p>
+                      <p className="suspension-alert__item__appeal-text">{suspension.appealText}</p>
+                      {suspension.appealDate && (
+                        <p className="suspension-alert__item__date">
+                          Žalba podneta: {new Date(suspension.appealDate).toLocaleDateString("sr-RS")}
+                        </p>
+                      )}
+                      {suspension.status === "REJECTED" && suspension.decisionDate && (
+                        <p className="suspension-alert__item__date" style={{ color: "#dc2626" }}>
+                          Žalba odbijena: {new Date(suspension.decisionDate).toLocaleDateString("sr-RS")}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  {suspension.status === "SUSPENDED" && (
+                    <button
+                      className="btn btn--primary"
+                      style={{ marginTop: "1rem" }}
+                      onClick={() => handleOpenAppealModal(parseInt(restaurantId), restaurant?.name || "")}
+                    >
+                      Uloži žalbu na suspenziju
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {showAppealModal && selectedRestaurantForAppeal && (
+          <AppealSuspensionModal
+            restaurantId={selectedRestaurantForAppeal.id}
+            restaurantName={selectedRestaurantForAppeal.name}
+            onClose={() => {
+              setShowAppealModal(false);
+              setSelectedRestaurantForAppeal(null);
+            }}
+            onSuccess={handleAppealSuccess}
+          />
+        )}
+
         {restaurants.length === 0 ? (
           <div className="dashboard__empty">
             <h2>Nemate nijedan restoran</h2>
@@ -93,6 +204,11 @@ const RestaurantDashboard = () => {
                   />
                 )}
                 <h2>{restaurant.name}</h2>
+                {suspensions[restaurant.id] && (
+                  <div className="suspension-badge">
+                    ⚠️ Suspendovan
+                  </div>
+                )}
                 <p>Kreiran: {formatDate(restaurant.createdAt)}</p>
 
                 <div className="card-actions">
