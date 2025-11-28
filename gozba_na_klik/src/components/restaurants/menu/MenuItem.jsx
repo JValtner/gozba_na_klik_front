@@ -72,7 +72,7 @@ const MenuItem = ({ meal, onEdit, onDelete, isOwner }) => {
           )}
           <div className="meal-card__overlay">
             <h3 className="meal-card__title">{meal.name}</h3>
-            <p className="meal-card__price">{meal.price.toFixed(2)} €</p>
+            <p className="meal-card__price">{meal.price.toFixed(2)} RSD</p>
           </div>
         </div>
 
