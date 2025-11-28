@@ -6,6 +6,7 @@ import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "../../constants/orderC
 import InvoiceButton from "../invoices/InvoiceButton";
 import ComplaintModal from "../complaints/ComplaintModal";
 import ViewComplaintModal from "../complaints/ViewComplaintModal";
+import OrderReviewModal from "../reviews/OrderReviewModal";
 import Spinner from "../spinner/Spinner";
 import Pagination from "../utils/Pagination";
 import { getComplaintByOrderId, checkComplaintExists } from "../service/complaintService";
@@ -26,8 +27,10 @@ const CustomerOrdersPage = () => {
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [showComplaintModal, setShowComplaintModal] = useState(false);
   const [showViewComplaintModal, setShowViewComplaintModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [ordersWithComplaints, setOrdersWithComplaints] = useState(new Set());
+  const [ordersWithReviews, setOrdersWithReviews] = useState(new Set());
   const [complaintsData, setComplaintsData] = useState(new Map());
 
   useEffect(() => {
@@ -139,6 +142,17 @@ const CustomerOrdersPage = () => {
       setSelectedOrderId(orderId);
       setShowViewComplaintModal(true);
     }
+  };
+
+  const handleOpenReviewModal = (orderId) => {
+    setSelectedOrderId(orderId);
+    setShowReviewModal(true);
+  };
+
+  const handleReviewSuccess = async (orderId) => {
+    setOrdersWithReviews(prev => new Set([...prev, orderId]));
+    loadOrders();
+    setCurrentPage(1);
   };
 
   const formatDate = (dateString) => {
@@ -342,6 +356,28 @@ const CustomerOrdersPage = () => {
 
                   {isOrderCompleted(order.status) && (
                     <>
+                      {ordersWithReviews.has(order.id) ? (
+                        <button
+                          className="btn btn--secondary btn--small"
+                          disabled
+                          title="Recenzija već postoji"
+                          style={{ 
+                            backgroundColor: '#10b981',
+                            color: 'white',
+                            cursor: 'not-allowed'
+                          }}
+                        >
+                          ✓ Ocenjeno
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn--primary btn--small"
+                          onClick={() => handleOpenReviewModal(order.id)}
+                          title="Oceni porudžbinu"
+                        >
+                          ⭐ Oceni
+                        </button>
+                      )}
                       {ordersWithComplaints.has(order.id) ? (
                         <button
                           className="btn btn--secondary btn--small"
@@ -389,6 +425,17 @@ const CustomerOrdersPage = () => {
               setShowViewComplaintModal(false);
               setSelectedOrderId(null);
             }}
+          />
+        )}
+
+        {showReviewModal && (
+          <OrderReviewModal
+            orderId={selectedOrderId}
+            onClose={() => {
+              setShowReviewModal(false);
+              setSelectedOrderId(null);
+            }}
+            onSuccess={handleReviewSuccess}
           />
         )}
 

@@ -5,6 +5,7 @@ import { getRestaurantById } from "../../service/restaurantsService"
 import { getMealsByRestaurantId } from "../../service/menuService"
 import Spinner from "../../spinner/Spinner"
 import MenuItem from "../../restaurants/menu/MenuItem"
+import RestaurantReviews from "../../reviews/RestaurantReviews"
 import { baseUrl } from "../../../config/routeConfig";
 import { getCartItemCount } from "../../orders/AddToCart";
 
@@ -140,6 +141,12 @@ const Menu = () => {
           </div>
         )}
       </div>
+
+      {/* --- Reviews Section --- */}
+      <div className="reviews-section">
+        <RestaurantReviews restaurantId={restaurant.id} />
+      </div>
+
       <div>
         <button type="button" className="btn btn--secondary" onClick={() => navigate(-1)}>
           ← Nazad
