@@ -54,7 +54,7 @@ export default function OrderSummary() {
 
   useEffect(() => {
     const updatePreview = async () => {
-      if (!restaurantId || !cart.length || loading || !preview) return;
+      if (!restaurantId || !cart.length || loading) return;
       
       if (useExistingAddress && selectedAddressId) {
         try {
@@ -77,6 +77,92 @@ export default function OrderSummary() {
       updatePreview();
     }
   }, [selectedAddressId, customerNote, allergenWarningAccepted]);
+
+  useEffect(() => {
+    const createPreviewForNewAddress = async () => {
+      if (useExistingAddress || !restaurantId || !cart.length || loading) return;
+      
+      const hasAllAddressFields = addressForm.street.trim() && 
+                                  addressForm.city.trim() && 
+                                  addressForm.postalCode.trim();
+      
+      if (!hasAllAddressFields) {
+        if (preview && !selectedAddressId) {
+          setPreview(null);
+        }
+        return;
+      }
+
+      try {
+        const existingAddress = savedAddresses.find(
+          (a) => a.street.trim() === addressForm.street.trim() &&
+                 a.city.trim() === addressForm.city.trim() &&
+                 a.postalCode.trim() === addressForm.postalCode.trim()
+        );
+
+        let addressIdToUse = null;
+
+        if (existingAddress) {
+          addressIdToUse = existingAddress.id;
+          setSelectedAddressId(existingAddress.id);
+        } else {
+          try {
+            const newAddress = await createAddress({
+              street: addressForm.street.trim(),
+              city: addressForm.city.trim(),
+              postalCode: addressForm.postalCode.trim(),
+              label: addressForm.label || "Adresa za dostavu",
+              isDefault: saveAddress && savedAddresses.length === 0,
+            });
+            addressIdToUse = newAddress.id;
+            setSelectedAddressId(newAddress.id);
+            
+            const userAddresses = await getUserAddresses();
+            setSavedAddresses(userAddresses);
+            
+            if (error === "Morate izabrati adresu za dostavu.") {
+              setError("");
+            }
+          } catch (err) {
+            console.error("Greška pri kreiranju adrese za preview:", err);
+            return;
+          }
+        }
+
+        if (addressIdToUse) {
+          const cartData = getCart(restaurantId);
+          const orderData = buildOrderData(addressIdToUse, cartData, customerNote, allergenWarningAccepted);
+          const previewData = await getOrderPreview(restaurantId, orderData);
+          setPreview(previewData);
+          setError("");
+        }
+      } catch (err) {
+        console.error("Greška pri kreiranju preview-a:", err);
+        const errorMessage = err.response?.data?.message || err.message || "";
+        if (errorMessage.includes("suspendovan") || err.response?.status === 400) {
+          setError("Restoran suspendovan. Ne možete kreirati porudžbinu iz suspendovanog restorana.");
+        }
+      }
+    };
+
+    const timeoutId = setTimeout(() => {
+      createPreviewForNewAddress();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [
+    addressForm.street, 
+    addressForm.city, 
+    addressForm.postalCode, 
+    addressForm.label,
+    saveAddress, 
+    customerNote, 
+    allergenWarningAccepted,
+    useExistingAddress,
+    restaurantId,
+    cart.length,
+    loading
+  ]);
 
   const loadData = async () => {
     try {
@@ -468,9 +554,12 @@ export default function OrderSummary() {
                   type="text"
                   className="form-input"
                   value={addressForm.street}
-                  onChange={(e) =>
-                    setAddressForm({ ...addressForm, street: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setAddressForm({ ...addressForm, street: e.target.value });
+                    if (error === "Morate izabrati adresu za dostavu.") {
+                      setError("");
+                    }
+                  }}
                   placeholder="npr. Nikole Tesle 15"
                   disabled={isRestaurantClosed}
                   required
@@ -483,9 +572,12 @@ export default function OrderSummary() {
                     type="text"
                     className="form-input"
                     value={addressForm.city}
-                    onChange={(e) =>
-                      setAddressForm({ ...addressForm, city: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setAddressForm({ ...addressForm, city: e.target.value });
+                      if (error === "Morate izabrati adresu za dostavu.") {
+                        setError("");
+                      }
+                    }}
                     placeholder="npr. Novi Sad"
                     disabled={isRestaurantClosed}
                     required
@@ -497,12 +589,15 @@ export default function OrderSummary() {
                     type="text"
                     className="form-input"
                     value={addressForm.postalCode}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setAddressForm({
                         ...addressForm,
                         postalCode: e.target.value,
-                      })
-                    }
+                      });
+                      if (error === "Morate izabrati adresu za dostavu.") {
+                        setError("");
+                      }
+                    }}
                     placeholder="npr. 21000"
                     disabled={isRestaurantClosed}
                     required
