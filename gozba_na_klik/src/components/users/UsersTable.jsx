@@ -106,7 +106,7 @@ const UsersTable = () => {
                 <UserTableRow
                   key={user.id}
                   id={user.id}
-                  username={user.username}
+                  username={user.userName}
                   email={user.email}
                   role={user.role}
                   onRoleChange={handleRoleChange}
