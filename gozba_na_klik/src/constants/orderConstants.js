@@ -1,5 +1,6 @@
 export const ORDER_STATUS_LABELS = {
-  "NA_CEKANJU": "Na čekanju",
+  "NA ČEKANJU": "Na čekanju",
+  "NA_CEKANJU": "Na čekanju", // Alias for backwards compatibility
   "PRIHVAĆENA": "Prihvaćena", 
   "PREUZIMANJE U TOKU": "Preuzimanje u toku",
   "DOSTAVA U TOKU": "U dostavi",
@@ -12,7 +13,8 @@ export const ORDER_STATUS_LABELS = {
 };
 
 export const ORDER_STATUS_COLORS = {
-  "NA_CEKANJU": "#f59e0b",
+  "NA ČEKANJU": "#f59e0b",
+  "NA_CEKANJU": "#f59e0b", // Alias for backwards compatibility
   "PRIHVAĆENA": "#10b981",
   "PREUZIMANJE U TOKU": "#8b5cf6",
   "DOSTAVA U TOKU": "#6366f1",

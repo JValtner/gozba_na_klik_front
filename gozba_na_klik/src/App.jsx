@@ -22,6 +22,7 @@ import CreateMeal from "./components/restaurants/meal/CreateMeal";
 import EditMeal from "./components/restaurants/meal/EditMeal";
 import MealDetails from "./components/restaurants/meal/MealDetail";
 import EditUserAlergens from "./components/users/EditUserAlergens";
+import OrderHistoryPage from "./components/orders/OrderHistoryPage";
 import CourierOrderDashboard from "./components/delivery/CourierOrderDashboard";
 import CourierOrderCard from "./components/delivery/CourierOrderCard";
 import CourierHistoryPage from "./components/delivery/CourierHistoryPage";
