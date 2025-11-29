@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { baseUrl } from "../../config/routeConfig";
+import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../users/UserContext";
 import Spinner from "../spinner/Spinner";
@@ -19,6 +20,17 @@ const WelcomePage = () => {
   const [msg, setMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [forgotMode, setForgotMode] = useState(false);
+  const [searchParams] = useSearchParams();
+// EMAIL CONFIRMATION EFFECT
+  useEffect(() => {
+    if (searchParams.get("emailConfirmed") === "true") {
+      setTimeout(() => {setMsg("Email uspešno potvrđen. Sada se možete prijaviti.");}, 5000);
+      }
+
+    if (searchParams.get("emailConfirmError") === "true") {
+      setTimeout(() => {setError("Došlo je do greške prilikom potvrde email-a.");}, 5000);
+    }
+  }, [searchParams]);
 
   // Redirect if already logged in
   useEffect(() => {

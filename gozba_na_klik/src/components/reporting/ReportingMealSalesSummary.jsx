@@ -2,17 +2,24 @@ import React, { useEffect, useState } from "react";
 import { getMealSalesReport, setPeriod } from "../service/reportingService";
 import DailyChart from "../utils/DailyChart";
 import { getMealsByRestaurantId } from "../service/menuService";
+import { useCurrency } from "../utils/currencyContext";
 
 const ReportingMealSalesSummary = ({ restaurantId }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [mealId, setMealId] = useState("");
   const [chartType, setChartType] = useState("bar");
-
   const [meals, setMeals] = useState([]);
   const [report, setReport] = useState(null);
-
   const valid = restaurantId && mealId && startDate && endDate;
+  const { convert, currency } = useCurrency();
+  const [convertedTR, setConvertedTR] = useState(0);
+
+  useEffect(() => {
+    if (!report) return;
+
+    convert(report.totalRevenue).then(setConvertedTR);
+  }, [report, currency]);
 
   useEffect(() => {
     if (!restaurantId) return;
@@ -84,7 +91,7 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
         <div className="section-content">
           <div className="summary-box">
             <p><strong>Ukupan broj prodatih jedinica:</strong> {report.totalUnitsSold.toLocaleString()} komada</p>
-            <p><strong>Ukupan prihod:</strong> {report.totalRevenue.toLocaleString()} RSD</p>
+            <p><strong>Ukupan prihod:</strong> {convertedTR.toLocaleString()} {currency}</p>
             <p><strong>Prosecna dnavna prodaja:</strong> {report.averageDailyUnitsSold.toLocaleString()} komada</p>
           </div>
 

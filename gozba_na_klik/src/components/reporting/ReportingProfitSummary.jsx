@@ -2,16 +2,25 @@ import React, { useEffect, useState } from "react";
 import { getProfitSummaryReport, setPeriod } from "../service/reportingService";
 import DailyChart from "../utils/DailyChart";
 import Spinner from "../spinner/Spinner";
+import { useCurrency } from "../utils/currencyContext";
 
 const ReportingProfitSummary = ({ restaurantId }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [chartType, setChartType] = useState("bar");
-
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const valid = restaurantId && startDate && endDate;
+  const { convert, currency } = useCurrency();
+  const [convertedTR, setConvertedTR] = useState(0);
+  const [convertedADP, setConvertedAVP] = useState(0);
+
+  useEffect(() => {
+    if (!report) return;
+
+    convert(report.totalRevenue).then(setConvertedTR);
+    convert(report.averageDailyProfit).then(setConvertedAVP);
+  }, [report, currency]);
 
   useEffect(() => {
     if (!valid) return;
@@ -58,7 +67,7 @@ const ReportingProfitSummary = ({ restaurantId }) => {
             <option value="bar">Stub</option>
           </select>
         </div>
-        </div>
+      </div>
 
       {/* FALLBACKS */}
       {!restaurantId && <p className="no-data">Izaberi restoran.</p>}
@@ -71,8 +80,8 @@ const ReportingProfitSummary = ({ restaurantId }) => {
         <div className="section-content">
           <div className="summary-box">
             <p><strong>Ukupan broj porudzbina:</strong> {report.totalPeriodOrders.toLocaleString()} komada</p>
-            <p><strong>Ukupan prihod</strong> {report.totalRevenue.toLocaleString()} RSD</p>
-            <p><strong>Prosecan dnevni prihod:</strong> {report.averageDailyProfit.toLocaleString()} RSD</p>
+            <p><strong>Ukupan prihod</strong> {convertedTR.toLocaleString()} {currency}</p>
+            <p><strong>Prosecan dnevni prihod:</strong> {convertedADP.toLocaleString()} {currency}</p>
           </div>
 
           <div className="chart-box">

@@ -4,8 +4,8 @@ import { useCurrency } from "../utils/currencyContext";
 
 const MonthlySummary = ({ report }) => {
   const { convert, currency } = useCurrency();
-  const [convertedTR, setConvertedTR] = useState(report.totalRevenue);
-  const [convertedAVP, setConvertedAVP] = useState(report.averageOrderValue);
+  const [convertedTR, setConvertedTR] = useState(0);
+  const [convertedAVP, setConvertedAVP] = useState(0);
 
   useEffect(() => {
     convert(report.totalRevenue).then(setConvertedTR);
