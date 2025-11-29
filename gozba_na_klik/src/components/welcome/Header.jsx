@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../users/UserContext";
-import { useCurrency } from "../utils/currencyContext";
 import { getCurrentProfile } from "../service/userService";
 import { baseUrl } from "../../config/routeConfig";
 
@@ -11,7 +10,6 @@ export default function Header() {
   const [profileImage, setProfileImage] = useState(
     `${baseUrl}/assets/profileImg/default_profile.png`
   );
-  const { currency, setCurrency } = useCurrency();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -41,12 +39,7 @@ export default function Header() {
         <div className="logo" onClick={() => navigate("/")}>
           🍴 Gozba na klik
         </div>
-        <select className="currency-select" value={currency} onChange={e => setCurrency(e.target.value)}>
- <option value="EUR">€ EUR</option>
-  <option value="USD">$ USD</option>
-  <option value="GBP">£ GBP</option>
-</select>
-
+        
         {isAuth && (
           <nav className="navbar-links">
             <ul>

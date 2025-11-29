@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { getOrdersReport, setPeriod } from "../service/reportingService";
 import DailyChart from "../utils/DailyChart";
+import { useCurrency } from "../utils/currencyContext";
 
 const ReportingOrdersSummary = ({ restaurantId }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [chartType, setChartType] = useState("pie");
-
   const [report, setReport] = useState(null);
-
   const valid = restaurantId && startDate && endDate;
+  const { convert, currency } = useCurrency();
 
+  
   useEffect(() => {
     if (!valid) return;
     getOrdersReport({ restaurantId, startDate, endDate }).then(setReport);

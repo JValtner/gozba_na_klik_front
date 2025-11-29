@@ -31,27 +31,33 @@ const cssVar = (name) =>
 
 const DailyChart = ({ title, labels, data, label, chartType }) => {
   const chartData = {
-    labels,
-    datasets: [
-      {
-        label,
-        data,
-        borderColor: cssVar("--chart-border"),
-        backgroundColor:
-          chartType === "pie"
-            ? [
-                cssVar("--chart-green"),
-                cssVar("--chart-purple"),
-                cssVar("--chart-orange"),
-                cssVar("--chart-red"),
-                cssVar("--chart-blue"),
-                cssVar("--chart-yellow"),
-              ]
-            : cssVar("--chart-fill"),
-        tension: 0.3,
-      },
-    ],
-  };
+  labels,
+  datasets: [
+    {
+      label,
+      data,
+      borderColor:
+        chartType === "pie"
+          ? cssVar("--chart-border") // white border for pie
+          : cssVar("--chart-line"),  // green/blue line for line chart
+      borderWidth: chartType === "pie" ? 0.5 : 2,
+      backgroundColor:
+        chartType === "pie"
+          ? [
+              cssVar("--chart-green"),
+              cssVar("--chart-purple"),
+              cssVar("--chart-orange"),
+              cssVar("--chart-red"),
+              cssVar("--chart-blue"),
+              cssVar("--chart-yellow"),
+            ]
+          : cssVar("--chart-fill"),
+      tension: 0.3,
+      fill: chartType === "line" ? false : true,
+    },
+  ],
+};
+
 
   const chartOptions = {
     responsive: true,
