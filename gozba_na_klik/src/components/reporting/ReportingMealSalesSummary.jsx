@@ -39,7 +39,7 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
       {/* FILTERS */}
       <div className="section-filters">
         <div className="filter-group">
-          <label>Jelo</label>
+          <label> 🍜 Jelo</label>
           <select value={mealId} onChange={e => setMealId(e.target.value)}>
             <option value="">Izaberi jelo...</option>
             {meals.map(m => (
@@ -49,7 +49,7 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
         </div>
 
         <div className="filter-group">
-          <label>Period:</label>
+          <label>📅 Period:</label>
           <select onChange={e => setPeriod(Number(e.target.value), setStartDate, setEndDate)}>
             <option value="">Izaberi period...</option>
             <option value="1">1 dan</option>
@@ -60,20 +60,20 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
         </div>
 
         <div className="filter-group">
-          <label>Od:</label>
+          <label> 📆 Od:</label>
           <input type="date" onChange={e => setStartDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>Do:</label>
+          <label> 📆 Do:</label>
           <input type="date" onChange={e => setEndDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>Tip grafika</label>
+          <label> 📊 Tip grafika: </label>
           <select value={chartType} onChange={e => setChartType(e.target.value)}>
-            <option value="line">Linija</option>
-            <option value="bar">Stub</option>
+            <option value="line"> 📈 Linija</option>
+            <option value="bar">📊 Stub</option>
           </select>
         </div>
       </div>

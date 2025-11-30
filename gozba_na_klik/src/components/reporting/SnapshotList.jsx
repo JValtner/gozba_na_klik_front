@@ -9,9 +9,17 @@ const SnapshotList = ({ snapshots, onDownload }) => {
         <div
           key={s.id}
           className="snapshot-item"
-          onClick={() => onDownload(s.id)}
         >
-          <span>Snimljen mesecni izvestaj za : {s.month}/{s.year}</span>
+          <div className="snapshot-info">
+            Snimljen mesečni izveštaj: <strong>{s.month}/{s.year}</strong>
+          </div>
+
+          <button
+            className="download-button"
+            onClick={() => onDownload(s.id)}
+          >
+             ⬇️ Preuzmi
+          </button>
         </div>
       ))}
     </div>
@@ -19,4 +27,3 @@ const SnapshotList = ({ snapshots, onDownload }) => {
 };
 
 export default SnapshotList;
-

@@ -152,7 +152,7 @@ const GeneralMealSearch = () => {
                         </button>
                     </div>
                 )}
-                {role === "Buyer" && (
+                {role === "User" && (
                     <div className="dashboard__controls">
                         <MealFilterSection filter={filter} setFilter={setFilter} />
 

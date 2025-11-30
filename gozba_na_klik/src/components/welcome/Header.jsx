@@ -46,7 +46,7 @@ export default function Header() {
               {(role === "User" || role === "Buyer") && (
                 <>
                   <li>
-                    <Link to={"/search"}>Pretraga jela</Link>
+                    <Link to={"/search"}>🔍 Pretraga jela</Link>
                   </li>
                   <li>
                     <Link to={"/my-orders"} className="my-orders-link">
@@ -55,7 +55,7 @@ export default function Header() {
                   </li>
                   <li>
                     <Link to={"/my-active-order"} className="my-orders-link">
-                      Aktivna porudžbina
+                      📝 Aktivna porudžbina
                     </Link>
                   </li>
                 </>
@@ -64,16 +64,16 @@ export default function Header() {
               {role === "Admin" && (
                 <>
                   <li>
-                    <Link to={"/admin-users"}>Korisnici</Link>
+                    <Link to={"/admin-users"}> 👫 Korisnici</Link>
                   </li>
                   <li>
-                    <Link to={"/admin-restaurants"}>Restorani</Link>
+                    <Link to={"/admin-restaurants"}> 🏠 Restorani</Link>
                   </li>
                   <li>
-                    <Link to={"/admin-complaints"}>Žalbe</Link>
+                    <Link to={"/admin-complaints"}> 📢 Žalbe</Link>
                   </li>
                   <li>
-                    <Link to={"/reporting/dashboard"}>Izveštaji</Link>
+                    <Link to={"/reporting/dashboard"}> 📊 Izveštaji</Link>
                   </li>
                 </>
               )}
@@ -85,7 +85,7 @@ export default function Header() {
       <div className="user-info">
         {!isAuth ? (
           <button className="login-btn" onClick={() => navigate("/login")}>
-            Prijava
+            🔓 Prijava
           </button>
         ) : (
           <>
@@ -102,7 +102,7 @@ export default function Header() {
               </button>
             )}
 
-            <Link to={`/profile`} className="profile-btn">
+            <Link to={`/profile`} >
               <button className="profile-btn" name="Profile">
                 <img
                   alt="Profile"
@@ -114,7 +114,7 @@ export default function Header() {
             </Link>
 
             <button className="logout-btn" onClick={handleLogout}>
-              Odjava
+              🔒 Odjava
             </button>
           </>
         )}

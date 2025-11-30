@@ -39,7 +39,7 @@ const ReportingProfitSummary = ({ restaurantId }) => {
       <div className="section-filters">
 
         <div className="filter-group">
-          <label>Period:</label>
+          <label> 📅 Period:</label>
           <select onChange={e => setPeriod(Number(e.target.value), setStartDate, setEndDate)}>
             <option value="">Izaberi period...</option>
             <option value="1">1 dan</option>
@@ -50,21 +50,21 @@ const ReportingProfitSummary = ({ restaurantId }) => {
         </div>
 
         <div className="filter-group">
-          <label>Od:</label>
+          <label>📆 Od:</label>
           <input type="date" onChange={e => setStartDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>Do:</label>
+          <label>📆 Do:</label>
           <input type="date" onChange={e => setEndDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>Tip grafika</label>
+          <label>📊 Tip grafika: </label>
           <select value={chartType} onChange={e => setChartType(e.target.value)}>
-            <option value="line">Linija</option>
-            <option value="pie">Pita</option>
-            <option value="bar">Stub</option>
+            <option value="line"> 📈 Linija</option>
+            <option value="bar">📊 Stub</option>
+            <option value="pie"> ⭕ Pita</option>
           </select>
         </div>
       </div>

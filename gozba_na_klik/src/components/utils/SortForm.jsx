@@ -4,7 +4,7 @@ const SortForm = ({ sortTypes, chosenType, onSortChange }) => {
   return (
     <div className="sort-form-wrapper">
       <label className="sort-label">
-        <span className="arrow">⇅</span>
+        <span className="arrow"> {/* ⇅ */}</span>
         <select
           className="sort-select"
           value={chosenType}
