@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useUser } from "../users/UserContext";
 import { createRestaurant } from "../service/restaurantService";
+import { showToast } from "../utils/toast";
 
 export default function CreateRestaurant() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function CreateRestaurant() {
 
       const newRestaurant = await createRestaurant(restaurantData);
       
-      alert("Restoran je uspešno kreiran!");
+      showToast.success("Restoran je uspešno kreiran!");
       navigate("/restaurants/dashboard");
     } catch (err) {
       console.error("Greška pri kreiranju restorana:", err);

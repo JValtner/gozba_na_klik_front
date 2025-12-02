@@ -88,22 +88,20 @@ const HomeRestaurants = () => {
         )}
 
         {/* Filter + Sort */}
-        <div className="dashboard__controls">
-          {role === "User" && (
-            <>
-              <RestaurantFilterSection filter={filter} setFilter={setFilter} />
+        {role === "User" && (
+          <div className="dashboard__controls">
+            <RestaurantFilterSection filter={filter} setFilter={setFilter} />
+            <SortForm
+              sortTypes={sortTypes}
+              chosenType={chosenType}
+              onSortChange={(value) => {
+                setChosenType(value);
+                setPage(0);
+              }}
+            />
+          </div>
+        )}
 
-              <SortForm
-                sortTypes={sortTypes}
-                chosenType={chosenType}
-                onSortChange={(value) => {
-                  setChosenType(value);
-                  setPage(0);
-                }}
-              />
-            </>
-          )}
-        </div>
         {/* Error */}
         {error && <p className="error-message">{error}</p>}
         <div>
@@ -145,8 +143,9 @@ const HomeRestaurants = () => {
             ))
           )}
         </div>
-        <div className="dashboard__controls">
-          {/* Pagination Controls */}
+
+        {/* Pagination Controls */}
+        {role === "User" && (
           <Pagination
             page={page}
             pageCount={pageCount}
@@ -157,7 +156,7 @@ const HomeRestaurants = () => {
             onPageChange={setPage}
             onPageSizeChange={setPageSize}
           />
-        </div>
+        )}
       </div>
     </div>
   );

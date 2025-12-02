@@ -4,6 +4,7 @@ import { getRestaurantById } from "../../service/restaurantsService"
 import { useUser } from "../../users/UserContext"
 import MealForm from "./MealForm"
 import Spinner from "../../spinner/Spinner"
+import { showToast } from "../../utils/toast"
 
 export default function CreateMeal() {
   const { id } = useParams()
@@ -22,7 +23,7 @@ export default function CreateMeal() {
                            Number(userId) === Number(restaurantData.ownerId)
         
         if (!userIsOwner) {
-          alert("Nemate dozvolu da dodajete jela u ovaj restoran.")
+          showToast.error("Nemate dozvolu da dodajete jela u ovaj restoran.")
           navigate(`/restaurants/${id}/menu`)
           return
         }

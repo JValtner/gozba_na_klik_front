@@ -130,21 +130,23 @@ export default function MealOrderModal({ meal, onClose, onAddToCart }) {
                 <div className="addons-section">
                   <h3>Dodatni prilozi (možete izabrati više)</h3>
                   <div className="addons-list">
-                    {independentAddons.map(addon => (
-                      <div 
-                        key={addon.id} 
-                        className={`addon-item ${selectedAddons.find(a => a.id === addon.id) ? 'addon-item--selected' : ''}`}
-                        onClick={() => handleIndependentAddonToggle(addon)}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={!!selectedAddons.find(a => a.id === addon.id)}
-                          onChange={() => handleIndependentAddonToggle(addon)}
-                        />
-                        <span className="addon-name">{addon.name}</span>
-                        <span className="addon-price">+{addon.price.toFixed(2)} RSD</span>
-                      </div>
-                    ))}
+                    {independentAddons.map(addon => {
+                      const isSelected = !!selectedAddons.find(a => a.id === addon.id);
+                      return (
+                        <label 
+                          key={addon.id} 
+                          className={`addon-item ${isSelected ? 'addon-item--selected' : ''}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleIndependentAddonToggle(addon)}
+                          />
+                          <span className="addon-name">{addon.name}</span>
+                          <span className="addon-price">+{addon.price.toFixed(2)} RSD</span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -154,22 +156,24 @@ export default function MealOrderModal({ meal, onClose, onAddToCart }) {
                 <div className="addons-section">
                   <h3>Izaberite opciju (samo jedna)</h3>
                   <div className="addons-list">
-                    {chosenAddons.map(addon => (
-                      <div 
-                        key={addon.id} 
-                        className={`addon-item ${selectedChosenAddon?.id === addon.id ? 'addon-item--selected' : ''}`}
-                        onClick={() => handleChosenAddonSelect(addon)}
-                      >
-                        <input
-                          type="radio"
-                          name="chosenAddon"
-                          checked={selectedChosenAddon?.id === addon.id}
-                          onChange={() => handleChosenAddonSelect(addon)}
-                        />
-                        <span className="addon-name">{addon.name}</span>
-                        <span className="addon-price">+{addon.price.toFixed(2)} RSD</span>
-                      </div>
-                    ))}
+                    {chosenAddons.map(addon => {
+                      const isSelected = selectedChosenAddon?.id === addon.id;
+                      return (
+                        <label 
+                          key={addon.id} 
+                          className={`addon-item ${isSelected ? 'addon-item--selected' : ''}`}
+                        >
+                          <input
+                            type="radio"
+                            name="chosenAddon"
+                            checked={isSelected}
+                            onChange={() => handleChosenAddonSelect(addon)}
+                          />
+                          <span className="addon-name">{addon.name}</span>
+                          <span className="addon-price">+{addon.price.toFixed(2)} RSD</span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
               )}

@@ -10,24 +10,26 @@ const RestaurantFilterSection = ({ filter, setFilter }) => {
 
   return (
     <div className="restaurant-filter-section">
-      <div className="filter-row">
-        <label>
-          Naziv restorana:
-          <input
-            type="text"
-            value={filter.Name || ""}
-            onChange={(e) => handleChange("Name", e.target.value)}
-          />
-        </label>
+      <div className="filter-control">
+        <span className="filter-icon">🔍</span>
+        <input
+          type="text"
+          placeholder="Naziv restorana"
+          value={filter.Name || ""}
+          onChange={(e) => handleChange("Name", e.target.value)}
+          className="filter-input"
+        />
+      </div>
 
-        <label>
-          Adresa:
-          <input
-            type="text"
-            value={filter.Address || ""}
-            onChange={(e) => handleChange("Address", e.target.value)}
-          />
-        </label>
+      <div className="filter-control">
+        <span className="filter-icon">📍</span>
+        <input
+          type="text"
+          placeholder="Adresa"
+          value={filter.Address || ""}
+          onChange={(e) => handleChange("Address", e.target.value)}
+          className="filter-input"
+        />
       </div>
     </div>
   );

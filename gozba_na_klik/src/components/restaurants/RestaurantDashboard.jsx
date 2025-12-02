@@ -5,6 +5,7 @@ import { getMyRestaurants, deleteRestaurant, getRestaurantSuspension } from "../
 import Spinner from "../spinner/Spinner";
 import { baseUrl } from "../../config/routeConfig";
 import AppealSuspensionModal from "./suspensions/AppealSuspensionModal";
+import { showToast, showConfirm } from "../utils/toast";
 
 
 const RestaurantDashboard = () => {
@@ -52,19 +53,20 @@ const RestaurantDashboard = () => {
   };
 
   const handleDelete = async (restaurantId, restaurantName) => {
-    if (!window.confirm(`Da li ste sigurni da želite da obrišete restoran "${restaurantName}"?`)) {
-      return;
-    }
-
-    try {
-      await deleteRestaurant(restaurantId);
-      alert("Restoran je uspešno obrisan!");
-      const data = await getMyRestaurants();
-      setRestaurants(data);
-    } catch (err) {
-      console.error("Greška pri brisanju restorana:", err);
-      alert("Greška pri brisanju restorana. Pokušajte ponovo.");
-    }
+    showConfirm(
+      `Da li ste sigurni da želite da obrišete restoran "${restaurantName}"?`,
+      async () => {
+        try {
+          await deleteRestaurant(restaurantId);
+          showToast.success("Restoran je uspešno obrisan!");
+          const data = await getMyRestaurants();
+          setRestaurants(data);
+        } catch (err) {
+          console.error("Greška pri brisanju restorana:", err);
+          showToast.error("Greška pri brisanju restorana. Pokušajte ponovo.");
+        }
+      }
+    );
   };
 
   const handleMenu = (restaurant) => {

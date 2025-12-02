@@ -6,6 +6,7 @@ import {
   removeAlergenFromMeal,
 } from "../../service/alergenService"
 import Spinner from "../../spinner/Spinner"
+import { showToast } from "../../utils/toast"
 
 export default function DisplayAlergens({ mealId }) {
   const [assignedAlergens, setAssignedAlergens] = useState([])
@@ -48,7 +49,7 @@ export default function DisplayAlergens({ mealId }) {
       setAvailable((prev) => prev.filter((a) => a.id !== alergenId))
     } catch (err) {
       console.error(err)
-      alert("Failed to add allergen.")
+      showToast.error("Failed to add allergen.")
     }
     finally {
       setStatusMsg("Allergen succesfully added.")
@@ -64,7 +65,7 @@ export default function DisplayAlergens({ mealId }) {
       setAssignedAlergens((prev) => prev.filter((a) => a.id !== alergenId))
     } catch (err) {
       console.error(err)
-      alert("Failed to remove allergen.")
+      showToast.error("Failed to remove allergen.")
     }
     finally {
       setStatusMsg("Allergen succesfully removed.")

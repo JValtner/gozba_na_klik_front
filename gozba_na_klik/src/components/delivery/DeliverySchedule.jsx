@@ -8,6 +8,7 @@ import {
   deleteDeliverySchedule
 } from "../service/deliveryScheduleService";
 import Spinner from "../spinner/Spinner";
+import { showToast, showConfirm } from "../utils/toast";
 
 const DAYS = [
   { id: 0, name: "Nedelja" },
@@ -126,10 +127,10 @@ export default function DeliverySchedule() {
         );
 
         await updateDeliverySchedule(userId, existingSchedule.id, formData);
-        alert("Raspored je uspešno ažuriran!");
+        showToast.success("Raspored je uspešno ažuriran!");
       } else {
         await createDeliverySchedule(userId, formData);
-        alert("Raspored je uspešno dodat!");
+        showToast.success("Raspored je uspešno dodat!");
       }
 
       await loadSchedule();
@@ -142,20 +143,20 @@ export default function DeliverySchedule() {
   };
 
   const handleDelete = async (schedule) => {
-    if (!window.confirm(`Da li ste sigurni da želite da obrišete raspored za ${schedule.dayName}?`)) {
-      return;
-    }
-
-    try {
-      setError("");
-      await deleteDeliverySchedule(userId, schedule.id);
-      alert("Raspored je uspešno obrisan!");
-      await loadSchedule();
-      
-    } catch (err) {
-      const errorMsg = err.response?.data?.error || "Greška pri brisanju rasporeda.";
-      setError(errorMsg);
-    }
+    showConfirm(
+      `Da li ste sigurni da želite da obrišete raspored za ${schedule.dayName}?`,
+      async () => {
+        try {
+          setError("");
+          await deleteDeliverySchedule(userId, schedule.id);
+          showToast.success("Raspored je uspešno obrisan!");
+          await loadSchedule();
+        } catch (err) {
+          const errorMsg = err.response?.data?.error || "Greška pri brisanju rasporeda.";
+          setError(errorMsg);
+        }
+      }
+    );
   };
 
   if (loading) {

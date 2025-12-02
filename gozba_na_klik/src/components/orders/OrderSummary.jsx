@@ -8,6 +8,7 @@ import { getCart, removeFromCart, clearCart, updateCartItemQuantity} from "../or
 import AllergenWarningModal from "./AllergenWarningModal";
 import Spinner from "../spinner/Spinner";
 import { baseUrl } from "../../config/routeConfig";
+import { showToast, showConfirm } from "../utils/toast";
 
 export default function OrderSummary() {
   const { restaurantId } = useParams();
@@ -239,22 +240,26 @@ export default function OrderSummary() {
   };
 
   const handleRemoveItem = (index) => {
-    if (!window.confirm("Da li želite da uklonite ovu stavku iz korpe?")) return;
-    removeFromCart(restaurantId, index);
-    const updatedCart = getCart(restaurantId);
-    if (updatedCart.length === 0) {
-      setCart([]);
-      setPreview(null);
-      alert("Korpa je prazna. Vraćamo vas nazad.");
-      navigate(`/restaurants/${restaurantId}/menu`);
-      return;
-    }
-    loadData();
+    showConfirm(
+      "Da li želite da uklonite ovu stavku iz korpe?",
+      () => {
+        removeFromCart(restaurantId, index);
+        const updatedCart = getCart(restaurantId);
+        if (updatedCart.length === 0) {
+          setCart([]);
+          setPreview(null);
+          showToast.info("Korpa je prazna. Vraćamo vas nazad.");
+          navigate(`/restaurants/${restaurantId}/menu`);
+          return;
+        }
+        loadData();
+      }
+    );
   };
 
   const submitOrderDirectly = async (allergenAccepted) => {
     if (!addressForm.street || !addressForm.city || !addressForm.postalCode) {
-      alert("Molimo popunite sve podatke o adresi.");
+      showToast.error("Molimo popunite sve podatke o adresi.");
       return;
     }
 
@@ -316,7 +321,7 @@ export default function OrderSummary() {
       const orderData = buildOrderData(finalAddressId, currentCart, customerNote, allergenAccepted);
       const createdOrder = await createOrder(restaurantId, orderData);
       clearCart(restaurantId);
-      alert(`✅ Porudžbina je uspešno kreirana! Broj porudžbine: ${createdOrder.id}`);
+      showToast.success(`Porudžbina je uspešno kreirana! Broj porudžbine: ${createdOrder.id}`);
       navigate(`/orders/${createdOrder.id}`);
     } catch (err) {
       console.error("Greška pri kreiranju porudžbine:", err);
@@ -334,7 +339,7 @@ export default function OrderSummary() {
 
   const handleSubmitOrder = async () => {
     if (!addressForm.street || !addressForm.city || !addressForm.postalCode) {
-      alert("Molimo popunite sve podatke o adresi.");
+      showToast.error("Molimo popunite sve podatke o adresi.");
       return;
     }
 

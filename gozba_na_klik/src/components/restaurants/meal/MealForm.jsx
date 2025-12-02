@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form"
 import { useNavigate, useParams } from "react-router-dom"
 import { createMeal, updateMeal } from "../../service/menuService"
 import { validateFile } from "../../service/fileService"
+import { showToast } from "../../utils/toast"
 
 export default function MealForm({ meal = null, restaurantId: propRestaurantId }) {
   const navigate = useNavigate()
@@ -44,10 +45,10 @@ export default function MealForm({ meal = null, restaurantId: propRestaurantId }
 
       if (isEdit) {
         await updateMeal(meal.id, mealData)
-        alert("Jelo je uspešno ažurirano!")
+        showToast.success("Jelo je uspešno ažurirano!")
       } else {
         await createMeal(mealData)
-        alert("Jelo je uspešno dodato!")
+        showToast.success("Jelo je uspešno dodato!")
       }
 
       navigate(`/restaurants/${restaurantId}/menu`)
@@ -110,7 +111,7 @@ export default function MealForm({ meal = null, restaurantId: propRestaurantId }
 
           {/* Cena */}
           <div className="form-group">
-            <label htmlFor="price" className="form-label">Cena (€)*</label>
+            <label htmlFor="price" className="form-label">Cena (RSD)*</label>
             <input
               type="number"
               step="0.01"

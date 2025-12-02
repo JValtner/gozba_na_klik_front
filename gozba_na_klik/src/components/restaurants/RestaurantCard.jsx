@@ -1,27 +1,29 @@
 import React, { useState } from "react";
 import { deleteRestaurant } from "../service/restaurantService";
 import { useNavigate } from "react-router-dom";
+import { showToast, showConfirm } from "../utils/toast";
 
 const RestaurantCard = ({ restaurant, onEdit, onView, onRefresh }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
 
   const handleDelete = async () => {
-    if (!window.confirm(`Da li ste sigurni da želite da obrišete restoran "${restaurant.name}"?`)) {
-      return;
-    }
-
-    try {
-      setIsDeleting(true);
-      await deleteRestaurant(restaurant.id);
-      alert("Restoran je uspešno obrisan!");
-      onRefresh();
-    } catch (err) {
-      console.error("Greška pri brisanju restorana:", err);
-      alert("Greška pri brisanju restorana. Pokušajte ponovo.");
-    } finally {
-      setIsDeleting(false);
-    }
+    showConfirm(
+      `Da li ste sigurni da želite da obrišete restoran "${restaurant.name}"?`,
+      async () => {
+        try {
+          setIsDeleting(true);
+          await deleteRestaurant(restaurant.id);
+          showToast.success("Restoran je uspešno obrisan!");
+          onRefresh();
+        } catch (err) {
+          console.error("Greška pri brisanju restorana:", err);
+          showToast.error("Greška pri brisanju restorana. Pokušajte ponovo.");
+        } finally {
+          setIsDeleting(false);
+        }
+      }
+    );
   };
 
   const handleMenu = () => {

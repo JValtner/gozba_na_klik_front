@@ -12,6 +12,7 @@ import EmployeeRow from "./EmployeeRow";
 import EmployeeForm from "./EmployeeForm";
 import Spinner from "../spinner/Spinner";
 import "../../styles/_employees.scss";
+import { showToast, showConfirm } from "../utils/toast";
 
 const EmployeesDashboard = () => {
   const { id } = useParams();
@@ -44,12 +45,12 @@ const EmployeesDashboard = () => {
   const handleRegister = async (formData) => {
     try {
       await registerEmployee(id, formData);
-      alert("Zaposleni je uspešno registrovan!");
+      showToast.success("Zaposleni je uspešno registrovan!");
       loadEmployees();
       setShowForm(false);
     } catch (err) {
       console.error("Greška:", err);
-      alert("Greška pri registraciji zaposlenog.");
+      showToast.error("Greška pri registraciji zaposlenog.");
     }
   };
 
@@ -57,39 +58,41 @@ const EmployeesDashboard = () => {
     if (selectedEmployee) {
       try {
         await updateEmployee(selectedEmployee.id, formData);
-        alert("Zaposleni je uspešno ažuriran!");
+        showToast.success("Zaposleni je uspešno ažuriran!");
         setSelectedEmployee(null);
         setShowForm(false);
         loadEmployees();
       } catch (err) {
         console.error("Greška:", err);
-        alert("Greška pri ažuriranju zaposlenog.");
+        showToast.error("Greška pri ažuriranju zaposlenog.");
       }
     }
   };
 
   const handleSuspend = async (id) => {
-    if (!window.confirm("Da li ste sigurni da želite da suspenujete ovog zaposlenog?")) {
-      return;
-    }
-    try {
-      await suspendEmployee(id);
-      alert("Zaposleni je suspendovan!");
-      loadEmployees();
-    } catch (err) {
-      console.error("Greška:", err);
-      alert("Greška pri suspendovanju.");
-    }
+    showConfirm(
+      "Da li ste sigurni da želite da suspenujete ovog zaposlenog?",
+      async () => {
+        try {
+          await suspendEmployee(id);
+          showToast.success("Zaposleni je suspendovan!");
+          loadEmployees();
+        } catch (err) {
+          console.error("Greška:", err);
+          showToast.error("Greška pri suspendovanju.");
+        }
+      }
+    );
   };
 
   const handleActivate = async (id) => {
     try {
       await activateEmployee(id);
-      alert("Zaposleni je aktiviran!");
+      showToast.success("Zaposleni je aktiviran!");
       loadEmployees();
     } catch (err) {
       console.error("Greška:", err);
-      alert("Greška pri aktiviranju.");
+      showToast.error("Greška pri aktiviranju.");
     }
   };
 
