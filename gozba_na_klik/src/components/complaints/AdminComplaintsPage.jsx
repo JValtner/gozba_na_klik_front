@@ -105,32 +105,35 @@ export default function AdminComplaintsPage() {
             <table className="table">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Porudžbina ID</th>
-                  <th>Restoran ID</th>
-                  <th>Korisnik ID</th>
+                  <th>Redni broj</th>
+                  <th>Porudžbina</th>
+                  <th>Restoran</th>
+                  <th>Korisnik</th>
                   <th>Datum podnošenja</th>
                   <th>Akcije</th>
                 </tr>
               </thead>
               <tbody>
-                {complaints.map((complaint) => (
-                  <tr key={complaint.id}>
-                    <td>{complaint.id}</td>
-                    <td>#{complaint.orderId}</td>
-                    <td>{complaint.restaurantId}</td>
-                    <td>{complaint.userId}</td>
-                    <td>{formatDate(complaint.createdAt)}</td>
-                    <td>
-                      <button
-                        className="btn btn--primary btn--small"
-                        onClick={() => handleViewComplaint(complaint.id)}
-                      >
-                        Pregledaj
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {complaints.map((complaint, index) => {
+                  const rowNumber = (currentPage * pageSize) + index + 1;
+                  return (
+                    <tr key={complaint.id}>
+                      <td>{rowNumber}</td>
+                      <td>#{complaint.orderId}</td>
+                      <td>{complaint.restaurantName || "Nepoznat restoran"}</td>
+                      <td>{complaint.customerName || "Nepoznat korisnik"}</td>
+                      <td>{formatDate(complaint.createdAt)}</td>
+                      <td>
+                        <button
+                          className="btn btn--primary btn--small"
+                          onClick={() => handleViewComplaint(complaint.id)}
+                        >
+                          Pregledaj
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
             {totalCount > 0 && (

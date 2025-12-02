@@ -6,6 +6,7 @@ import { useUser } from "../users/UserContext";
 import { baseUrl } from "../../config/routeConfig";
 import { validateFile } from "../service/fileService";
 import Spinner from "../spinner/Spinner";
+import { showToast } from "../utils/toast";
 
 const EditRestaurant = () => {
   const { id } = useParams();
@@ -52,11 +53,11 @@ const EditRestaurant = () => {
       if (data.photo?.[0]) formData.append("Photo", data.photo[0]);
 
       await updateRestaurant(id, formData);
-      alert("Restoran uspešno ažuriran!");
+      showToast.success("Restoran uspešno ažuriran!");
       navigate("/restaurants/dashboard");
     } catch (err) {
       console.error("Greška pri ažuriranju restorana:", err);
-      alert("Došlo je do greške pri ažuriranju.");
+      showToast.error("Došlo je do greške pri ažuriranju.");
     }
   };
 

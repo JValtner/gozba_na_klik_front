@@ -10,6 +10,8 @@ import Spinner from "../spinner/Spinner";
 import InvoiceButton from "../invoices/InvoiceButton";
 import { getStatusLabel } from "../../constants/orderConstants";
 import "../../styles/_restaurant-orders.scss";
+import { showToast } from "../utils/toast";
+import { showPrompt } from "../utils/PromptModal";
 
 const RestaurantOrdersPage = () => {
   const { restaurantId } = useParams();
@@ -39,31 +41,37 @@ const RestaurantOrdersPage = () => {
   }, [filterStatus, restaurantId]);
 
   const handleAccept = async (orderId) => {
-    const minutes = prompt("Unesite procenjeno vreme pripreme (u minutima):");
-    if (!minutes) return;
-
-    try {
-      await acceptOrder(orderId, parseInt(minutes, 10));
-      alert("Porudžbina je uspešno prihvaćena!");
-      loadOrders();
-    } catch (err) {
-      console.error("Greška pri prihvatanju porudžbine:", err);
-      alert("Greška pri prihvatanju porudžbine.");
-    }
+    showPrompt(
+      "Unesite procenjeno vreme pripreme (u minutima):",
+      "npr. 30",
+      async (minutes) => {
+        try {
+          await acceptOrder(orderId, parseInt(minutes, 10));
+          showToast.success("Porudžbina je uspešno prihvaćena!");
+          loadOrders();
+        } catch (err) {
+          console.error("Greška pri prihvatanju porudžbine:", err);
+          showToast.error("Greška pri prihvatanju porudžbine.");
+        }
+      }
+    );
   };
 
   const handleCancel = async (orderId) => {
-    const reason = prompt("Unesite razlog otkazivanja porudžbine:");
-    if (!reason) return;
-
-    try {
-      await cancelOrder(orderId, reason);
-      alert("Porudžbina je otkazana.");
-      loadOrders();
-    } catch (err) {
-      console.error("Greška pri otkazivanju:", err);
-      alert("Greška pri otkazivanju porudžbine.");
-    }
+    showPrompt(
+      "Unesite razlog otkazivanja porudžbine:",
+      "npr. Nedostaje namirnica",
+      async (reason) => {
+        try {
+          await cancelOrder(orderId, reason);
+          showToast.success("Porudžbina je otkazana.");
+          loadOrders();
+        } catch (err) {
+          console.error("Greška pri otkazivanju:", err);
+          showToast.error("Greška pri otkazivanju porudžbine.");
+        }
+      }
+    );
   };
 
 

@@ -147,6 +147,12 @@
         height: 18px;
         cursor: pointer;
         accent-color: #ea580c;
+        flex-shrink: 0;
+        z-index: 10;
+        position: relative;
+        pointer-events: auto;
+        -webkit-appearance: checkbox;
+        appearance: checkbox;
       }
 
       .addon-name {
@@ -154,12 +160,14 @@
         font-weight: 500;
         color: #1f2937;
         font-size: 0.9375rem;
+        pointer-events: none;
       }
 
       .addon-price {
         font-weight: 600;
         color: #ea580c;
         font-size: 0.9375rem;
+        pointer-events: none;
       }
     }
 

@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useUser } from "../../users/UserContext"
 import { getRestaurantById } from "../../service/restaurantsService"
-import { getMealsByRestaurantId } from "../../service/menuService"
+import { getMealsByRestaurantId, deleteMeal } from "../../service/menuService"
 import Spinner from "../../spinner/Spinner"
 import MenuItem from "../../restaurants/menu/MenuItem"
 import RestaurantReviews from "../../reviews/RestaurantReviews"
 import { baseUrl } from "../../../config/routeConfig";
 import { getCartItemCount } from "../../orders/AddToCart";
+import { showToast, showConfirm } from "../../utils/toast";
 
 
 const Menu = () => {
@@ -27,13 +28,20 @@ const Menu = () => {
       try {
         setLoading(true)
         const restaurantData = await getRestaurantById(id)
-        setRestaurant(restaurantData)
-
-        // Check if current user is the owner of this restaurant
+        
         const userIsOwner = role === "RestaurantOwner" &&
           userId &&
           restaurantData.ownerId &&
           Number(userId) === Number(restaurantData.ownerId)
+        
+        if (restaurantData.isSuspended && !userIsOwner) {
+          setError("Ovaj restoran je trenutno suspendovan i nije dostupan za naručivanje.")
+          setRestaurant(restaurantData)
+          setLoading(false)
+          return
+        }
+        
+        setRestaurant(restaurantData)
         setIsOwner(userIsOwner)
 
         const mealsData = await getMealsByRestaurantId(restaurantData.id)
@@ -70,7 +78,7 @@ const Menu = () => {
     }
 
     if (cartItemCount === 0) {
-      alert("Korpa je prazna.");
+      showToast.warning("Korpa je prazna.");
       return;
     }
 
@@ -80,10 +88,19 @@ const Menu = () => {
   const onEdit = (meal) => navigate(`/restaurants/${id}/menu/${meal.id}/edit`)
 
   const onDelete = async (mealId) => {
-    if (window.confirm("Da li ste sigurni da želite obrisati ovo jelo?")) {
-      console.log("Deleting meal:", mealId)
-      setMeals((prev) => prev.filter((m) => m.id !== mealId))
-    }
+    showConfirm(
+      "Da li ste sigurni da želite obrisati ovo jelo?",
+      async () => {
+        try {
+          await deleteMeal(mealId)
+          setMeals((prev) => prev.filter((m) => m.id !== mealId))
+          showToast.success("Jelo je uspešno obrisano.")
+        } catch (err) {
+          console.error("Greška pri brisanju jela:", err)
+          showToast.error("Greška pri brisanju jela. Pokušajte ponovo.")
+        }
+      }
+    )
   }
   const handleNewMeal = () => {
     if (!restaurant) return
@@ -91,7 +108,37 @@ const Menu = () => {
   }
 
   if (loading) return <Spinner />
-  if (error) return <p style={{ color: "red" }}>{error}</p>
+  if (error) {
+    return (
+      <div className="menu-page">
+        <div style={{ 
+          padding: "2rem", 
+          textAlign: "center",
+          backgroundColor: "#fff3cd",
+          border: "2px solid #ffc107",
+          borderRadius: "0.5rem",
+          margin: "2rem auto",
+          maxWidth: "600px"
+        }}>
+          <h2 style={{ color: "#856404", marginBottom: "1rem" }}>⚠️ Restoran suspendovan</h2>
+          <p style={{ color: "#856404", fontSize: "1.1rem", marginBottom: "1rem" }}>{error}</p>
+          {restaurant?.suspensionReason && (
+            <p style={{ color: "#856404", fontSize: "0.9rem", fontStyle: "italic" }}>
+              Razlog: {restaurant.suspensionReason}
+            </p>
+          )}
+          <button 
+            type="button" 
+            className="btn btn--secondary" 
+            onClick={() => navigate("/restaurants/home")}
+            style={{ marginTop: "1rem" }}
+          >
+            ← Nazad na restorane
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="menu-page">

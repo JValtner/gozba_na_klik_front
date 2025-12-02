@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { CurrencyProvider } from "./components/utils/currencyContext";
 import Header from "./components/welcome/Header";
 import WelcomePage from "./components/welcome/WelcomePage";
@@ -50,6 +51,7 @@ export default function App() {
     <CurrencyProvider>
       <Router>
         <div className="app">
+          <Toaster />
           <Header />
           <main>
             <Routes>

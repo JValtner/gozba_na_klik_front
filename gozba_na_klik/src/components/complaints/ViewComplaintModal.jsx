@@ -22,16 +22,16 @@ export default function ViewComplaintModal({ complaint, onClose }) {
         <div className="modal-body">
           <div className="complaint-details">
             <div className="complaint-info-item">
-              <strong>Porudžbina ID:</strong> #{complaint.orderId}
+              <strong>Porudžbina:</strong> #{complaint.orderId}
             </div>
-            {complaint.restaurantId && (
+            {complaint.restaurantName && (
               <div className="complaint-info-item">
-                <strong>Restoran ID:</strong> {complaint.restaurantId}
+                <strong>Restoran:</strong> {complaint.restaurantName}
               </div>
             )}
-            {complaint.userId && (
+            {complaint.customerName && (
               <div className="complaint-info-item">
-                <strong>Korisnik ID:</strong> {complaint.userId}
+                <strong>Korisnik:</strong> {complaint.customerName}
               </div>
             )}
             <div className="complaint-info-item">

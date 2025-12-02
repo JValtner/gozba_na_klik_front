@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getRestaurantById, updateWorkSchedules } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
+import { showToast } from "../utils/toast";
 
 const DAYS = [
   { id: 1, name: "Ponedeljak" },
@@ -33,10 +34,14 @@ export default function WorkingHours() {
       setRestaurant(data);
       
       const initialSchedules = DAYS.map(day => {
-        const existing = data.workSchedules?.find(ws => ws.dayOfWeek === day.id);
+        const existing = data.workSchedules?.find(ws => {
+          const dayOfWeekValue = typeof ws.dayOfWeek === 'number' ? ws.dayOfWeek : ws.dayOfWeek;
+          return dayOfWeekValue === day.id;
+        });
         
-        const formatTime = (timeString) => {
-          if (!timeString) return "";
+        const formatTime = (timeValue) => {
+          if (!timeValue) return "";
+          const timeString = typeof timeValue === 'string' ? timeValue : String(timeValue);
           if (timeString.length >= 5) {
             return timeString.substring(0, 5);
           }
@@ -82,8 +87,8 @@ export default function WorkingHours() {
       }));
       
       await updateWorkSchedules(Number(id), schedulesForBackend);
-      alert("Radno vreme je uspešno sačuvano!");
-      navigate(`/restaurants/edit/${id}`);
+      showToast.success("Radno vreme je uspešno sačuvano!");
+      await loadRestaurantData();
     } catch (err) {
       console.error("Greška pri čuvanju radnog vremena:", err);
       setError(err.response?.data?.message || "Greška pri čuvanju radnog vremena. Pokušajte ponovo.");

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getRestaurantById, addClosedDate, removeClosedDate } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
+import { showToast, showConfirm } from "../utils/toast";
 
 export default function ClosedDates() {
   const { id } = useParams();
@@ -33,12 +34,12 @@ export default function ClosedDates() {
 
   const handleAddDate = async () => {
     if (!newDate) {
-      alert("Molimo unesite datum.");
+      showToast.warning("Molimo unesite datum.");
       return;
     }
 
     if (closedDates.some(cd => cd.date.substring(0, 10) === newDate)) {
-      alert("Ovaj datum je već dodat.");
+      showToast.warning("Ovaj datum je već dodat.");
       return;
     }
 
@@ -50,29 +51,30 @@ export default function ClosedDates() {
       };
 
       await addClosedDate(Number(id), closedDate);
-      alert("Neradni datum je uspešno dodat!");
+      showToast.success("Neradni datum je uspešno dodat!");
       loadRestaurantData();
       setNewDate("");
       setNewReason("");
     } catch (err) {
       console.error("Greška pri dodavanju neradnog datuma:", err);
-      alert("Greška pri dodavanju neradnog datuma. Pokušajte ponovo.");
+      showToast.error("Greška pri dodavanju neradnog datuma. Pokušajte ponovo.");
     }
   };
 
   const handleRemoveDate = async (dateId) => {
-    if (!window.confirm("Da li ste sigurni da želite da uklonite ovaj datum?")) {
-      return;
-    }
-
-    try {
-      await removeClosedDate(Number(id), dateId);
-      alert("Neradni datum je uspešno uklonjen!");
-      loadRestaurantData();
-    } catch (err) {
-      console.error("Greška pri uklanjanju neradnog datuma:", err);
-      alert("Greška pri uklanjanju neradnog datuma. Pokušajte ponovo.");
-    }
+    showConfirm(
+      "Da li ste sigurni da želite da uklonite ovaj datum?",
+      async () => {
+        try {
+          await removeClosedDate(Number(id), dateId);
+          showToast.success("Neradni datum je uspešno uklonjen!");
+          loadRestaurantData();
+        } catch (err) {
+          console.error("Greška pri uklanjanju neradnog datuma:", err);
+          showToast.error("Greška pri uklanjanju neradnog datuma. Pokušajte ponovo.");
+        }
+      }
+    );
   };
 
   const formatDate = (dateString) => {

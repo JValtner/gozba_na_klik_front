@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAppealedSuspensions, processAppealDecision } from "../../service/restaurantsService";
 import Spinner from "../../spinner/Spinner";
+import { showToast, showConfirm } from "../../utils/toast";
 
 export default function SuspensionAppealsPage() {
   const navigate = useNavigate();
@@ -30,46 +31,39 @@ export default function SuspensionAppealsPage() {
   };
 
   const handleDecision = async (restaurantId, accept) => {
-    if (!window.confirm(
+    showConfirm(
       accept 
         ? "Da li ste sigurni da želite da prihvatite žalbu i uklonite suspenziju?"
-        : "Da li ste sigurni da želite da odbijete žalbu?"
-    )) {
-      return;
-    }
-
-    try {
-      setProcessingId(restaurantId);
-      await processAppealDecision(restaurantId, accept);
-      
-      if (typeof window !== 'undefined' && window.toast?.success) {
-        window.toast.success(
-          accept 
-            ? "Žalba je prihvaćena i suspenzija je uklonjena."
-            : "Žalba je odbijena."
-        );
-      }
-      
-      await loadAppeals();
-    } catch (err) {
-      let errorMessage = "Greška pri obradi odluke.";
-      
-      if (err.response?.data) {
-        if (err.response.data.message) {
-          errorMessage = err.response.data.message;
-        } else if (err.response.data.error) {
-          errorMessage = err.response.data.error;
+        : "Da li ste sigurni da želite da odbijete žalbu?",
+      async () => {
+        try {
+          setProcessingId(restaurantId);
+          await processAppealDecision(restaurantId, accept);
+          
+          showToast.success(
+            accept 
+              ? "Žalba je prihvaćena i suspenzija je uklonjena."
+              : "Žalba je odbijena."
+          );
+          
+          await loadAppeals();
+        } catch (err) {
+          let errorMessage = "Greška pri obradi odluke.";
+          
+          if (err.response?.data) {
+            if (err.response.data.message) {
+              errorMessage = err.response.data.message;
+            } else if (err.response.data.error) {
+              errorMessage = err.response.data.error;
+            }
+          }
+          
+          showToast.error(errorMessage);
+        } finally {
+          setProcessingId(null);
         }
       }
-      
-      if (typeof window !== 'undefined' && window.toast?.error) {
-        window.toast.error(errorMessage);
-      } else {
-        alert(errorMessage);
-      }
-    } finally {
-      setProcessingId(null);
-    }
+    );
   };
 
   const formatDate = (dateString) => {
