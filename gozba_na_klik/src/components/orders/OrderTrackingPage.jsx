@@ -11,12 +11,14 @@ import {
   stopConnection,
   onOrderCompleted,
 } from "../service/courierLocationService";
+import { useNavigate } from "react-router-dom";
 
 const OrderTrackingPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null);
   const [courierLocation, setCourierLocation] = useState(null);
+  const navigate = useNavigate();
 
   const DELIVERY_STATUSES = [
     { key: "NA_CEKANJU", label: "Na čekanju", icon: "⏳" },
@@ -137,6 +139,12 @@ const OrderTrackingPage = () => {
         <div className="order-tracking-page__container">
           <div className="error-message">
             <p className="error-message__text">{error}</p>
+            <button
+              className="btn btn--primary btn--small"
+              onClick={() => navigate("/my-orders")}
+            >
+              Idi na sve porudzbine
+            </button>
           </div>
         </div>
       </div>
@@ -204,7 +212,7 @@ const OrderTrackingPage = () => {
         </div>
 
         <div className="order-tracking-page__content">
-          {/* Left Column - Order Details */}
+          {/* Leva kolona - Restoran, stavke, cena */}
           <div className="order-tracking-page__details">
             {/* Restaurant Info */}
             {order.restaurant && (
@@ -222,35 +230,6 @@ const OrderTrackingPage = () => {
                       📞 {order.restaurant.phone}
                     </p>
                   )}
-                </div>
-              </div>
-            )}
-
-            {/* Delivery Address */}
-            {order.customerAddress && (
-              <div className="info-card">
-                <h2 className="info-card__title">Adresa dostave</h2>
-                <div className="info-card__content">
-                  <p className="info-card__text">
-                    {formatAddress(order.customerAddress)}
-                  </p>
-                  {order.customerAddress.notes && (
-                    <p className="info-card__text info-card__text--notes">
-                      📝 {order.customerAddress.notes}
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Delivery Person */}
-            {order.deliveryPerson && (
-              <div className="info-card">
-                <h2 className="info-card__title">Kurir</h2>
-                <div className="info-card__content">
-                  <p className="info-card__name">
-                    🚴 {order.deliveryPerson.username}
-                  </p>
                 </div>
               </div>
             )}
@@ -304,6 +283,38 @@ const OrderTrackingPage = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Desna kolona - Korisnik / dostava / info */}
+          <div className="order-tracking-page__details">
+            {/* Delivery Person */}
+            {order.deliveryPerson && (
+              <div className="info-card">
+                <h2 className="info-card__title">Kurir</h2>
+                <div className="info-card__content">
+                  <p className="info-card__name">
+                    🚴 {order.deliveryPerson.username}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Delivery Address */}
+            {order.customerAddress && (
+              <div className="info-card">
+                <h2 className="info-card__title">Adresa dostave</h2>
+                <div className="info-card__content">
+                  <p className="info-card__text">
+                    {formatAddress(order.customerAddress)}
+                  </p>
+                  {order.customerAddress.notes && (
+                    <p className="info-card__text info-card__text--notes">
+                      📝 {order.customerAddress.notes}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Customer Note */}
             {order.customerNote && (
@@ -315,7 +326,7 @@ const OrderTrackingPage = () => {
               </div>
             )}
 
-            {/* Order Dates */}
+            {/* Order Dates / Info */}
             <div className="info-card">
               <h2 className="info-card__title">Informacije</h2>
               <div className="info-card__content">
@@ -338,18 +349,18 @@ const OrderTrackingPage = () => {
               </div>
             </div>
           </div>
-
-          {/* Right Column - Map Placeholder */}
-          {courierLocation && (
-            <div className="order-tracking-page__map">
-              <CourierMap
-                lat={courierLocation.lat}
-                lng={courierLocation.lng}
-                height="400px"
-              />
-            </div>
-          )}
         </div>
+
+        {/* Map below both columns, full width */}
+        {courierLocation && (
+          <div className="order-tracking-page__map">
+            <CourierMap
+              lat={courierLocation.lat}
+              lng={courierLocation.lng}
+              height="500px"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

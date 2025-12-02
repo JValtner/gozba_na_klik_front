@@ -2,19 +2,25 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../users/UserContext";
 import { getUserOrderHistory } from "../service/orderService";
-import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "../../constants/orderConstants";
+import {
+  ORDER_STATUS_LABELS,
+  ORDER_STATUS_COLORS,
+} from "../../constants/orderConstants";
 import InvoiceButton from "../invoices/InvoiceButton";
 import ComplaintModal from "../complaints/ComplaintModal";
 import ViewComplaintModal from "../complaints/ViewComplaintModal";
 import OrderReviewModal from "../reviews/OrderReviewModal";
 import Spinner from "../spinner/Spinner";
 import Pagination from "../utils/Pagination";
-import { getComplaintByOrderId, checkComplaintExists } from "../service/complaintService";
+import {
+  getComplaintByOrderId,
+  checkComplaintExists,
+} from "../service/complaintService";
 
 const CustomerOrdersPage = () => {
   const navigate = useNavigate();
   const { userId, username } = useUser();
-  
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -44,23 +50,27 @@ const CustomerOrdersPage = () => {
       setError("");
 
       const response = await getUserOrderHistory(
-        userId, 
-        statusFilter || null, 
-        currentPage, 
+        userId,
+        statusFilter || null,
+        currentPage,
         pageSize
       );
 
       const ordersList = response.orders || response.Orders || [];
       setOrders(ordersList);
       setTotalPages(response.totalPages || response.TotalPages || 0);
-      setTotalItems(response.totalCount || response.TotalCount || response.totalItems || 0);
+      setTotalItems(
+        response.totalCount || response.TotalCount || response.totalItems || 0
+      );
       setHasNextPage(response.hasNextPage || response.HasNextPage || false);
-      setHasPreviousPage(response.hasPreviousPage || response.HasPreviousPage || false);
+      setHasPreviousPage(
+        response.hasPreviousPage || response.HasPreviousPage || false
+      );
 
-      const completedOrders = ordersList.filter(order => 
+      const completedOrders = ordersList.filter((order) =>
         isOrderCompleted(order.status)
       );
-      
+
       if (completedOrders.length > 0) {
         const complaintChecks = await Promise.all(
           completedOrders.map(async (order) => {
@@ -74,21 +84,20 @@ const CustomerOrdersPage = () => {
             return null;
           })
         );
-        
+
         const ordersWithComplaintsSet = new Set();
         const complaintsMap = new Map();
-        
-        complaintChecks.forEach(result => {
+
+        complaintChecks.forEach((result) => {
           if (result) {
             ordersWithComplaintsSet.add(result.orderId);
             complaintsMap.set(result.orderId, result.complaint);
           }
         });
-        
+
         setOrdersWithComplaints(ordersWithComplaintsSet);
         setComplaintsData(complaintsMap);
       }
-
     } catch (err) {
       console.error("Greška pri učitavanju porudžbina:", err);
       setError(err.message || "Greška pri učitavanju istorije porudžbina");
@@ -111,7 +120,7 @@ const CustomerOrdersPage = () => {
   };
 
   const isOrderCompleted = (status) => {
-    return status === 'ZAVRŠENO';
+    return status === "ZAVRŠENO";
   };
 
   const handleOpenComplaintModal = (orderId) => {
@@ -123,8 +132,8 @@ const CustomerOrdersPage = () => {
     // Dodaj porudžbinu u set porudžbina sa žalbama i učitaj žalbu
     const complaint = await getComplaintByOrderId(orderId);
     if (complaint) {
-      setOrdersWithComplaints(prev => new Set([...prev, orderId]));
-      setComplaintsData(prev => new Map(prev).set(orderId, complaint));
+      setOrdersWithComplaints((prev) => new Set([...prev, orderId]));
+      setComplaintsData((prev) => new Map(prev).set(orderId, complaint));
     }
     loadOrders();
     setCurrentPage(1);
@@ -135,7 +144,7 @@ const CustomerOrdersPage = () => {
     if (!complaint) {
       complaint = await getComplaintByOrderId(orderId);
       if (complaint) {
-        setComplaintsData(prev => new Map(prev).set(orderId, complaint));
+        setComplaintsData((prev) => new Map(prev).set(orderId, complaint));
       }
     }
     if (complaint) {
@@ -150,7 +159,7 @@ const CustomerOrdersPage = () => {
   };
 
   const handleReviewSuccess = async (orderId) => {
-    setOrdersWithReviews(prev => new Set([...prev, orderId]));
+    setOrdersWithReviews((prev) => new Set([...prev, orderId]));
     loadOrders();
     setCurrentPage(1);
   };
@@ -158,10 +167,10 @@ const CustomerOrdersPage = () => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString("sr-RS", {
       year: "numeric",
-      month: "2-digit", 
+      month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
     });
   };
 
@@ -169,7 +178,7 @@ const CustomerOrdersPage = () => {
     return new Intl.NumberFormat("sr-RS", {
       style: "currency",
       currency: "RSD",
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
@@ -180,7 +189,6 @@ const CustomerOrdersPage = () => {
   return (
     <div className="customer-orders-page">
       <div className="customer-orders-page__container">
-        
         <div className="customer-orders-page__header">
           <div>
             <h1>Moje porudžbine</h1>
@@ -212,7 +220,8 @@ const CustomerOrdersPage = () => {
             </span>
             {statusFilter && (
               <span className="stat">
-                {ORDER_STATUS_LABELS[statusFilter]}: <strong>{orders.length}</strong>
+                {ORDER_STATUS_LABELS[statusFilter]}:{" "}
+                <strong>{orders.length}</strong>
               </span>
             )}
           </div>
@@ -249,10 +258,9 @@ const CustomerOrdersPage = () => {
           <div className="empty-state">
             <div className="empty-state__icon">📦</div>
             <h2>
-              {statusFilter 
+              {statusFilter
                 ? `Nemate porudžbine sa statusom "${ORDER_STATUS_LABELS[statusFilter]}"`
-                : "Još nemate nijednu porudžbinu"
-              }
+                : "Još nemate nijednu porudžbinu"}
             </h2>
             <p>
               {!statusFilter && "Kada napravite porudžbinu, pojaviće se ovde."}
@@ -268,43 +276,43 @@ const CustomerOrdersPage = () => {
           <div className="orders-list">
             {orders.map((order) => (
               <div key={order.id} className="customer-order-card">
-                
                 <div className="customer-order-card__header">
                   <div className="order-info">
                     <h3>Porudžbina #{order.id}</h3>
                     <p className="order-date">{formatDate(order.orderDate)}</p>
                   </div>
-                  
+
                   <div className="order-status-info">
                     <span
                       className="status-badge"
-                      style={{ backgroundColor: ORDER_STATUS_COLORS[order.status] }}
+                      style={{
+                        backgroundColor: ORDER_STATUS_COLORS[order.status],
+                      }}
                     >
                       {ORDER_STATUS_LABELS[order.status]}
                     </span>
-                    <span className="order-total">{formatPrice(order.totalPrice)}</span>
+                    <span className="order-total">
+                      {formatPrice(order.totalPrice)}
+                    </span>
                   </div>
                 </div>
 
                 <div className="customer-order-card__content">
-                  
                   <div className="restaurant-info">
                     <h4> {order.restaurantName}</h4>
-                    {order.deliveryAddress && (
-                      <p>📍 {order.deliveryAddress}</p>
-                    )}
+                    {order.deliveryAddress && <p>📍 {order.deliveryAddress}</p>}
                   </div>
 
                   <div className="order-items-preview">
                     <p>
-                      <strong>{order.itemsCount}</strong> stavka
-                      {order.itemsCount !== 1 && (order.itemsCount % 10 !== 1 || order.itemsCount === 11) ? "e" : ""}
+                      <strong>{order.itemsCount}</strong>{" "}
+                      {order.itemsCount === 1 ? "stavka" : "stavke"}
                     </p>
                     {order.items && order.items.length > 0 && (
                       <div className="items-summary">
                         {order.items.slice(0, 2).map((item, index) => (
                           <span key={index} className="item-name">
-                            {item.mealName} 
+                            {item.mealName}
                             {item.quantity > 1 && ` x${item.quantity}`}
                           </span>
                         ))}
@@ -319,7 +327,9 @@ const CustomerOrdersPage = () => {
 
                   {order.customerNote && (
                     <div className="customer-note">
-                      <p><strong>Napomena:</strong> {order.customerNote}</p>
+                      <p>
+                        <strong>Napomena:</strong> {order.customerNote}
+                      </p>
                     </div>
                   )}
 
@@ -349,7 +359,9 @@ const CustomerOrdersPage = () => {
 
                   <button
                     className="btn btn--primary btn--small"
-                    onClick={() => navigate(`/restaurants/${order.restaurantId}/menu`)}
+                    onClick={() =>
+                      navigate(`/restaurants/${order.restaurantId}/menu`)
+                    }
                   >
                     Naruči ponovo
                   </button>
@@ -361,10 +373,10 @@ const CustomerOrdersPage = () => {
                           className="btn btn--secondary btn--small"
                           disabled
                           title="Recenzija već postoji"
-                          style={{ 
-                            backgroundColor: '#10b981',
-                            color: 'white',
-                            cursor: 'not-allowed'
+                          style={{
+                            backgroundColor: "#10b981",
+                            color: "white",
+                            cursor: "not-allowed",
                           }}
                         >
                           ✓ Ocenjeno
@@ -383,9 +395,9 @@ const CustomerOrdersPage = () => {
                           className="btn btn--secondary btn--small"
                           onClick={() => handleViewComplaint(order.id)}
                           title="Vidi žalbu"
-                          style={{ 
-                            backgroundColor: '#10b981',
-                            color: 'white'
+                          style={{
+                            backgroundColor: "#10b981",
+                            color: "white",
                           }}
                         >
                           ✓ Vidi žalbu

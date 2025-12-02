@@ -1,6 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+
+const RecenterOnMarker = ({ lat, lng, zoom }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+    map.setView([lat, lng], zoom, {
+      animate: true,
+    });
+  }, [lat, lng, zoom, map]);
+
+  return null;
+};
 
 const CourierMap = ({ lat, lng, zoom = 15, height = "400px" }) => {
   return (
@@ -16,6 +29,7 @@ const CourierMap = ({ lat, lng, zoom = 15, height = "400px" }) => {
       <Marker position={[lat, lng]}>
         <Popup>Kurir je ovde</Popup>
       </Marker>
+      <RecenterOnMarker lat={lat} lng={lng} zoom={zoom} />
     </MapContainer>
   );
 };

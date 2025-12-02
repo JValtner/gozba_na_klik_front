@@ -106,7 +106,7 @@ const CourierOrderCard = ({ order, onStatusUpdate, isUpdating }) => {
 
       {/* Content */}
       <div className="courier-order-card__content">
-        {/* Left Column - Order Details */}
+        {/* Left Column - Restaurant */}
         <div className="courier-order-card__details">
           {/* Restaurant Info */}
           {order.restaurant && (
@@ -121,33 +121,6 @@ const CourierOrderCard = ({ order, onStatusUpdate, isUpdating }) => {
                 )}
                 {order.restaurant.phone && (
                   <p className="info-card__text">📞 {order.restaurant.phone}</p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Customer Info */}
-          {order.buyer && (
-            <div className="info-card">
-              <h2 className="info-card__title">Kupac</h2>
-              <div className="info-card__content">
-                <p className="info-card__name">👤 {order.buyer.username}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Delivery Address */}
-          {order.address && (
-            <div className="info-card">
-              <h2 className="info-card__title">Adresa dostave</h2>
-              <div className="info-card__content">
-                <p className="info-card__text">
-                  {formatAddress(order.address)}
-                </p>
-                {order.address.notes && (
-                  <p className="info-card__text info-card__text--notes">
-                    📝 {order.address.notes}
-                  </p>
                 )}
               </div>
             </div>
@@ -194,6 +167,36 @@ const CourierOrderCard = ({ order, onStatusUpdate, isUpdating }) => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Right Column - Customer */}
+        <div className="courier-order-card__details">
+          {/* Customer Info */}
+          {order.buyer && (
+            <div className="info-card">
+              <h2 className="info-card__title">Kupac</h2>
+              <div className="info-card__content">
+                <p className="info-card__name">👤 {order.buyer.username}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Delivery Address */}
+          {order.address && (
+            <div className="info-card">
+              <h2 className="info-card__title">Adresa dostave</h2>
+              <div className="info-card__content">
+                <p className="info-card__text">
+                  {formatAddress(order.address)}
+                </p>
+                {order.address.notes && (
+                  <p className="info-card__text info-card__text--notes">
+                    📝 {order.address.notes}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Customer Note */}
           {order.customerNote && (
@@ -204,20 +207,6 @@ const CourierOrderCard = ({ order, onStatusUpdate, isUpdating }) => {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Right Column - Map Placeholder */}
-        <div className="courier-order-card__map">
-          <div className="map-placeholder">
-            <div className="map-placeholder__icon">🗺️</div>
-            <p className="map-placeholder__text">Mapa će biti prikazana ovde</p>
-            {order.address?.latitude && order.address?.longitude && (
-              <p className="map-placeholder__coordinates">
-                Koordinate: {order.address.latitude.toFixed(6)},{" "}
-                {order.address.longitude.toFixed(6)}
-              </p>
-            )}
-          </div>
         </div>
       </div>
 

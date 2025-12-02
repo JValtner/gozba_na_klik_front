@@ -5,9 +5,14 @@ export async function getRestaurantById(id) {
   // Dodaj cache-busting parametar da se podaci uvek osveže
   const response = await AxiosConfig.get(`/api/restaurants/${id}`, {
     params: {
-      _t: Date.now() // Dodaj timestamp da spreči keširanje
-    }
+      _t: Date.now(), // Dodaj timestamp da spreči keširanje
+    },
   });
+  return response.data;
+}
+
+export async function getRestaurantByIdByAdmin(id) {
+  const response = await AxiosConfig.get(`/api/restaurants/${id}/admin`);
   return response.data;
 }
 
@@ -43,13 +48,18 @@ export async function getAllRestaurants() {
   return response.data;
 }
 // GET  withrestaurants sorting, filtering, and paging
-export const getSortedFilteredPagedRestaurants = async (filter, page = 1, pageSize = 5, sortType = "") => {
+export const getSortedFilteredPagedRestaurants = async (
+  filter,
+  page = 1,
+  pageSize = 5,
+  sortType = ""
+) => {
   try {
     const params = {
       page,
       pageSize,
       sortType,
-      ...filter 
+      ...filter,
     };
 
     // Remove null or undefined filter fields
@@ -57,10 +67,14 @@ export const getSortedFilteredPagedRestaurants = async (filter, page = 1, pageSi
       (key) => (params[key] == null || params[key] === "") && delete params[key]
     );
 
-    const response = await AxiosConfig.get(`/api/restaurants/filterSortPage`, { params });
+    const response = await AxiosConfig.get(`/api/restaurants/filterSortPage`, {
+      params,
+    });
     return response.data; // { items, count, hasNextPage, hasPreviousPage, totalPages }
   } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to fetch restaurants");
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch restaurants"
+    );
   }
 };
 
@@ -130,10 +144,15 @@ export async function suspendRestaurant(restaurantId, reason) {
 
 export async function getRestaurantSuspension(restaurantId) {
   try {
-    const response = await AxiosConfig.get(`/api/restaurants/${restaurantId}/suspension`);
+    const response = await AxiosConfig.get(
+      `/api/restaurants/${restaurantId}/suspension`
+    );
     return response.data || null;
   } catch (error) {
-    console.error(`Greška pri učitavanju suspenzije za restoran ${restaurantId}:`, error);
+    console.error(
+      `Greška pri učitavanju suspenzije za restoran ${restaurantId}:`,
+      error
+    );
     return null;
   }
 }
@@ -160,13 +179,15 @@ export async function processAppealDecision(restaurantId, accept) {
 }
 export const getTop5Restaurants = async () => {
   try {
-    const response = await AxiosConfig.get(`/api/reviews/best-rated-restaurants`);
-    const top5Ids = response.data; 
+    const response = await AxiosConfig.get(
+      `/api/reviews/best-rated-restaurants`
+    );
+    const top5Ids = response.data;
     const restaurantsTop5 = await Promise.all(
-      top5Ids.map(id => getRestaurantById(id))
+      top5Ids.map((id) => getRestaurantById(id))
     );
 
-    return restaurantsTop5; 
+    return restaurantsTop5;
   } catch (error) {
     console.error(error);
     throw new Error("Failed to fetch top 5 restaurants");

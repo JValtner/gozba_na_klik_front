@@ -4,9 +4,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getAllRestaurantOwners } from "../service/userService";
 import {
   createRestaurant,
-  getRestaurantById,
   updateRestaurantByAdmin,
   getRestaurantSuspension,
+  getRestaurantByIdByAdmin,
 } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
 
@@ -57,7 +57,7 @@ const AdminRestaurantForm = () => {
       if (!id) return;
       setLoading(true);
       try {
-        const restaurant = await getRestaurantById(id);
+        const restaurant = await getRestaurantByIdByAdmin(id);
         reset({
           name: restaurant.name,
           ownerId: restaurant.ownerId,
