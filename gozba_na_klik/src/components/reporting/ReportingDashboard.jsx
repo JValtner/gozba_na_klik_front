@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { baseUrl } from "../../config/routeConfig";
 import { getAllRestaurants, getRestaurantById } from "../service/restaurantsService";
 import { getMealsByRestaurantId } from "../service/menuService";
-
+import { useCurrency } from "../utils/currencyContext";
 import ReportingProfitSummary from "./ReportingProfitSummary";
 import ReportingMealSalesSummary from "./ReportingMealSalesSummary";
 import ReportingOrdersSummary from "./ReportingOrdersSummary";
@@ -12,6 +12,7 @@ const ReportingDashboard = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [restaurantId, setRestaurantId] = useState("");
   const [restaurantInfo, setRestaurantInfo] = useState(null);
+  const { currency, setCurrency } = useCurrency("EUR");
 
   // date filters
   const [startDate, setStartDate] = useState("");
@@ -36,23 +37,36 @@ const ReportingDashboard = () => {
 
   return (
     <div className="reporting-dashboard">
+
       <h1 className="title">Reporting Dashboard</h1>
 
       <div className="section">
-        <h2>Restaurant</h2>
 
         <div className="row">
           <select
             value={restaurantId}
             onChange={e => setRestaurantId(e.target.value)}
           >
-            <option value="">Select restaurant...</option>
+            <option value=""> 🏠 Izaberi restoran ...</option>
             {restaurants.map(r => (
               <option key={r.id} value={r.id}>
                 {r.name}
               </option>
             ))}
           </select>
+        </div>
+        <div className="row">
+          <select
+            className="currency-select"
+            value={currency}
+            onChange={e => setCurrency(e.target.value)}
+          >
+            <option value="EUR">💱 Izaberi valutu izvestaja ...</option> {/* emoji shown, value is EUR */}
+            <option value="EUR">€ EUR</option>
+            <option value="USD">$ USD</option>
+            <option value="GBP">£ GBP</option>
+          </select>
+
         </div>
 
         <div className="row">

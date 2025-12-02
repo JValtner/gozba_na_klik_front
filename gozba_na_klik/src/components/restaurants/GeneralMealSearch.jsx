@@ -5,7 +5,7 @@ import Spinner from "../spinner/Spinner";
 import MealFilterSection from "../utils/MealFilterSection";
 import SortForm from "../utils/SortForm";
 import Pagination from "../utils/Pagination";
-import { getSortedFilteredPagedMeals, getSortTypes } from "../service/menuService";
+import { getSortedFilteredPagedMeals, getSortTypes, getTop5Meals } from "../service/menuService";
 import { useNavigate } from "react-router-dom";
 import { getCart } from "../orders/AddToCart";
 
@@ -14,6 +14,7 @@ const GeneralMealSearch = () => {
     const { role, userId } = useUser();
     const navigate = useNavigate();
     const [meals, setMeals] = useState([]);
+    const [mealstop5, setMealsTop5] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [sortTypes, setSortTypes] = useState([]);
@@ -75,7 +76,8 @@ const GeneralMealSearch = () => {
                     pageSize,
                     chosenType
                 );
-
+                const top5 = await getTop5Meals();
+                setMealsTop5(top5 || []);
                 setMeals(data.items || []);
                 setTotalItems(data.count || 0);
                 setHasNextPage(data.hasNextPage || false);
@@ -115,7 +117,7 @@ const GeneralMealSearch = () => {
         return () => clearInterval(i);
     }, []);
 
-    
+
 
     return (
         <div className="dashboard">
@@ -152,7 +154,7 @@ const GeneralMealSearch = () => {
                         </button>
                     </div>
                 )}
-                {role === "Buyer" && (
+                {role === "User" && (
                     <div className="dashboard__controls">
                         <MealFilterSection filter={filter} setFilter={setFilter} />
 
@@ -164,22 +166,42 @@ const GeneralMealSearch = () => {
                                 setPage(0);
                             }}
                         />
-
-                        <Pagination
-                            page={page}
-                            pageCount={pageCount}
-                            totalCount={totalItems}
-                            hasPreviousPage={hasPreviousPage}
-                            hasNextPage={hasNextPage}
-                            pageSize={pageSize}
-                            onPageChange={setPage}
-                            onPageSizeChange={setPageSize}
-                        />
                     </div>
                 )}
 
                 {error && <p className="error-message">{error}</p>}
+                <h3>Top 5 najpopularnijih jela</h3>
+                <hr />
+                <div className="dashboard__grid">
+                    {loading ? (
+                        <Spinner />
+                    ) : mealstop5.length === 0 ? (
+                        <div className="dashboard__empty">
+                            <h2>Nema dostupnih jela</h2>
+                            <p>Trenutno nema raspolozivih jela.</p>
+                        </div>
+                    ) : (
+                        mealstop5.map((mealt5) => (
+                            <div
+                                key={mealt5.id}
+                                className="dashboard__card restaurant-card-link"
+                                onClick={() => navigate(`/restaurants/${mealt5.restaurant.id}/menu?highlight=${mealt5.id}`)}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        navigate(`/restaurants/${mealt5.restaurant.id}/menu?highlight=${mealt5.id}`);
+                                    }
+                                }}
+                            >
+                                <MenuItem meal={mealt5} isOwner={false} />
+                            </div>
+                        ))
+                    )}
+                </div>
 
+                <h3>Kompletna ponuda</h3>
+                <hr />
                 <div className="dashboard__grid">
                     {loading ? (
                         <Spinner />
@@ -206,6 +228,18 @@ const GeneralMealSearch = () => {
                             </div>
                         ))
                     )}
+                </div>
+                <div className="dashboard-controls">
+                    <Pagination
+                        page={page}
+                        pageCount={pageCount}
+                        totalCount={totalItems}
+                        hasPreviousPage={hasPreviousPage}
+                        hasNextPage={hasNextPage}
+                        pageSize={pageSize}
+                        onPageChange={setPage}
+                        onPageSizeChange={setPageSize}
+                    />
                 </div>
             </div>
         </div>

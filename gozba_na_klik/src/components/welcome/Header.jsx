@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../users/UserContext";
-import { useCurrency } from "../utils/currencyContext";
 import { getCurrentProfile } from "../service/userService";
 import { baseUrl } from "../../config/routeConfig";
 
@@ -11,7 +10,6 @@ export default function Header() {
   const [profileImage, setProfileImage] = useState(
     `${baseUrl}/assets/profileImg/default_profile.png`
   );
-  const { currency, setCurrency } = useCurrency();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -41,19 +39,14 @@ export default function Header() {
         <div className="logo" onClick={() => navigate("/")}>
           🍴 Gozba na klik
         </div>
-        <select className="currency-select" value={currency} onChange={e => setCurrency(e.target.value)}>
- <option value="EUR">€ EUR</option>
-  <option value="USD">$ USD</option>
-  <option value="GBP">£ GBP</option>
-</select>
-
+        
         {isAuth && (
           <nav className="navbar-links">
             <ul>
               {(role === "User" || role === "Buyer") && (
                 <>
                   <li>
-                    <Link to={"/search"}>Pretraga jela</Link>
+                    <Link to={"/search"}>🔍 Pretraga jela</Link>
                   </li>
                   <li>
                     <Link to={"/my-orders"} className="my-orders-link">
@@ -62,7 +55,7 @@ export default function Header() {
                   </li>
                   <li>
                     <Link to={"/my-active-order"} className="my-orders-link">
-                      Aktivna porudžbina
+                      📝 Aktivna porudžbina
                     </Link>
                   </li>
                 </>
@@ -71,16 +64,16 @@ export default function Header() {
               {role === "Admin" && (
                 <>
                   <li>
-                    <Link to={"/admin-users"}>Korisnici</Link>
+                    <Link to={"/admin-users"}> 👫 Korisnici</Link>
                   </li>
                   <li>
-                    <Link to={"/admin-restaurants"}>Restorani</Link>
+                    <Link to={"/admin-restaurants"}> 🏠 Restorani</Link>
                   </li>
                   <li>
-                    <Link to={"/admin-complaints"}>Žalbe</Link>
+                    <Link to={"/admin-complaints"}> 📢 Žalbe</Link>
                   </li>
                   <li>
-                    <Link to={"/reporting/dashboard"}>Izveštaji</Link>
+                    <Link to={"/reporting/dashboard"}> 📊 Izveštaji</Link>
                   </li>
                 </>
               )}
@@ -92,7 +85,7 @@ export default function Header() {
       <div className="user-info">
         {!isAuth ? (
           <button className="login-btn" onClick={() => navigate("/login")}>
-            Prijava
+            🔓 Prijava
           </button>
         ) : (
           <>
@@ -109,7 +102,7 @@ export default function Header() {
               </button>
             )}
 
-            <Link to={`/profile`} className="profile-btn">
+            <Link to={`/profile`} >
               <button className="profile-btn" name="Profile">
                 <img
                   alt="Profile"
@@ -121,7 +114,7 @@ export default function Header() {
             </Link>
 
             <button className="logout-btn" onClick={handleLogout}>
-              Odjava
+              🔒 Odjava
             </button>
           </>
         )}

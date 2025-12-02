@@ -158,3 +158,17 @@ export async function processAppealDecision(restaurantId, accept) {
   );
   return response.data;
 }
+export const getTop5Restaurants = async () => {
+  try {
+    const response = await AxiosConfig.get(`/api/reviews/best-rated-restaurants`);
+    const top5Ids = response.data; 
+    const restaurantsTop5 = await Promise.all(
+      top5Ids.map(id => getRestaurantById(id))
+    );
+
+    return restaurantsTop5; 
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch top 5 restaurants");
+  }
+};

@@ -4,6 +4,7 @@ import { useUser } from "../users/UserContext";
 import {
   getSortedFilteredPagedRestaurants,
   getSortTypes,
+  getTop5Restaurants
 } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
 import Pagination from "../utils/Pagination";
@@ -17,6 +18,7 @@ const HomeRestaurants = () => {
   const navigate = useNavigate();
   const { userId, role } = useUser();
   const [restaurants, setRestaurants] = useState([]);
+  const [top5Restaurants, setTop5Restaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [sortTypes, setSortTypes] = useState([]);
@@ -56,7 +58,8 @@ const HomeRestaurants = () => {
           pageSize,
           chosenType
         );
-
+        const dataTop5 = await getTop5Restaurants();
+        setTop5Restaurants(dataTop5 || [])
         setRestaurants(data.items || []);
         setTotalItems(data.count || 0);
         setHasNextPage(data.hasNextPage || false);
@@ -100,23 +103,34 @@ const HomeRestaurants = () => {
               />
             </>
           )}
-
-          {/* Pagination Controls */}
-          <Pagination
-            page={page}
-            pageCount={pageCount}
-            totalCount={totalItems}
-            hasPreviousPage={hasPreviousPage}
-            hasNextPage={hasNextPage}
-            pageSize={pageSize}
-            onPageChange={setPage}
-            onPageSizeChange={setPageSize}
-          />
         </div>
         {/* Error */}
         {error && <p className="error-message">{error}</p>}
+        <div>
+          <h3>Najbolje ocenjeni restorani</h3>
+
+          <hr />
+        </div>
+        <div className="dashboard__grid">
+          {loading ? (
+            <Spinner />
+          ) : top5Restaurants.length === 0 ? (
+            <div className="dashboard__empty">
+              <h2>Nema dostupnih ocenjenih restorana</h2>
+              <p>Trenutno nema restorana koji su otvoreni.</p>
+            </div>
+          ) : (
+            top5Restaurants.map((r5) => (
+              <RestaurantBuyerCard key={r5.id} restaurant={r5} />
+            ))
+          )}
+        </div>
 
         {/* Restaurant Grid */}
+        <div>
+          <h3>Kompletna ponuda restorana</h3>
+          <hr />
+        </div>
         <div className="dashboard__grid">
           {loading ? (
             <Spinner />
@@ -130,6 +144,19 @@ const HomeRestaurants = () => {
               <RestaurantBuyerCard key={r.id} restaurant={r} />
             ))
           )}
+        </div>
+        <div className="dashboard__controls">
+          {/* Pagination Controls */}
+          <Pagination
+            page={page}
+            pageCount={pageCount}
+            totalCount={totalItems}
+            hasPreviousPage={hasPreviousPage}
+            hasNextPage={hasNextPage}
+            pageSize={pageSize}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
         </div>
       </div>
     </div>

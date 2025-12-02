@@ -30,7 +30,7 @@
 
       &:hover {
         background-color: #fbeade;
-        color: #fff;
+        color: #605f5f;
         transform: scale(1.05);
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
       }
@@ -46,8 +46,27 @@
       }
 
       option {
-        font-size: 1rem; // smaller for dropdown items
+        font-size: 1rem; 
+        background-color: #fbeade;
         text-align: center;
+
+        &:hover {
+          background-color: #fbeade !important;
+          color: #605f5f;
+          transform: scale(1.05);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        &:active {
+          background-color: #c75c0f!important;
+          transform: scale(0.95);
+        }
+
+        &:focus {
+          outline: none;
+          background-color: #fcd6bb !important;
+          box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+        }
       }
     }
   }

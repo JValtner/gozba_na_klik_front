@@ -2,17 +2,24 @@ import React, { useEffect, useState } from "react";
 import { getMealSalesReport, setPeriod } from "../service/reportingService";
 import DailyChart from "../utils/DailyChart";
 import { getMealsByRestaurantId } from "../service/menuService";
+import { useCurrency } from "../utils/currencyContext";
 
 const ReportingMealSalesSummary = ({ restaurantId }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [mealId, setMealId] = useState("");
   const [chartType, setChartType] = useState("bar");
-
   const [meals, setMeals] = useState([]);
   const [report, setReport] = useState(null);
-
   const valid = restaurantId && mealId && startDate && endDate;
+  const { convert, currency } = useCurrency();
+  const [convertedTR, setConvertedTR] = useState(0);
+
+  useEffect(() => {
+    if (!report) return;
+
+    convert(report.totalRevenue).then(setConvertedTR);
+  }, [report, currency]);
 
   useEffect(() => {
     if (!restaurantId) return;
@@ -32,7 +39,7 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
       {/* FILTERS */}
       <div className="section-filters">
         <div className="filter-group">
-          <label>Jelo</label>
+          <label> 🍜 Jelo</label>
           <select value={mealId} onChange={e => setMealId(e.target.value)}>
             <option value="">Izaberi jelo...</option>
             {meals.map(m => (
@@ -42,7 +49,7 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
         </div>
 
         <div className="filter-group">
-          <label>Period:</label>
+          <label>📅 Period:</label>
           <select onChange={e => setPeriod(Number(e.target.value), setStartDate, setEndDate)}>
             <option value="">Izaberi period...</option>
             <option value="1">1 dan</option>
@@ -53,20 +60,20 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
         </div>
 
         <div className="filter-group">
-          <label>Od:</label>
+          <label> 📆 Od:</label>
           <input type="date" onChange={e => setStartDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>Do:</label>
+          <label> 📆 Do:</label>
           <input type="date" onChange={e => setEndDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>Tip grafika</label>
+          <label> 📊 Tip grafika: </label>
           <select value={chartType} onChange={e => setChartType(e.target.value)}>
-            <option value="line">Linija</option>
-            <option value="bar">Stub</option>
+            <option value="line"> 📈 Linija</option>
+            <option value="bar">📊 Stub</option>
           </select>
         </div>
       </div>
@@ -84,7 +91,7 @@ const ReportingMealSalesSummary = ({ restaurantId }) => {
         <div className="section-content">
           <div className="summary-box">
             <p><strong>Ukupan broj prodatih jedinica:</strong> {report.totalUnitsSold.toLocaleString()} komada</p>
-            <p><strong>Ukupan prihod:</strong> {report.totalRevenue.toLocaleString()} RSD</p>
+            <p><strong>Ukupan prihod:</strong> {convertedTR.toLocaleString()} {currency}</p>
             <p><strong>Prosecna dnavna prodaja:</strong> {report.averageDailyUnitsSold.toLocaleString()} komada</p>
           </div>
 

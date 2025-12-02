@@ -46,11 +46,11 @@ const ReportingMonthlyReport = ({ restaurantId }) => {
 
       <div className="section-filters">
         <div className="filter-group">
-          <label>Chart Type</label>
+          <label>📊 Tip grafika: </label>
           <select value={chartType} onChange={e => setChartType(e.target.value)}>
-            <option value="line">Line</option>
-            <option value="bar">Bar</option>
-            <option value="pie">Pie</option>
+            <option value="line"> 📈 Linija</option>
+            <option value="bar">📊 Stub</option>
+            <option value="pie"> ⭕ Pita</option>
           </select>
         </div>
       </div>

@@ -2,16 +2,25 @@ import React, { useEffect, useState } from "react";
 import { getProfitSummaryReport, setPeriod } from "../service/reportingService";
 import DailyChart from "../utils/DailyChart";
 import Spinner from "../spinner/Spinner";
+import { useCurrency } from "../utils/currencyContext";
 
 const ReportingProfitSummary = ({ restaurantId }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [chartType, setChartType] = useState("bar");
-
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const valid = restaurantId && startDate && endDate;
+  const { convert, currency } = useCurrency();
+  const [convertedTR, setConvertedTR] = useState(0);
+  const [convertedADP, setConvertedAVP] = useState(0);
+
+  useEffect(() => {
+    if (!report) return;
+
+    convert(report.totalRevenue).then(setConvertedTR);
+    convert(report.averageDailyProfit).then(setConvertedAVP);
+  }, [report, currency]);
 
   useEffect(() => {
     if (!valid) return;
@@ -30,7 +39,7 @@ const ReportingProfitSummary = ({ restaurantId }) => {
       <div className="section-filters">
 
         <div className="filter-group">
-          <label>Period:</label>
+          <label> 📅 Period:</label>
           <select onChange={e => setPeriod(Number(e.target.value), setStartDate, setEndDate)}>
             <option value="">Izaberi period...</option>
             <option value="1">1 dan</option>
@@ -41,24 +50,24 @@ const ReportingProfitSummary = ({ restaurantId }) => {
         </div>
 
         <div className="filter-group">
-          <label>Od:</label>
+          <label>📆 Od:</label>
           <input type="date" onChange={e => setStartDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>Do:</label>
+          <label>📆 Do:</label>
           <input type="date" onChange={e => setEndDate(new Date(e.target.value).toISOString())} />
         </div>
 
         <div className="filter-group">
-          <label>Tip grafika</label>
+          <label>📊 Tip grafika: </label>
           <select value={chartType} onChange={e => setChartType(e.target.value)}>
-            <option value="line">Linija</option>
-            <option value="pie">Pita</option>
-            <option value="bar">Stub</option>
+            <option value="line"> 📈 Linija</option>
+            <option value="bar">📊 Stub</option>
+            <option value="pie"> ⭕ Pita</option>
           </select>
         </div>
-        </div>
+      </div>
 
       {/* FALLBACKS */}
       {!restaurantId && <p className="no-data">Izaberi restoran.</p>}
@@ -71,8 +80,8 @@ const ReportingProfitSummary = ({ restaurantId }) => {
         <div className="section-content">
           <div className="summary-box">
             <p><strong>Ukupan broj porudzbina:</strong> {report.totalPeriodOrders.toLocaleString()} komada</p>
-            <p><strong>Ukupan prihod</strong> {report.totalRevenue.toLocaleString()} RSD</p>
-            <p><strong>Prosecan dnevni prihod:</strong> {report.averageDailyProfit.toLocaleString()} RSD</p>
+            <p><strong>Ukupan prihod</strong> {convertedTR.toLocaleString()} {currency}</p>
+            <p><strong>Prosecan dnevni prihod:</strong> {convertedADP.toLocaleString()} {currency}</p>
           </div>
 
           <div className="chart-box">

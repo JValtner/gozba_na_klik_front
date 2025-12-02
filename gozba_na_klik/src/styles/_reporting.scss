@@ -310,34 +310,50 @@ $bg-light: #f3f4f7;
 /* ----------------------------- */
 
 .snapshot-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
   padding: 0.5rem;
 
   .snapshot-item {
-    background: linear-gradient(180deg, #ffffff, #f3f4f7);
+    background: #ffffff;
     border-radius: $radius;
-    box-shadow: $shadow-soft;
-    padding: 1.2rem 1.6rem;
-    cursor: pointer;
-    transition: all 0.25s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+    padding: 1rem 1.2rem;
+
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    color: #1f2937;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    justify-content: space-between;
+
+    transition: all 0.2s ease;
 
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: $shadow-strong;
-      background: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      transform: translateY(-2px);
+      border-color: #d1d5db;
     }
 
-    span {
-      font-size: 1.05rem;
-      text-align: center;
+    .snapshot-info {
+      font-size: 1rem;
+      color: #1f2937;
+    }
+
+    .download-button {
+      background: #ffffff;
+      color: #3b82f6;
+      border: 0,5px solid #3b82f6;
+      padding: 0.5rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: #d7e3fb;
+      }
     }
   }
 }
@@ -370,8 +386,9 @@ $bg-light: #f3f4f7;
   --chart-blue: #3498db;
   --chart-purple: #9b59b6;
   --chart-orange: #e67e22;
-
-  --chart-border: #2ecc71;
+  
+  --chart-line: #2980b9;
+  --chart-border: #ffffff;
   --chart-fill: rgba(46, 204, 113, 0.25);
 
   --chart-text: #333;

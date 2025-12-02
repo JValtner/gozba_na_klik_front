@@ -1,6 +1,7 @@
 import AxiosConfig from "../../config/axios.config";
 
 const RESOURCE = "/api/meals";
+const RESOURCE_ORDERS = "/api/orders";
 
 export async function getMealsByRestaurantId(restaurantId) {
   const response = await AxiosConfig.get(`${RESOURCE}/restaurant/${restaurantId}`);
@@ -52,6 +53,23 @@ export const getSortedFilteredPagedMeals = async (filter, page = 1, pageSize = 5
     throw new Error(error.response?.data?.message || "Failed to fetch meals");
   }
 };
+
+export const getTop5Meals = async () => {
+  try {
+    const response = await AxiosConfig.get(`${RESOURCE_ORDERS}/most-popular`);
+    const top5Ids = response.data; 
+    console.log("Top 5 meal IDs:", top5Ids);
+
+    const mealsTop5 = await Promise.all(top5Ids.map(id => getMealById(id)));
+
+    return mealsTop5; 
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch top 5 meals");
+  }
+};
+
+
 
 export const getSortTypes = async () => {
   try {
