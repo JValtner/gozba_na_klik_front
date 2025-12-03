@@ -79,15 +79,7 @@ const HomeRestaurants = () => {
   return (
     <div className="dashboard">
       <div className="dashboard__container">
-        {role === "Guest" && (
-          <div className="guest-placeholder">
-            <div className="guest-login-prompt">
-              <WelcomePage />
-            </div>
-          </div>
-        )}
-
-        {/* Filter + Sort */}
+       {/* Filter + Sort */}
         {role === "User" && (
           <div className="dashboard__controls">
             <RestaurantFilterSection filter={filter} setFilter={setFilter} />
@@ -104,9 +96,8 @@ const HomeRestaurants = () => {
 
         {/* Error */}
         {error && <p className="error-message">{error}</p>}
-        <div>
+        <div className="best-rated-section">
           <h3>Najbolje ocenjeni restorani</h3>
-
           <hr />
         </div>
         <div className="dashboard__grid">
@@ -124,7 +115,7 @@ const HomeRestaurants = () => {
         </div>
 
         {/* Restaurant Grid */}
-        <div>
+        <div className="best-rated-section">
           <h3>Kompletna ponuda restorana</h3>
           <hr />
         </div>

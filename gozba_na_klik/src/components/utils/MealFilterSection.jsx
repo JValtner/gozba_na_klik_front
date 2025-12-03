@@ -9,55 +9,55 @@ const MealFilterSection = ({ filter, setFilter }) => {
   };
 
   return (
-    <div className="meal-filter-section">
-      <div className="filter-row">
-        <label>
-          Naziv jela:
-          <input
-            type="text"
-            value={filter.Name || ""}
-            onChange={(e) => handleChange("Name", e.target.value)}
-          />
-        </label>
+    <div className="restaurant-filter-section">
+      <div className="filter-control">
+        <span className="filter-icon">🍽️</span>
+        <input
+          type="text"
+          placeholder="Naziv jela"
+          value={filter.Name || ""}
+          onChange={(e) => handleChange("Name", e.target.value)}
+          className="filter-input"
+        />
+      </div>
 
-        <label>
-          Restoran:
-          <input
-            type="text"
-            value={filter.RestaurantName || ""}
-            onChange={(e) => handleChange("RestaurantName", e.target.value)}
-          />
-        </label>
+      <div className="filter-control">
+        <span className="filter-icon">🏨</span>
+        <input
+          type="text"
+          placeholder="Restoran"
+          value={filter.RestaurantName || ""}
+          onChange={(e) => handleChange("RestaurantName", e.target.value)}
+          className="filter-input"
+        />
+      </div>
 
-        <label>
-          Cena od:
-          <input
-            type="number"
-            min="0"
-            value={filter.MinPrice ?? ""}
-            onChange={(e) =>
-              handleChange(
-                "MinPrice",
-                e.target.value ? Number(e.target.value) : null
-              )
-            }
-          />
-        </label>
+      <div className="filter-control">
+        <span className="filter-icon">💰</span>
+        <input
+          type="number"
+          min="0"
+          placeholder="Cena od"
+          value={filter.MinPrice ?? ""}
+          onChange={(e) =>
+            handleChange("MinPrice", e.target.value ? Number(e.target.value) : null)
+          }
+          className="filter-input"
+        />
+      </div>
 
-        <label>
-          Cena do:
-          <input
-            type="number"
-            min="0"
-            value={filter.MaxPrice ?? ""}
-            onChange={(e) =>
-              handleChange(
-                "MaxPrice",
-                e.target.value ? Number(e.target.value) : null
-              )
-            }
-          />
-        </label>
+      <div className="filter-control">
+        <span className="filter-icon">💵</span>
+        <input
+          type="number"
+          min="0"
+          placeholder="Cena do"
+          value={filter.MaxPrice ?? ""}
+          onChange={(e) =>
+            handleChange("MaxPrice", e.target.value ? Number(e.target.value) : null)
+          }
+          className="filter-input"
+        />
       </div>
     </div>
   );
