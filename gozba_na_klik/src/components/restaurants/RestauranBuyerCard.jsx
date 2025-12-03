@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from "../users/UserContext";
 import { baseUrl } from "../../config/routeConfig";
+import { getRestaurantAverageRating } from "../service/reviewService";
 
 const RestaurantBuyerCard = ({ restaurant }) => {
   const { role, userId } = useUser();
+  const [averageRating, setAverageRating] = useState(null);
+  const [loadingRating, setLoadingRating] = useState(true);
   
   if (!restaurant) return null;
 
@@ -23,6 +26,25 @@ const RestaurantBuyerCard = ({ restaurant }) => {
     ownerId
   } = restaurant;
 
+  // Load average rating
+  useEffect(() => {
+    const loadRating = async () => {
+      try {
+        setLoadingRating(true);
+        const rating = await getRestaurantAverageRating(id);
+        setAverageRating(rating);
+      } catch (error) {
+        console.error("Error loading average rating:", error);
+        setAverageRating(0);
+      } finally {
+        setLoadingRating(false);
+      }
+    };
+    if (id) {
+      loadRating();
+    }
+  }, [id]);
+
   const formatDate = (dateString) =>
     dateString ? new Date(dateString).toLocaleDateString("sr-RS") : "";
 
@@ -32,6 +54,35 @@ const RestaurantBuyerCard = ({ restaurant }) => {
     Number(userId) === Number(ownerId);
 
   const isDisabled = isSuspended && !isOwner;
+
+  // Render stars for average rating
+  const renderStars = (rating) => {
+    if (rating === null || rating === 0) return null;
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+        {[...Array(fullStars)].map((_, i) => (
+          <span key={`full-${i}`} style={{ color: "#ffc107", fontSize: "1rem" }}>
+            ★
+          </span>
+        ))}
+        {hasHalfStar && (
+          <span style={{ color: "#ffc107", fontSize: "1rem" }}>★</span>
+        )}
+        {[...Array(emptyStars)].map((_, i) => (
+          <span key={`empty-${i}`} style={{ color: "#ddd", fontSize: "1rem" }}>
+            ★
+          </span>
+        ))}
+        <span style={{ marginLeft: "0.5rem", fontWeight: "bold" }}>
+          {rating.toFixed(1)}
+        </span>
+      </div>
+    );
+  };
 
   const cardContent = (
     <>
@@ -92,6 +143,19 @@ const RestaurantBuyerCard = ({ restaurant }) => {
             ) : (
               <span className="status status--closed">Zatvoreno</span>
             )}
+            {/* Average Rating next to status */}
+            {!loadingRating && averageRating !== null && averageRating > 0 && (
+              <span style={{ marginLeft: "1rem" }}>
+                <strong>Prosečna ocena:</strong> {renderStars(averageRating)}
+              </span>
+            )}
+          </p>
+        )}
+
+        {/* Average Rating as separate line if status is suspended */}
+        {isSuspended && !isOwner && !loadingRating && averageRating !== null && averageRating > 0 && (
+          <p>
+            <strong>Prosečna ocena:</strong> {renderStars(averageRating)}
           </p>
         )}
 
