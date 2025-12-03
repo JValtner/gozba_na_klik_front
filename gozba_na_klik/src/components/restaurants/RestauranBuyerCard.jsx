@@ -63,7 +63,7 @@ const RestaurantBuyerCard = ({ restaurant }) => {
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
     return (
-      <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+      <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
         {[...Array(fullStars)].map((_, i) => (
           <span key={`full-${i}`} style={{ color: "#ffc107", fontSize: "1rem" }}>
             ★
@@ -77,10 +77,10 @@ const RestaurantBuyerCard = ({ restaurant }) => {
             ★
           </span>
         ))}
-        <span style={{ marginLeft: "0.5rem", fontWeight: "bold" }}>
+        <span style={{ fontWeight: "bold" }}>
           {rating.toFixed(1)}
         </span>
-      </div>
+      </span>
     );
   };
 
@@ -143,19 +143,14 @@ const RestaurantBuyerCard = ({ restaurant }) => {
             ) : (
               <span className="status status--closed">Zatvoreno</span>
             )}
-            {/* Average Rating next to status */}
-            {!loadingRating && averageRating !== null && averageRating > 0 && (
-              <span style={{ marginLeft: "1rem" }}>
-                <strong>Prosečna ocena:</strong> {renderStars(averageRating)}
-              </span>
-            )}
           </p>
         )}
 
-        {/* Average Rating as separate line if status is suspended */}
-        {isSuspended && !isOwner && !loadingRating && averageRating !== null && averageRating > 0 && (
-          <p>
-            <strong>Prosečna ocena:</strong> {renderStars(averageRating)}
+        {/* Average Rating below status */}
+        {!loadingRating && averageRating !== null && averageRating > 0 && (
+          <p style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+            <strong>Prosečna ocena:</strong>
+            {renderStars(averageRating)}
           </p>
         )}
 
