@@ -7,6 +7,7 @@ import { getRestaurantAverageRating } from "../service/reviewService";
 const RestaurantBuyerCard = ({ restaurant }) => {
   const { role, userId } = useUser();
   const [averageRating, setAverageRating] = useState(null);
+  const [reviewsCount, setReviewsCount] = useState(0);
   const [loadingRating, setLoadingRating] = useState(true);
   
   if (!restaurant) return null;
@@ -26,16 +27,18 @@ const RestaurantBuyerCard = ({ restaurant }) => {
     ownerId
   } = restaurant;
 
-  // Load average rating
+  // Load average rating and count
   useEffect(() => {
     const loadRating = async () => {
       try {
         setLoadingRating(true);
-        const rating = await getRestaurantAverageRating(id);
-        setAverageRating(rating);
+        const result = await getRestaurantAverageRating(id);
+        setAverageRating(result.average || result);
+        setReviewsCount(result.count || 0);
       } catch (error) {
         console.error("Error loading average rating:", error);
         setAverageRating(0);
+        setReviewsCount(0);
       } finally {
         setLoadingRating(false);
       }
@@ -56,11 +59,12 @@ const RestaurantBuyerCard = ({ restaurant }) => {
   const isDisabled = isSuspended && !isOwner;
 
   // Render stars for average rating
-  const renderStars = (rating) => {
+  const renderStars = (rating, count = 0) => {
     if (rating === null || rating === 0) return null;
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    const formattedRating = rating.toFixed(1).replace(".", ",");
 
     return (
       <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
@@ -78,7 +82,12 @@ const RestaurantBuyerCard = ({ restaurant }) => {
           </span>
         ))}
         <span style={{ fontWeight: "bold" }}>
-          {rating.toFixed(1)}
+          {formattedRating}
+          {count > 0 && (
+            <span style={{ color: "#666", fontSize: "0.9rem", fontWeight: "normal", marginLeft: "0.25rem" }}>
+              ({count})
+            </span>
+          )}
         </span>
       </span>
     );
@@ -147,10 +156,10 @@ const RestaurantBuyerCard = ({ restaurant }) => {
         )}
 
         {/* Average Rating below status */}
-        {!loadingRating && averageRating !== null && averageRating > 0 && (
+        {!loadingRating && averageRating !== null && averageRating > 0 && reviewsCount > 0 && (
           <p style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
             <strong>Prosečna ocena:</strong>
-            {renderStars(averageRating)}
+            {renderStars(averageRating, reviewsCount)}
           </p>
         )}
 
