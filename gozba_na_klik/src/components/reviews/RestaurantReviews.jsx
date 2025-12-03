@@ -30,28 +30,37 @@ export default function RestaurantReviews({ restaurantId }) {
 
       // Handle both camelCase and PascalCase response formats
       const items = response.items || response.Items || [];
+      const count = response.count || response.Count || 0;
+      
       setReviews(items);
       setTotalPages(response.totalPages || response.TotalPages || 0);
-      setTotalCount(response.count || response.Count || 0);
+      setTotalCount(count);
       setHasNextPage(response.hasNextPage || response.HasNextPage || false);
       setHasPreviousPage(
         response.hasPreviousPage || response.HasPreviousPage || false
       );
 
-      // Calculate average rating from total count
-      // We'll calculate from all reviews by getting a large page
-      // In production, you might want a separate endpoint for average
-      if (totalCount > 0) {
-        const allReviewsResponse = await getRestaurantReviews(restaurantId, 1, 1000);
-        const allItems = allReviewsResponse.items || allReviewsResponse.Items || [];
-        if (allItems.length > 0) {
-          const sum = allItems.reduce(
-            (acc, review) =>
-              acc + (review.restaurantRating || review.RestaurantRating || 0),
-            0
-          );
-          setAverageRating(sum / allItems.length);
-        } else {
+      // Calculate average rating from all reviews
+      // Use the count from response, not the state variable
+      if (count > 0) {
+        try {
+          const allReviewsResponse = await getRestaurantReviews(restaurantId, 1, 1000);
+          const allItems = allReviewsResponse.items || allReviewsResponse.Items || [];
+          if (allItems.length > 0) {
+            const sum = allItems.reduce(
+              (acc, review) => {
+                const rating = review.restaurantRating || review.RestaurantRating || 0;
+                return acc + (typeof rating === 'number' ? rating : 0);
+              },
+              0
+            );
+            const average = sum / allItems.length;
+            setAverageRating(isNaN(average) ? 0 : average);
+          } else {
+            setAverageRating(0);
+          }
+        } catch (avgError) {
+          console.error("Error calculating average rating:", avgError);
           setAverageRating(0);
         }
       } else {
