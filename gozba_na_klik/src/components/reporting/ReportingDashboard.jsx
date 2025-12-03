@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { baseUrl } from "../../config/routeConfig";
-import { getAllRestaurants, getRestaurantById } from "../service/restaurantsService";
+import {
+  getAllRestaurants,
+  getRestaurantById,
+} from "../service/restaurantsService";
 import { getMealsByRestaurantId } from "../service/menuService";
 import { useCurrency } from "../utils/currencyContext";
 import ReportingProfitSummary from "./ReportingProfitSummary";
@@ -37,18 +40,16 @@ const ReportingDashboard = () => {
 
   return (
     <div className="reporting-dashboard">
-
-      <h1 className="title">Reporting Dashboard</h1>
+      <h1 className="title">Statistika zarade</h1>
 
       <div className="section">
-
         <div className="row">
           <select
             value={restaurantId}
-            onChange={e => setRestaurantId(e.target.value)}
+            onChange={(e) => setRestaurantId(e.target.value)}
           >
             <option value=""> 🏠 Izaberi restoran ...</option>
-            {restaurants.map(r => (
+            {restaurants.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.name}
               </option>
@@ -59,25 +60,32 @@ const ReportingDashboard = () => {
           <select
             className="currency-select"
             value={currency}
-            onChange={e => setCurrency(e.target.value)}
+            onChange={(e) => setCurrency(e.target.value)}
           >
-            <option value="EUR">💱 Izaberi valutu izvestaja ...</option> {/* emoji shown, value is EUR */}
+            <option value="EUR">💱 Izaberi valutu izvestaja ...</option>{" "}
+            {/* emoji shown, value is EUR */}
             <option value="EUR">€ EUR</option>
             <option value="USD">$ USD</option>
             <option value="GBP">£ GBP</option>
           </select>
-
         </div>
 
         <div className="row">
           {restaurantInfo && (
             <div className="restaurant-card-report">
-              <img src={`${baseUrl}${restaurantInfo.photoUrl}`} alt={restaurantInfo?.name} />
+              <img
+                src={`${baseUrl}${restaurantInfo.photoUrl}`}
+                alt={restaurantInfo?.name}
+              />
               <div>
                 <h3>{restaurantInfo.name}</h3>
                 <p>{restaurantInfo.description}</p>
-                <p><strong>Adresa:</strong> {restaurantInfo.address}</p>
-                <p><strong>Telefon:</strong> {restaurantInfo.phone}</p>
+                <p>
+                  <strong>Adresa:</strong> {restaurantInfo.address}
+                </p>
+                <p>
+                  <strong>Telefon:</strong> {restaurantInfo.phone}
+                </p>
               </div>
             </div>
           )}

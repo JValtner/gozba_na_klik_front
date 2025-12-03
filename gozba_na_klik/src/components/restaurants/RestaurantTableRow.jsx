@@ -12,11 +12,11 @@ const RestaurantTableRow = ({ id, name, address, phone, owner, onDelete }) => {
         <div className="btn-container">
           <Link
             to={`/admin-restaurant-form/${id}`}
-            className="btn btn--secondary"
+            className="btn btn--primary"
           >
             Uredi
           </Link>
-          <button className="delete-btn" onClick={onDelete}>
+          <button className="btn btn--danger" onClick={onDelete}>
             Obriši
           </button>
         </div>

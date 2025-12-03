@@ -103,7 +103,7 @@ const RestaurantTable = () => {
                   name={restaurant.name}
                   address={restaurant.address}
                   phone={restaurant.phone}
-                  owner={restaurant.owner?.userName}
+                  owner={restaurant.owner}
                   onDelete={() => handleDelete(restaurant.id)}
                 />
               ))}

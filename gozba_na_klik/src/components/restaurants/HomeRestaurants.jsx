@@ -4,7 +4,7 @@ import { useUser } from "../users/UserContext";
 import {
   getSortedFilteredPagedRestaurants,
   getSortTypes,
-  getTop5Restaurants
+  getTop5Restaurants,
 } from "../service/restaurantsService";
 import Spinner from "../spinner/Spinner";
 import Pagination from "../utils/Pagination";
@@ -59,7 +59,7 @@ const HomeRestaurants = () => {
           chosenType
         );
         const dataTop5 = await getTop5Restaurants();
-        setTop5Restaurants(dataTop5 || [])
+        setTop5Restaurants(dataTop5 || []);
         setRestaurants(data.items || []);
         setTotalItems(data.count || 0);
         setHasNextPage(data.hasNextPage || false);
@@ -115,7 +115,6 @@ const HomeRestaurants = () => {
           ) : top5Restaurants.length === 0 ? (
             <div className="dashboard__empty">
               <h2>Nema dostupnih ocenjenih restorana</h2>
-              <p>Trenutno nema restorana koji su otvoreni.</p>
             </div>
           ) : (
             top5Restaurants.map((r5) => (
