@@ -98,10 +98,10 @@ export default function DisplayAddons({ mealId }) {
         if (selectedChosenId === addonId) setSelectedChosenId(null);
       }
 
-      showStatus("Addon successfully removed.");
+      showStatus("Dodatak uspesno uklonjen.");
     } catch (err) {
       console.error(err);
-      showStatus("Failed to remove addon.", "red");
+      showStatus("Neuspesno uklanjanje dodatka", "red");
     }
   };
 
@@ -119,9 +119,9 @@ export default function DisplayAddons({ mealId }) {
 
       {/* Independent Addons */}
       <section className="addon-section">
-        <h3>Independent Addons</h3>
+        <h3>Nezavisni dodatak</h3>
         {independentAddons.length === 0 ? (
-          <p>No independent addons added.</p>
+          <p>Nema dodatih nezavisnih dodataka</p>
         ) : (
           <ul className="addon-list">
             {independentAddons.map(a => (
@@ -136,9 +136,9 @@ export default function DisplayAddons({ mealId }) {
 
       {/* Chosen Addons */}
       <section className="addon-section">
-        <h3>Chosen Addon</h3>
+        <h3>Izborni dodatak</h3>
         {chosenAddons.length === 0 ? (
-          <p>No chosen addons added.</p>
+          <p>Nema dodatih izbornih dodataka</p>
         ) : (
           chosenAddons.map(a => (
             <div
@@ -163,7 +163,7 @@ export default function DisplayAddons({ mealId }) {
 
       {/* Add New Addon Form */}
       <section className="addon-section">
-        <h3>Add New Addon</h3>
+        <h3>Novi dodatak</h3>
         <AddonForm mealId={mealId} onSubmit={handleAdd} />
       </section>
     </div>

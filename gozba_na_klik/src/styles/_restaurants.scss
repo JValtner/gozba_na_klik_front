@@ -106,6 +106,32 @@
 }
 
 // ============================================
+// Best rated RESTAURANT
+// ============================================
+.best-rated-section {
+  position: relative;
+  padding: 4rem 1rem 4rem 1rem;
+
+  h3 {
+    position: absolute;
+    top: 55%;
+    transform: translateY(-50%);
+    left: 50px;
+    background: #fff;
+    padding: 0 2rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  hr {
+    margin-top: 1rem;
+    border: none;
+    border-top: 2px solid #444444;
+  }
+}
+
+// ============================================
 // EDIT RESTAURANT
 // ============================================
 
@@ -596,7 +622,7 @@
   opacity: 0.6;
   cursor: not-allowed;
   pointer-events: none;
-  
+
   &:hover {
     opacity: 0.6;
   }
@@ -606,7 +632,7 @@
 .btn--danger[disabled] {
   background-color: #9ca3af;
   color: #ffffff;
-  
+
   &:hover {
     background-color: #9ca3af;
   }

@@ -170,8 +170,11 @@ const GeneralMealSearch = () => {
                 )}
 
                 {error && <p className="error-message">{error}</p>}
-                <h3>Top 5 najpopularnijih jela</h3>
-                <hr />
+                <div className="best-rated-section">
+                    <h3>Top 5 najpopularnijih jela</h3>
+                    <hr />
+                </div>
+
                 <div className="dashboard__grid">
                     {loading ? (
                         <Spinner />
@@ -199,9 +202,11 @@ const GeneralMealSearch = () => {
                         ))
                     )}
                 </div>
+                <div className="best-rated-section">
+                    <h3>Kompletna ponuda</h3>
+                    <hr />
+                </div>
 
-                <h3>Kompletna ponuda</h3>
-                <hr />
                 <div className="dashboard__grid">
                     {loading ? (
                         <Spinner />

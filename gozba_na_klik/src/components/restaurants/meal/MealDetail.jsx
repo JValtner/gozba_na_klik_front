@@ -38,7 +38,7 @@ export default function MealDetails() {
   }, [mealId, restaurantId, userId, role])
 
   if (loading) return <Spinner />
-  if (!meal) return <p>Meal not found.</p>
+  if (!meal) return <p>Jelo nije pronadjeno.</p>
 
   return (
     <div className="meal-details">
@@ -54,7 +54,7 @@ export default function MealDetails() {
       {/* --- Name & Price --- */}
       <div className="meal-details__header">
         <h1>{meal.name}</h1>
-        <h2>{meal.price.toFixed(2)} €</h2>
+        <h2>{meal.price.toFixed(2)} RSD</h2>
       </div>
 
       {/* --- Description --- */}
@@ -63,12 +63,12 @@ export default function MealDetails() {
       {/* --- Addons & Alergens columns --- */}
       <div className="meal-details__columns">
         <div className="column">
-          <h3>Addons</h3>
+          <h3>Dodaci</h3>
           <DisplayAddons mealId={mealId} /> 
         </div>
 
         <div className="column">
-          <h3>Alergens</h3>
+          <h3>Alergeni</h3>
           <DisplayAlergens mealId={mealId} />
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function MealDetails() {
             className="btn btn--secondary"
             onClick={() => navigate(`/restaurants/${restaurantId}/menu/${mealId}/edit`)}
           >
-            Edit
+            Izmeni
           </button>
         )}
         <button className="btn btn--secondary" onClick={() => navigate(`/restaurants/${restaurantId}/menu`)}>

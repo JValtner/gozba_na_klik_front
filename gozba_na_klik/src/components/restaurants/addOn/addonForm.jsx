@@ -18,11 +18,11 @@ const AddonForm = ({ mealId, onSubmit }) => {
     return (
         <form onSubmit={handleSubmit(submitHandler)} className="addon-form">
             <div className="form-row">
-                <label>Name:</label>
+                <label>Naziv:</label>
                 <input
                     {...register("name", {
-                        required: "Addon name is required",
-                        maxLength: { value: 100, message: "Cannot exceed 100 characters" },
+                        required: "Dodatak je obavezan",
+                        maxLength: { value: 100, message: "Prekoracena maksimalna duzina 100 karaktera" },
                     })}
                     type="text"
                     placeholder="Addon name"
@@ -31,12 +31,12 @@ const AddonForm = ({ mealId, onSubmit }) => {
             </div>
 
             <div className="form-row">
-                <label>Price:</label>
+                <label>Cena:</label>
                 <input
                     {...register("price", {
-                        required: "Price is required",
-                        min: { value: 0, message: "Price must be positive" },
-                        max: { value: 5000, message: "Price too high" },
+                        required: "Cena je obavezna",
+                        min: { value: 0, message: "Cena mora biti pozitivan broj" },
+                        max: { value: 5000, message: "Cena je previsoka" },
                     })}
                     type="number"
                     placeholder="Price"
@@ -46,15 +46,15 @@ const AddonForm = ({ mealId, onSubmit }) => {
             </div>
 
             <div className="form-row">
-                <label>Type:</label>
+                <label>Tip dodatka:</label>
                 <select {...register("type", { required: "Type is required" })}>
-                    <option value="independent">Independent</option>
-                    <option value="chosen">Chosen</option>
+                    <option value="independent">Nezavisni</option>
+                    <option value="chosen">Izabrani</option>
                 </select>
                 {errors.type && <span className="error-msg">{errors.type.message}</span>}
             </div>
 
-            <button type="submit">Add</button>
+            <button type="submit">Dodaj +</button>
         </form>
     );
 };
