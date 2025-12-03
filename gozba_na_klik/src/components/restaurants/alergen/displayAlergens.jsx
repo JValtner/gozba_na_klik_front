@@ -65,10 +65,10 @@ export default function DisplayAlergens({ mealId }) {
       setAssignedAlergens((prev) => prev.filter((a) => a.id !== alergenId))
     } catch (err) {
       console.error(err)
-      showToast.error("Failed to remove allergen.")
+      showToast.error("Neuspesno uklanjanje alergena.")
     }
     finally {
-      setStatusMsg("Allergen succesfully removed.")
+      setStatusMsg("Alergen uspesno uklonjen.")
       setTimeout(() => setStatusMsg(""), 3000)
     }
   }
@@ -83,9 +83,9 @@ export default function DisplayAlergens({ mealId }) {
       </div>
       <div className="alergens-page">
         <div className="alergen-column">
-          <h3>Assigned Allergens</h3>
+          <h3>Dodeljeni alergeni</h3>
           {assignedAlergens.length === 0 ? (
-            <p>No allergens assigned to this meal.</p>
+            <p>Nema dodeljenih alergena.</p>
           ) : (
             <ul className="alergen-list">
               {assignedAlergens.map((a) => (
@@ -104,9 +104,9 @@ export default function DisplayAlergens({ mealId }) {
         </div>
 
         <div className="alergen-column">
-          <h3>Available Allergens</h3>
+          <h3>Dostupni alergeni</h3>
           {available.length === 0 ? (
-            <p>All allergens are already assigned.</p>
+            <p>Svi alergeni su vec dodeljeni</p>
           ) : (
             <ul className="alergen-list">
               {available.map((a) => (

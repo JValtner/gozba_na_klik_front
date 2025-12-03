@@ -110,7 +110,7 @@ export default function UserProfile() {
         <div className="profile-image">
           <img
             src={imageSrc}
-            alt="Profile Preview"
+            alt="Pregled profila"
             onError={(e) => {
               e.target.src = `${baseUrl}/assets/profileImg/default_profile.png`;
             }}

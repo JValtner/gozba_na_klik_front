@@ -158,7 +158,7 @@ const Menu = () => {
       {/* --- New meal btn --- */}
       {isOwner && (
         <div className="restaurant-meal-new">
-          <button className="btn btn--primary" onClick={handleNewMeal}>Add meal</button>
+          <button className="btn btn--primary" onClick={handleNewMeal}>Dodaj novo jelo</button>
         </div>
       )}
 
