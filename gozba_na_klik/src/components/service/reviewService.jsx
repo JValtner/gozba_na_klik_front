@@ -32,9 +32,10 @@ export async function getRestaurantAverageRating(restaurantId) {
     // In production, you might want a separate endpoint for this
     const allReviews = await getRestaurantReviews(restaurantId, 1, 1000);
     const items = allReviews.items || allReviews.Items || [];
+    const count = allReviews.count || allReviews.Count || items.length;
     
     if (items.length === 0) {
-      return 0;
+      return { average: 0, count: 0 };
     }
     
     const sum = items.reduce((acc, review) => {
@@ -42,10 +43,10 @@ export async function getRestaurantAverageRating(restaurantId) {
       return acc + rating;
     }, 0);
     
-    return sum / items.length;
+    return { average: sum / items.length, count: count };
   } catch (error) {
     console.error("Error calculating average rating:", error);
-    return 0;
+    return { average: 0, count: 0 };
   }
 }
 

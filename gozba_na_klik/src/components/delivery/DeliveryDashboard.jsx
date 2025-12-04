@@ -32,6 +32,15 @@ export default function DeliveryDashboard() {
             <h3>Aktivne dostave</h3>
             <p>Pregledajte vaše pristigle dostave</p>
           </div>
+
+          <div
+            className="dashboard-card"
+            onClick={() => navigate("/delivery/history")}
+          >
+            <span className="dashboard-card__icon">📋</span>
+            <h3>Istorija dostava</h3>
+            <p>Pregledajte sve vaše završene dostave</p>
+          </div>
         </div>
       </div>
     </div>
